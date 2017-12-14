@@ -2,6 +2,7 @@ package ru.coolone.platformer;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Mainline;
+import com.brashmonkey.spriter.Player.PlayerListener;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
@@ -23,7 +25,7 @@ import java.util.Collection;
  * Created by coolone on 13.12.17.
  */
 
-public class Player implements InputProcessor, com.brashmonkey.spriter.Player.PlayerListener {
+public class Player implements InputProcessor, PlayerListener {
 
     private static final String TAG = Player.class.getSimpleName();
 
@@ -41,8 +43,9 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
      */
     public enum AnimationId {
         IDLE,
-        SHOOT,
         WALK,
+        SLIDE_START,
+        SLIDE_LOOP,
         CROUCH_DOWN,
         STAND_UP,
         CROUCH_IDLE,
@@ -68,7 +71,8 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
      */
     public enum Mode {
         DEFAULT,
-        JUMP
+        JUMP,
+        SLIDE
     }
 
     private Mode mode = Mode.DEFAULT;
@@ -91,7 +95,11 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
     /**
      * Player entity
      */
-    Entity entity;
+    private Entity entity;
+
+    public static final int MIN_SLIDE_VELOCITY = 0;
+    public static final int JUMP_VELOCITY = 1000;
+    public static final int MOVE_VELOCITY = 50;
 
     public class CompositeScript implements IScript {
 
@@ -113,28 +121,37 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
             if (!physic.body.isFixedRotation())
                 physic.body.setFixedRotation(true);
 
-            switch (move) {
-                case LEFT:
-                    physic.body.applyLinearImpulse(
-                            new Vector2(-50, 0),
-                            physic.body.getPosition(),
-                            true
-                    );
+            if(mode != Mode.SLIDE)
+                switch (move) {
+                    case LEFT:
+                        physic.body.applyLinearImpulse(
+                                new Vector2(-MOVE_VELOCITY, 0),
+                                physic.body.getPosition(),
+                                true
+                        );
+                        break;
+                    case RIGHT:
+                        physic.body.applyLinearImpulse(
+                                new Vector2(MOVE_VELOCITY, 0),
+                                physic.body.getPosition(),
+                                true
+                        );
+                        break;
+                }
+
+            // Check end of mode
+            boolean end = false;
+            switch (mode) {
+                case JUMP:
+                    end = spriter.player.getAnimation().id == AnimationId.JUMP_LOOP.ordinal() &&
+                            isPlayerGrounded();
                     break;
-                case RIGHT:
-                    physic.body.applyLinearImpulse(
-                            new Vector2(50, 0),
-                            physic.body.getPosition(),
-                            true
-                    );
+                case SLIDE:
+                    end = Math.abs(physic.body.getLinearVelocity().x) <= MIN_SLIDE_VELOCITY;
                     break;
             }
-
-            // Check jump end
-            if (mode == Mode.JUMP &&
-                    physic.body.getLinearVelocity().y < 0 &&
-                    isPlayerGrounded()) {
-                // End jump
+            if(end) {
+                // To default mode
                 mode = Mode.DEFAULT;
 
                 // Update animation
@@ -199,7 +216,7 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
                 if (mode == Mode.DEFAULT) {
                     // Jump
                     physic.body.applyLinearImpulse(
-                            new Vector2(0, 500),
+                            new Vector2(0, JUMP_VELOCITY),
                             physic.body.getPosition(),
                             true
                     );
@@ -209,6 +226,17 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
 
                     // Change animation
                     spriter.player.setAnimation(AnimationId.JUMP_START.ordinal());
+                }
+                break;
+            case Input.Keys.DOWN:
+                if (mode == Mode.DEFAULT &&
+                        (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                                || Gdx.input.isKeyPressed(Input.Keys.LEFT))) {
+                    // Slide mode
+                    mode = Mode.SLIDE;
+
+                    // Change animation
+                    spriter.player.setAnimation(AnimationId.SLIDE_START.ordinal());
                 }
                 break;
         }
@@ -240,6 +268,12 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
         return false;
     }
 
+    /**
+     * Binding touch coords to keyboard key
+     * @param screenX Touch x
+     * @param screenY Touch y
+     * @return Key number
+     */
     private int touchToKey(int screenX, int screenY) {
         if (screenX < Gdx.graphics.getWidth() / 3)
             return Input.Keys.LEFT;
@@ -250,16 +284,20 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        // Bind touch to key
-        keyDown(touchToKey(screenX, screenY));
+        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+            // Bind to key
+            keyDown(touchToKey(screenX, screenY));
+        }
 
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        // Bind touch to key
-        keyUp(touchToKey(screenX, screenY));
+        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+            // Bind touch to key
+            keyUp(touchToKey(screenX, screenY));
+        }
 
         return false;
     }
@@ -281,9 +319,11 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
 
     @Override
     public void animationFinished(Animation animation) {
-        if (animation.id == AnimationId.JUMP_START.ordinal()) {
-            // Start jump loop animation
+        // Start loop animation
+        if (animation.id == AnimationId.JUMP_START.ordinal()) { // for jump
             spriter.player.setAnimation(AnimationId.JUMP_LOOP.ordinal());
+        } else if(animation.id == AnimationId.SLIDE_START.ordinal()) { // for slide
+            spriter.player.setAnimation(AnimationId.SLIDE_LOOP.ordinal());
         }
     }
 
@@ -368,7 +408,7 @@ public class Player implements InputProcessor, com.brashmonkey.spriter.Player.Pl
                     animationId = AnimationId.JUMP_LOOP;
                 break;
             default:
-                if(Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
+                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
                         Gdx.input.isKeyPressed(Input.Keys.RIGHT))
                     animationId = AnimationId.WALK;
                 else
