@@ -408,8 +408,8 @@ public class Player implements InputProcessor, PlayerListener {
                     animationId = AnimationId.JUMP_LOOP;
                 break;
             default:
-                if (Gdx.input.isKeyPressed(Input.Keys.LEFT) ||
-                        Gdx.input.isKeyPressed(Input.Keys.RIGHT))
+                if (move == MoveDirection.LEFT ||
+                        move == MoveDirection.RIGHT)
                     animationId = AnimationId.WALK;
                 else
                     animationId = AnimationId.IDLE;
