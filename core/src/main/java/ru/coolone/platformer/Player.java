@@ -20,6 +20,7 @@ import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 /**
  * Created by coolone on 13.12.17.
@@ -46,13 +47,14 @@ public class Player implements InputProcessor, PlayerListener {
         WALK,
         SLIDE_START,
         SLIDE_LOOP,
-        CROUCH_DOWN,
-        STAND_UP,
-        CROUCH_IDLE,
+        SLIDE_END,
+        CROUCH_START,
+        CROUCH_LOOP,
+        CROUCH_END,
         JUMP_START,
-        FALL_START,
         JUMP_LOOP,
-        HIT_0
+        JUMP_END,
+        HIT
     }
 
     /**
@@ -67,18 +69,38 @@ public class Player implements InputProcessor, PlayerListener {
     private MoveDirection move = MoveDirection.NONE;
 
     /**
-     * Mode
+     * PlayerModeId
      */
-    public enum Mode {
+    public enum PlayerModeId {
         DEFAULT,
         JUMP,
-        SLIDE
+        SLIDE,
+        CROUCH
+    }
+    public static final PlayerMode[] modes = new PlayerMode[] {
+            new PlayerMode(),
+            new PlayerMode( // JUMP
+                    true,
+                    false
+            ),
+            new PlayerMode( // SLIDE
+                    false,
+                    false
+            ),
+            new PlayerMode( // CROUCH
+                    false,
+                    false
+            )
+    };
+
+    private PlayerModeId modeId = PlayerModeId.DEFAULT;
+
+    public PlayerModeId getModeId() {
+        return modeId;
     }
 
-    private Mode mode = Mode.DEFAULT;
-
-    public Mode getMode() {
-        return mode;
+    public PlayerMode getMode() {
+        return modes[modeId.ordinal()];
     }
 
     /**
@@ -97,9 +119,9 @@ public class Player implements InputProcessor, PlayerListener {
      */
     private Entity entity;
 
-    public static final int MIN_SLIDE_VELOCITY = 0;
     public static final int JUMP_VELOCITY = 1000;
     public static final int MOVE_VELOCITY = 50;
+    public static final int MIN_SLIDE_VELOCITY = 0;
 
     public class CompositeScript implements IScript {
 
@@ -121,7 +143,7 @@ public class Player implements InputProcessor, PlayerListener {
             if (!physic.body.isFixedRotation())
                 physic.body.setFixedRotation(true);
 
-            if(mode != Mode.SLIDE)
+            if (modeId != PlayerModeId.SLIDE)
                 switch (move) {
                     case LEFT:
                         physic.body.applyLinearImpulse(
@@ -139,23 +161,17 @@ public class Player implements InputProcessor, PlayerListener {
                         break;
                 }
 
-            // Check end of mode
-            boolean end = false;
-            switch (mode) {
+            // Check end of modeId
+            switch (modeId) {
                 case JUMP:
-                    end = spriter.player.getAnimation().id == AnimationId.JUMP_LOOP.ordinal() &&
-                            isPlayerGrounded();
+                    if (spriter.player.getAnimation().id == AnimationId.JUMP_LOOP.ordinal() &&
+                            isPlayerGrounded(20))
+                        spriter.player.setAnimation(AnimationId.JUMP_END.ordinal());
                     break;
                 case SLIDE:
-                    end = Math.abs(physic.body.getLinearVelocity().x) <= MIN_SLIDE_VELOCITY;
+                    if (Math.abs(physic.body.getLinearVelocity().x) <= MIN_SLIDE_VELOCITY)
+                        spriter.player.setAnimation(AnimationId.SLIDE_END.ordinal());
                     break;
-            }
-            if(end) {
-                // To default mode
-                mode = Mode.DEFAULT;
-
-                // Update animation
-                updateAnimation();
             }
         }
 
@@ -192,54 +208,69 @@ public class Player implements InputProcessor, PlayerListener {
     public boolean keyDown(int keycode) {
         Gdx.app.log(TAG, "Key down (" + keycode + ')');
 
+        // Change modeId (and/or) animation
+
+        // Create
+        PlayerModeId newModeId = null;
+        AnimationId newAnimationId = null;
+
+        // Set
         switch (keycode) {
             case Input.Keys.LEFT:
             case Input.Keys.RIGHT:
+                if (move == MoveDirection.NONE &&
+                        getMode().movable) {
+                    // Move to left
+                    move = (keycode == Input.Keys.LEFT)
+                            ? MoveDirection.LEFT
+                            : MoveDirection.RIGHT;
 
-                // Move to left
-                move = (keycode == Input.Keys.LEFT)
-                        ? MoveDirection.LEFT
-                        : MoveDirection.RIGHT;
+                    // Flip image
+                    if ((keycode == Input.Keys.LEFT && !flippedX) ||
+                            (keycode == Input.Keys.RIGHT && flippedX)) {
+                        spriter.player.flipX();
+                        flippedX = keycode == Input.Keys.LEFT;
+                    }
 
-                // Flip image
-                if ((keycode == Input.Keys.LEFT && !flippedX) ||
-                        (keycode == Input.Keys.RIGHT && flippedX)) {
-                    spriter.player.flipX();
-                    flippedX = keycode == Input.Keys.LEFT;
+                    // Change animation
+                    if (modeId == PlayerModeId.DEFAULT)
+                        newAnimationId = AnimationId.WALK;
                 }
-
-                // Change animation
-                if (mode == Mode.DEFAULT)
-                    spriter.player.setAnimation(AnimationId.WALK.ordinal());
                 break;
             case Input.Keys.UP:
-                if (mode == Mode.DEFAULT) {
-                    // Jump
+                if (getMode().jumpable) {
+                    // Jump physic body
                     physic.body.applyLinearImpulse(
                             new Vector2(0, JUMP_VELOCITY),
                             physic.body.getPosition(),
                             true
                     );
 
-                    // Jump mode
-                    mode = Mode.JUMP;
-
-                    // Change animation
-                    spriter.player.setAnimation(AnimationId.JUMP_START.ordinal());
+                    // Jump
+                    newModeId = PlayerModeId.JUMP;
+                    newAnimationId = AnimationId.JUMP_START;
                 }
                 break;
             case Input.Keys.DOWN:
-                if (mode == Mode.DEFAULT &&
-                        (Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                                || Gdx.input.isKeyPressed(Input.Keys.LEFT))) {
-                    // Slide mode
-                    mode = Mode.SLIDE;
-
-                    // Change animation
-                    spriter.player.setAnimation(AnimationId.SLIDE_START.ordinal());
-                }
+                if (modeId == PlayerModeId.DEFAULT)
+                    if (move == MoveDirection.RIGHT ||
+                            move == MoveDirection.LEFT) {
+                        // Slide
+                        newModeId = PlayerModeId.SLIDE;
+                        newAnimationId = AnimationId.SLIDE_START;
+                    } else {
+                        // Crouch
+                        newModeId = PlayerModeId.CROUCH;
+                        newAnimationId = AnimationId.CROUCH_START;
+                    }
                 break;
         }
+
+        // Apply
+        if(newModeId != null)
+            modeId = newModeId;
+        if(newAnimationId != null)
+        spriter.player.setAnimation(newAnimationId.ordinal());
 
         return false;
     }
@@ -248,15 +279,31 @@ public class Player implements InputProcessor, PlayerListener {
     public boolean keyUp(int keycode) {
         Gdx.app.log(TAG, "Key up (" + keycode + ')');
 
+        // Check move direction
+        boolean stopMove = false;
         switch (keycode) {
             case Input.Keys.RIGHT:
+                stopMove = move == MoveDirection.RIGHT;
+                break;
             case Input.Keys.LEFT:
-                // Stop moving
-                move = MoveDirection.NONE;
+                stopMove = move == MoveDirection.LEFT;
+                break;
+        }
+        if (stopMove) {
+            // Stop moving
+            move = MoveDirection.NONE;
 
+            // Change animation
+            if (modeId == PlayerModeId.DEFAULT)
+                spriter.player.setAnimation(AnimationId.IDLE.ordinal());
+        }
+
+        // Stop crouch
+        switch (keycode) {
+            case Input.Keys.DOWN:
                 // Change animation
-                if (mode == Mode.DEFAULT)
-                    spriter.player.setAnimation(AnimationId.IDLE.ordinal());
+                if(modeId == PlayerModeId.CROUCH)
+                    spriter.player.setAnimation(AnimationId.CROUCH_END.ordinal());
                 break;
         }
 
@@ -270,21 +317,33 @@ public class Player implements InputProcessor, PlayerListener {
 
     /**
      * Binding touch coords to keyboard key
+     *
      * @param screenX Touch x
      * @param screenY Touch y
      * @return Key number
      */
     private int touchToKey(int screenX, int screenY) {
+        // Bind touch to key
+        int key;
         if (screenX < Gdx.graphics.getWidth() / 3)
-            return Input.Keys.LEFT;
+            key = Input.Keys.LEFT;
         else if (screenX > Gdx.graphics.getWidth() / 3 * 2)
-            return Input.Keys.RIGHT;
-        else return Input.Keys.UP;
+            key = Input.Keys.RIGHT;
+        else if (screenY < Gdx.graphics.getHeight() / 2)
+            key = Input.Keys.UP;
+        else
+            key = Input.Keys.DOWN;
+
+        return key;
     }
+
+    private static HashMap<Integer, Vector2> touchMap = new HashMap<Integer, Vector2>();
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+        if (Gdx.app.getType() == Application.ApplicationType.Android) {
+            touchMap.put(pointer, new Vector2(screenX, screenY));
+
             // Bind to key
             keyDown(touchToKey(screenX, screenY));
         }
@@ -294,9 +353,12 @@ public class Player implements InputProcessor, PlayerListener {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+        if (Gdx.app.getType() == Application.ApplicationType.Android) {
             // Bind touch to key
-            keyUp(touchToKey(screenX, screenY));
+            Vector2 downCoord = touchMap.get(pointer);
+            keyUp(touchToKey((int) downCoord.x, (int) downCoord.y));
+
+            touchMap.remove(pointer);
         }
 
         return false;
@@ -319,11 +381,40 @@ public class Player implements InputProcessor, PlayerListener {
 
     @Override
     public void animationFinished(Animation animation) {
-        // Start loop animation
-        if (animation.id == AnimationId.JUMP_START.ordinal()) { // for jump
-            spriter.player.setAnimation(AnimationId.JUMP_LOOP.ordinal());
-        } else if(animation.id == AnimationId.SLIDE_START.ordinal()) { // for slide
-            spriter.player.setAnimation(AnimationId.SLIDE_LOOP.ordinal());
+        AnimationId finishedId = AnimationId.values()[animation.id];
+        AnimationId startId = null;
+
+        // Start loop animations
+        switch (finishedId) {
+            case JUMP_START:
+                startId = AnimationId.JUMP_LOOP;
+                break;
+            case SLIDE_START:
+                startId = AnimationId.SLIDE_LOOP;
+                break;
+            case CROUCH_START:
+                startId = AnimationId.CROUCH_LOOP;
+                break;
+        }
+        if (startId != null)
+            spriter.player.setAnimation(startId.ordinal());
+
+        // Bind end animations
+        switch (finishedId) {
+            case JUMP_END:
+            case SLIDE_END:
+            case CROUCH_END:
+                // To default modeId
+                modeId = PlayerModeId.DEFAULT;
+
+                // Update animation
+                updateAnimation();
+
+                // Handle pressed keys
+                for (int mKeyId: Platformer.pressedKeys) {
+                    keyDown(mKeyId);
+                }
+                break;
         }
     }
 
@@ -354,6 +445,10 @@ public class Player implements InputProcessor, PlayerListener {
      * @return Player grounded bool
      */
     public boolean isPlayerGrounded() {
+        return isPlayerGrounded(0f);
+    }
+
+    public boolean isPlayerGrounded(float offset) {
         // Check all contacts
         Array<Contact> contactList = world.getContactList();
         for (int i = 0; i < contactList.size; i++) {
@@ -367,7 +462,7 @@ public class Player implements InputProcessor, PlayerListener {
                 boolean below = true;
                 WorldManifold manifold = contact.getWorldManifold();
                 for (Vector2 mPoint : manifold.getPoints()) {
-                    below &= (mPoint.y < getPosition().y);
+                    below &= (mPoint.y < getPosition().y + offset);
                 }
 //                for (int mContactId = 0; mContactId < manifold.getNumberOfContactPoints(); mContactId++) {
 //                    below &= (manifold.getPoints()[mContactId].y < getPosition().y);
@@ -400,7 +495,7 @@ public class Player implements InputProcessor, PlayerListener {
     private void updateAnimation() {
         // Get animation id
         AnimationId animationId;
-        switch (mode) {
+        switch (modeId) {
             case JUMP:
                 if (spriter.player.getAnimation().id == AnimationId.JUMP_START.ordinal())
                     animationId = AnimationId.JUMP_START;
@@ -408,11 +503,14 @@ public class Player implements InputProcessor, PlayerListener {
                     animationId = AnimationId.JUMP_LOOP;
                 break;
             default:
-                if (move == MoveDirection.LEFT ||
-                        move == MoveDirection.RIGHT)
-                    animationId = AnimationId.WALK;
-                else
-                    animationId = AnimationId.IDLE;
+                switch (move) {
+                    case RIGHT:
+                    case LEFT:
+                        animationId = AnimationId.WALK;
+                        break;
+                    default:
+                        animationId = AnimationId.IDLE;
+                }
                 break;
         }
 
@@ -427,4 +525,21 @@ public class Player implements InputProcessor, PlayerListener {
     public float getAngle() {
         return physic.body.getAngle();
     }
+}
+
+class PlayerMode {
+    public PlayerMode() {
+        this(true, true);
+    }
+
+    public PlayerMode(
+            boolean movable,
+            boolean jumpable
+    ) {
+        this.movable = movable;
+        this.jumpable = jumpable;
+    }
+
+    public boolean movable;
+    public boolean jumpable;
 }
