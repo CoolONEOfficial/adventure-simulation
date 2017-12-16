@@ -1,10 +1,10 @@
-package ru.coolone.platformer.android;
+package ru.coolone.adventure_emulation;
 
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import ru.coolone.platformer.Platformer;
+import ru.coolone.adventure_emulation.Platformer;
 
 /** Launches the Android application. */
 public class AndroidLauncher extends AndroidApplication {

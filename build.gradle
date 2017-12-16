@@ -31,7 +31,7 @@ configure(subprojects - project(':android')) {
 
 subprojects {
   version = '0.0.1-SNAPSHOT'
-  ext.appName = 'platfrmer'
+  ext.appName = 'Adventure Emulation'
   repositories {
     mavenLocal()
     mavenCentral()

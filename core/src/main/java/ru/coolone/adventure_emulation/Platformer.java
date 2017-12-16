@@ -1,4 +1,4 @@
-package ru.coolone.platformer;
+package ru.coolone.adventure_emulation;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -8,10 +8,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.utils.IntIntMap;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.uwsoft.editor.renderer.SceneLoader;
+import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
@@ -52,9 +52,10 @@ public class Platformer extends ApplicationAdapter
         debugRenderer = new Box2DDebugRenderer();
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
-        camera.setToOrtho(true,
-                Gdx.graphics.getWidth(),
-                Gdx.graphics.getHeight());
+        camera.setToOrtho(false,
+                Gdx.graphics.getWidth() * PhysicsBodyLoader.getScale(),
+                Gdx.graphics.getHeight() * PhysicsBodyLoader.getScale()
+        );
     }
 
     @Override

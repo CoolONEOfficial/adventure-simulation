@@ -1,4 +1,4 @@
-package ru.coolone.platformer;
+package ru.coolone.adventure_emulation;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;

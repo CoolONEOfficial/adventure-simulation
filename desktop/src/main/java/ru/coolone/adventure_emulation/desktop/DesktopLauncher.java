@@ -1,9 +1,9 @@
-package ru.coolone.platformer.desktop;
+package ru.coolone.adventure_emulation.desktop;
 
 import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import ru.coolone.platformer.Platformer;
+import ru.coolone.adventure_emulation.Platformer;
 
 /** Launches the desktop (LWJGL) application. */
 public class DesktopLauncher {
@@ -17,7 +17,7 @@ public class DesktopLauncher {
 
     private static LwjglApplicationConfiguration getDefaultConfiguration() {
         LwjglApplicationConfiguration configuration = new LwjglApplicationConfiguration();
-        configuration.title = "Platformer";
+        configuration.title = "Adventure Emulation";
         configuration.width = 800;
         configuration.height = 480;
         for (int size : new int[] { 128, 64, 32, 16 }) {
