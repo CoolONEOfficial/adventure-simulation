@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -23,7 +24,10 @@ public class Platformer extends ApplicationAdapter
         implements InputProcessor {
     private SceneLoader loader;
 
+    private Player player;
+
     private SpriteBatch batch;
+    private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
     private OrthographicCamera camera;
 
@@ -34,7 +38,7 @@ public class Platformer extends ApplicationAdapter
         loader.loadScene("MainScene", viewport);
 
         // Create scripts
-        Player player = new Player(loader.world);
+        player = new Player(loader.world);
 
         InputMultiplexer inputMultiplexer = new InputMultiplexer(
                 player
@@ -49,8 +53,9 @@ public class Platformer extends ApplicationAdapter
                 .getChild("playerSpriter")
                 .addScript(player.new SpriterScript());
 
-        debugRenderer = new Box2DDebugRenderer();
         batch = new SpriteBatch();
+        debugRenderer = new Box2DDebugRenderer();
+        font = new BitmapFont();
         camera = new OrthographicCamera();
         camera.setToOrtho(false,
                 Gdx.graphics.getWidth() * PhysicsBodyLoader.getScale(),
@@ -65,9 +70,16 @@ public class Platformer extends ApplicationAdapter
 
         loader.getEngine().update(Gdx.graphics.getDeltaTime());
 
-        batch.begin();
         debugRenderer.render(loader.world, camera.combined);
-        batch.end();
+
+        loader.getBatch().begin();
+        font.draw(loader.getBatch(),
+                "Mode: " + player.getModeId() + '\n'
+                + "Grounded: " + player.isPlayerGrounded()
+                + "FPS: " + Gdx.graphics.getFramesPerSecond(),
+                10, Gdx.graphics.getHeight() - 10);
+        loader.getBatch().end();
+
     }
 
     static final ArrayList<Integer> pressedKeys = new ArrayList<Integer>();
@@ -112,5 +124,11 @@ public class Platformer extends ApplicationAdapter
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    @Override
+    public void dispose() {
+        font.dispose();
+        batch.dispose();
     }
 }

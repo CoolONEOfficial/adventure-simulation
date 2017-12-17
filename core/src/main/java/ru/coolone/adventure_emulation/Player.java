@@ -1,6 +1,5 @@
 package ru.coolone.adventure_emulation;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
@@ -19,16 +18,13 @@ import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
-import java.util.Collection;
 import java.util.HashMap;
-
-import ru.coolone.adventure_emulation.PlayerMode.Strength;
 
 /**
  * Created by coolone on 13.12.17.
  */
 
-public class Player implements InputProcessor, PlayerListener {
+public class Player implements InputProcessor {
 
     private static final String TAG = Player.class.getSimpleName();
 
@@ -39,12 +35,12 @@ public class Player implements InputProcessor, PlayerListener {
     /**
      * Box2d world
      */
-    World world;
+    private World world;
 
     /**
      * Spriter animation ids
      */
-    public enum AnimationId {
+    public enum AnimationNum {
         IDLE,
         WALK,
         BREAK_START,
@@ -77,6 +73,7 @@ public class Player implements InputProcessor, PlayerListener {
      * PlayerModeId
      */
     public enum PlayerModeId {
+        IDLE,
         WALK,
         JUMP,
         SLIDE,
@@ -84,27 +81,128 @@ public class Player implements InputProcessor, PlayerListener {
         BREAK
     }
 
-    public static final PlayerMode[] modes = new PlayerMode[]{
-            new PlayerMode(),
+    public final PlayerMode[] modes = new PlayerMode[]{
+            new PlayerMode(
+                    PlayerModeId.IDLE,
+                    new AnimationNum[]{
+                            AnimationNum.IDLE
+                    },
+                    new PlayerModeListener() {
+                        @Override
+                        public boolean checkEnd() {
+                            return false;
+                        }
+
+                        @Override
+                        public PlayerModeId endMode() {
+                            return null;
+                        }
+                    }
+            ),
+            new PlayerMode( // WALK
+                    PlayerModeId.WALK,
+                    new AnimationNum[]{
+                            AnimationNum.WALK
+                    },
+                    new PlayerModeListener() {
+                        @Override
+                        public boolean checkEnd() {
+                            return physic.body.getLinearVelocity().x == 0;
+                        }
+
+                        @Override
+                        public PlayerModeId endMode() {
+                            return physic.body.getLinearVelocity().x == 0
+                                    ? PlayerModeId.IDLE
+                                    : PlayerModeId.BREAK;
+                        }
+                    }
+            ),
             new PlayerMode( // JUMP
-                    Strength.NORMAL,
-                    Strength.EMPTY
+                    PlayerModeId.JUMP,
+                    new AnimationNum[]{
+                            AnimationNum.JUMP_LOOP,
+                            AnimationNum.JUMP_START,
+                            AnimationNum.JUMP_END
+                    },
+                    new PlayerModeListener() {
+                        @Override
+                        public boolean checkEnd() {
+                            return spriter.player.getAnimation().id == AnimationNum.JUMP_LOOP.ordinal() &&
+                                    isPlayerGrounded();
+                        }
+
+                        @Override
+                        public PlayerModeId endMode() {
+                            return physic.body.getLinearVelocity().x == 0
+                                    ? PlayerModeId.IDLE
+                                    : PlayerModeId.BREAK;
+                        }
+                    }
             ),
             new PlayerMode( // SLIDE
-                    Strength.EMPTY,
-                    Strength.EMPTY
+                    PlayerModeId.SLIDE,
+                    new AnimationNum[]{
+                            AnimationNum.SLIDE_LOOP,
+                            AnimationNum.SLIDE_START,
+                            AnimationNum.SLIDE_END
+                    },
+                    new PlayerModeListener() {
+                        @Override
+                        public boolean checkEnd() {
+                            return physic.body.getLinearVelocity().x == 0;
+                        }
+
+                        @Override
+                        public PlayerModeId endMode() {
+                            return PlayerModeId.IDLE;
+                        }
+                    }
             ),
             new PlayerMode( // CROUCH
-                    Strength.EMPTY,
-                    Strength.EMPTY
+                    PlayerModeId.CROUCH,
+                    new AnimationNum[]{
+                            AnimationNum.CROUCH_LOOP,
+                            AnimationNum.CROUCH_START,
+                            AnimationNum.CROUCH_END
+                    },
+                    new PlayerModeListener() {
+                        @Override
+                        public boolean checkEnd() {
+                            return false;
+                        }
+
+                        @Override
+                        public PlayerModeId endMode() {
+                            return PlayerModeId.IDLE;
+                        }
+                    }
             ),
             new PlayerMode( // BREAK
-                    Strength.WEAK,
-                    Strength.EMPTY
+                    PlayerModeId.BREAK,
+                    new AnimationNum[]{
+                            AnimationNum.BREAK_LOOP,
+                            AnimationNum.BREAK_START,
+                            AnimationNum.BREAK_END
+                    },
+                    new PlayerModeListener() {
+                        @Override
+                        public boolean checkEnd() {
+                            return physic.body.getLinearVelocity().x == 0;
+                        }
+
+                        @Override
+                        public PlayerModeId endMode() {
+                            return PlayerModeId.IDLE;
+                        }
+                    }
             )
     };
 
-    private PlayerModeId modeId = PlayerModeId.WALK;
+    /**
+     * Player mode id
+     */
+    private PlayerModeId modeId = PlayerModeId.IDLE;
 
     public PlayerModeId getModeId() {
         return modeId;
@@ -121,31 +219,18 @@ public class Player implements InputProcessor, PlayerListener {
     private SpriterComponent spriter;
 
     /**
-     * Mirror image by X flag
+     * Horizontal flipped image flag
      */
-    private boolean flippedX = false;
-
-    /**
-     * Player entity
-     */
-    private Entity entity;
+    private boolean flipped = false;
 
     public static final int JUMP_VELOCITY = 1000;
     public static final int MOVE_VELOCITY = 50;
-    public static final int MIN_SLIDE_VELOCITY = 0;
 
     public class CompositeScript implements IScript {
 
         @Override
         public void init(Entity entity) {
-            Player.this.entity = entity;
-
             physic = ComponentRetriever.get(entity, PhysicsBodyComponent.class);
-
-            Collection<Component> components = ComponentRetriever.getComponents(entity);
-            for (Component mComponent : components)
-                Gdx.app.log(TAG, "mComponent:" + mComponent.getClass().getSimpleName());
-            Gdx.app.log(TAG, "Components count: " + ComponentRetriever.getComponents(entity).size());
         }
 
         @Override
@@ -154,45 +239,26 @@ public class Player implements InputProcessor, PlayerListener {
             if (!physic.body.isFixedRotation())
                 physic.body.setFixedRotation(true);
 
-            if (modeId != PlayerModeId.SLIDE)
-                switch (move) {
-                    case LEFT:
-                        physic.body.applyLinearImpulse(
-                                new Vector2(-MOVE_VELOCITY, 0),
-                                physic.body.getPosition(),
-                                true
-                        );
-                        break;
-                    case RIGHT:
-                        physic.body.applyLinearImpulse(
-                                new Vector2(MOVE_VELOCITY, 0),
-                                physic.body.getPosition(),
-                                true
-                        );
-                        break;
-                }
-
-            // Check end of modeId
-            AnimationId newAnimationId = null;
-            switch (modeId) {
-                case JUMP:
-                    if (spriter.player.getAnimation().id == AnimationId.JUMP_LOOP.ordinal() &&
-                            isPlayerGrounded(20))
-                        newAnimationId = AnimationId.JUMP_END;
+            // Move
+            switch (move) {
+                case LEFT:
+                    physic.body.applyLinearImpulse(
+                            new Vector2(-MOVE_VELOCITY, 0),
+                            physic.body.getPosition(),
+                            true
+                    );
                     break;
-                case SLIDE:
-                    if (Math.abs(physic.body.getLinearVelocity().x) <= MIN_SLIDE_VELOCITY)
-                        newAnimationId = AnimationId.SLIDE_END;
-                    break;
-                case BREAK:
-                    if (physic.body.getLinearVelocity().x == 0) {
-                        Gdx.app.debug(TAG, "Break ended!");
-                        newAnimationId = AnimationId.BREAK_END;
-                    }
+                case RIGHT:
+                    physic.body.applyLinearImpulse(
+                            new Vector2(MOVE_VELOCITY, 0),
+                            physic.body.getPosition(),
+                            true
+                    );
                     break;
             }
-            if (newAnimationId != null)
-                spriter.player.setAnimation(newAnimationId.ordinal());
+
+            // Check mode end
+            getMode().checkEnd();
         }
 
         @Override
@@ -202,16 +268,9 @@ public class Player implements InputProcessor, PlayerListener {
     }
 
     public class SpriterScript implements IScript {
-
         @Override
         public void init(Entity entity) {
             spriter = ComponentRetriever.get(entity, SpriterComponent.class);
-            spriter.player.addListener(Player.this);
-
-            Collection<Component> components = ComponentRetriever.getComponents(entity);
-            for (Component mComponent : components)
-                Gdx.app.log(TAG, "mComponent:" + mComponent.getClass().getSimpleName());
-            Gdx.app.log(TAG, "Components count: " + ComponentRetriever.getComponents(entity).size());
         }
 
         @Override
@@ -232,49 +291,38 @@ public class Player implements InputProcessor, PlayerListener {
 
         // Create
         PlayerModeId newModeId = null;
-        AnimationId newAnimationId = null;
 
         // Set
         switch (keycode) {
             case Input.Keys.LEFT:
             case Input.Keys.RIGHT:
-                if (move == MoveDirection.NONE &&
-                        getMode().movable != Strength.EMPTY) {
-                    // Move to left
+                if (move == MoveDirection.NONE) {
+                    // Move to..
                     move = (keycode == Input.Keys.LEFT)
-                            ? MoveDirection.LEFT
-                            : MoveDirection.RIGHT;
+                            ? MoveDirection.LEFT   // ..left
+                            : MoveDirection.RIGHT; // ..right
 
                     // Flip image
-                    if ((keycode == Input.Keys.LEFT && !flippedX) ||
-                            (keycode == Input.Keys.RIGHT && flippedX)) {
+                    if ((keycode == Input.Keys.LEFT && !flipped) ||
+                            (keycode == Input.Keys.RIGHT && flipped)) {
                         spriter.player.flipX();
-                        flippedX = keycode == Input.Keys.LEFT;
+                        flipped = keycode == Input.Keys.LEFT;
                     }
 
-                    if (modeId == PlayerModeId.WALK ||
-                            getMode().movable == Strength.WEAK) {
-                        // Change animation
-                        newAnimationId = AnimationId.WALK;
-
-                        // Change mode
-                        modeId = PlayerModeId.WALK;
-                    }
+                    // Mode
+                    newModeId = PlayerModeId.WALK;
                 }
                 break;
             case Input.Keys.UP:
-                if (getMode().jumpable != Strength.EMPTY) {
-                    // Jump physic body
-                    physic.body.applyLinearImpulse(
-                            new Vector2(0, JUMP_VELOCITY),
-                            physic.body.getPosition(),
-                            true
-                    );
+                // Jump physic body
+                physic.body.applyLinearImpulse(
+                        new Vector2(0, JUMP_VELOCITY),
+                        physic.body.getPosition(),
+                        true
+                );
 
-                    // Jump
-                    newModeId = PlayerModeId.JUMP;
-                    newAnimationId = AnimationId.JUMP_START;
-                }
+                // Jump
+                newModeId = PlayerModeId.JUMP;
                 break;
             case Input.Keys.DOWN:
                 if (modeId == PlayerModeId.WALK)
@@ -282,20 +330,16 @@ public class Player implements InputProcessor, PlayerListener {
                             move == MoveDirection.LEFT) {
                         // Slide
                         newModeId = PlayerModeId.SLIDE;
-                        newAnimationId = AnimationId.SLIDE_START;
                     } else {
                         // Crouch
                         newModeId = PlayerModeId.CROUCH;
-                        newAnimationId = AnimationId.CROUCH_START;
                     }
                 break;
         }
 
         // Apply
         if (newModeId != null)
-            modeId = newModeId;
-        if (newAnimationId != null)
-            spriter.player.setAnimation(newAnimationId.ordinal());
+            modes[newModeId.ordinal()].set();
 
         return false;
     }
@@ -318,17 +362,8 @@ public class Player implements InputProcessor, PlayerListener {
             // Stop moving
             move = MoveDirection.NONE;
 
-            // Change animation
-            if (modeId == PlayerModeId.WALK) {
-                if (physic.body.getLinearVelocity().x == 0)
-                    spriter.player.setAnimation(AnimationId.IDLE.ordinal());
-                else {
-                    spriter.player.setAnimation(AnimationId.BREAK_START.ordinal());
-
-                    // Mode
-                    modeId = PlayerModeId.BREAK;
-                }
-            }
+            // End mode
+            getMode().endMode();
         }
 
         // Stop crouch
@@ -336,7 +371,7 @@ public class Player implements InputProcessor, PlayerListener {
             case Input.Keys.DOWN:
                 // Change animation
                 if (modeId == PlayerModeId.CROUCH)
-                    spriter.player.setAnimation(AnimationId.CROUCH_END.ordinal());
+                    getMode().endMode();
                 break;
         }
 
@@ -412,86 +447,12 @@ public class Player implements InputProcessor, PlayerListener {
         return false;
     }
 
-    @Override
-    public void animationFinished(Animation animation) {
-        Gdx.app.debug(TAG, "test");
-
-        AnimationId finishedId = AnimationId.values()[animation.id];
-        AnimationId startId = null;
-
-        // Start loop animations
-        switch (finishedId) {
-            case JUMP_START:
-                startId = AnimationId.JUMP_LOOP;
-                break;
-            case SLIDE_START:
-                startId = AnimationId.SLIDE_LOOP;
-                break;
-            case CROUCH_START:
-                startId = AnimationId.CROUCH_LOOP;
-                break;
-            case BREAK_START:
-                startId = AnimationId.BREAK_LOOP;
-                break;
-        }
-        if (startId != null) {
-            Gdx.app.debug(TAG, "Start animation ended");
-            spriter.player.setAnimation(startId.ordinal());
-        }
-
-        // Bind end animations
-        switch (finishedId) {
-            case JUMP_END:
-            case SLIDE_END:
-            case CROUCH_END:
-            case BREAK_END:
-                Gdx.app.debug(TAG, "End animation ended");
-
-                // To default modeId
-                modeId = PlayerModeId.WALK;
-
-                // Update animation
-                updateAnimation();
-
-                // Handle pressed keys
-                for (int mKeyId : Platformer.pressedKeys) {
-                    keyDown(mKeyId);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void animationChanged(Animation oldAnim, Animation newAnim) {
-
-    }
-
-    @Override
-    public void preProcess(com.brashmonkey.spriter.Player player) {
-
-    }
-
-    @Override
-    public void postProcess(com.brashmonkey.spriter.Player player) {
-
-    }
-
-    @Override
-    public void mainlineKeyChanged(Mainline.Key prevKey, Mainline.Key newKey) {
-
-    }
-
-
     /**
      * Function, checks player touch's some bodies
      *
      * @return Player grounded bool
      */
     public boolean isPlayerGrounded() {
-        return isPlayerGrounded(0f);
-    }
-
-    public boolean isPlayerGrounded(float offset) {
         // Check all contacts
         Array<Contact> contactList = world.getContactList();
         for (int i = 0; i < contactList.size; i++) {
@@ -505,60 +466,12 @@ public class Player implements InputProcessor, PlayerListener {
                 boolean below = true;
                 WorldManifold manifold = contact.getWorldManifold();
                 for (Vector2 mPoint : manifold.getPoints()) {
-                    below &= (mPoint.y < getPosition().y + offset);
+                    below &= (mPoint.y < getPosition().y);
                 }
-//                for (int mContactId = 0; mContactId < manifold.getNumberOfContactPoints(); mContactId++) {
-//                    below &= (manifold.getPoints()[mContactId].y < getPosition().y);
-//                }
-//                if (below) {
-//                    Fixture groundFixture = null;
-//                    if (contact.getFixtureA().getUserData() != null
-//                            && contact.getFixtureA().getUserData().equals("p")) {
-//                        groundFixture = contact.getFixtureA();
-//                    }
-//
-//                    if (contact.getFixtureB().getUserData() != null
-//                            && contact.getFixtureB().getUserData().equals("p")) {
-//                        groundFixture = contact.getFixtureB();
-//                    }
-//
-//                    if (groundFixture != null) {
-//                        Gdx.app.log(TAG, "Griund fixture angle: " + groundFixture.getBody().getAngle());
-//
-//                        // Set angle
-//                        spriter.player.setAngle(groundFixture.getBody().getAngle());
-//                    }
-//                }
                 return below;
             }
         }
         return false;
-    }
-
-    private void updateAnimation() {
-        // Get animation id
-        AnimationId animationId;
-        switch (modeId) {
-            case JUMP:
-                if (spriter.player.getAnimation().id == AnimationId.JUMP_START.ordinal())
-                    animationId = AnimationId.JUMP_START;
-                else
-                    animationId = AnimationId.JUMP_LOOP;
-                break;
-            default:
-                switch (move) {
-                    case RIGHT:
-                    case LEFT:
-                        animationId = AnimationId.WALK;
-                        break;
-                    default:
-                        animationId = AnimationId.IDLE;
-                }
-                break;
-        }
-
-        // Set animation id
-        spriter.player.setAnimation(animationId.ordinal());
     }
 
     public Vector2 getPosition() {
@@ -568,27 +481,164 @@ public class Player implements InputProcessor, PlayerListener {
     public float getAngle() {
         return physic.body.getAngle();
     }
-}
 
-class PlayerMode {
-    public PlayerMode() {
-        this(Strength.NORMAL, Strength.NORMAL);
+    /**
+     * Player state, e.g. walk, jump, slide etc.
+     */
+    class PlayerMode
+            implements PlayerListener {
+        public PlayerMode(
+                PlayerModeId selfId,
+                AnimationNum[] animationNums,
+                PlayerModeListener listener
+        ) {
+            // Self id
+            this.selfId = selfId;
+
+            // Animation nums
+            if (animationNums.length == 1 || // One animation
+                    animationNums.length == 3) // Start, loop and end animations
+                this.animationNums = animationNums;
+            else
+                throw new AssertionError("Animation nums array length != 1 or 3");
+
+            // Listener
+            this.listener = listener;
+        }
+
+        private PlayerModeListener listener;
+
+        boolean checkEnd() {
+            // Check end
+            boolean checkResult = listener.checkEnd();
+            if (checkResult) {
+                if (isStartLoopEndAnimations())
+                    // Start end animation
+                    spriter.player.setAnimation(
+                            animationNums[AnimationNumId.END.ordinal()].ordinal()
+                    );
+                else
+                    // End mode
+                    endMode();
+            }
+
+            return checkResult;
+        }
+
+        private void endMode() {
+            // Set next mode
+            PlayerModeId nextModeId = listener.endMode();
+            if (nextModeId != null)
+                modes[nextModeId.ordinal()].set();
+        }
+
+        /**
+         * Id in modes array
+         */
+        final PlayerModeId selfId;
+
+        /**
+         * Animation nums
+         */
+        AnimationNum[] animationNums;
+
+        /**
+         * @return Start, end, and loop animation bool
+         */
+        boolean isStartLoopEndAnimations() {
+            return animationNums.length == 3;
+        }
+
+        /**
+         * @return Only loop animation bool
+         */
+        boolean isOneAnimation() {
+            return animationNums.length == 1;
+        }
+
+        /**
+         * Changes modeId to self id
+         */
+        void set() {
+            // Animation
+            spriter.player.setAnimation(
+                    animationNums[(isStartLoopEndAnimations()
+                            ? AnimationNumId.START
+                            : AnimationNumId.LOOP
+                    ).ordinal()].ordinal());
+
+            // Remove old player listener
+            spriter.player.removeListener(getMode());
+
+            // Change mode
+            modeId = selfId;
+
+            // Add player listener
+            spriter.player.addListener(getMode());
+        }
+
+        @Override
+        public void animationFinished(Animation animation) {
+            if (isStartLoopEndAnimations()) {
+                // Check end of start animation
+                if (animation.id == animationNums[AnimationNumId.START.ordinal()].ordinal()) {
+                    // Start loop animation
+                    spriter.player.setAnimation(
+                            animationNums[AnimationNumId.LOOP.ordinal()].ordinal()
+                    );
+                }
+
+                // Check end of end animation
+                else if (animation.id == animationNums[AnimationNumId.END.ordinal()].ordinal()) {
+                    // To next mode
+                    endMode();
+                }
+            }
+        }
+
+        @Override
+        public void animationChanged(Animation oldAnim, Animation newAnim) {
+
+        }
+
+        @Override
+        public void preProcess(com.brashmonkey.spriter.Player player) {
+
+        }
+
+        @Override
+        public void postProcess(com.brashmonkey.spriter.Player player) {
+
+        }
+
+        @Override
+        public void mainlineKeyChanged(Mainline.Key prevKey, Mainline.Key newKey) {
+
+        }
     }
 
-    public PlayerMode(
-            Strength movable,
-            Strength jumpable
-    ) {
-        this.movable = movable;
-        this.jumpable = jumpable;
+    /**
+     * Animation nums ids
+     */
+    enum AnimationNumId {
+        LOOP,
+        START,
+        END
     }
 
-    enum Strength {
-        EMPTY,
-        WEAK,
-        NORMAL
-    }
+    interface PlayerModeListener {
+        /**
+         * Checks end of mode
+         * Calling in every act
+         *
+         * @return Mode end bool
+         */
+        boolean checkEnd();
 
-    public Strength movable;
-    public Strength jumpable;
+
+        /**
+         * @return Mode, that will be setted after end previous
+         */
+        PlayerModeId endMode();
+    }
 }
