@@ -22,6 +22,8 @@ import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import java.util.Collection;
 import java.util.HashMap;
 
+import ru.coolone.adventure_emulation.PlayerMode.Strength;
+
 /**
  * Created by coolone on 13.12.17.
  */
@@ -45,6 +47,9 @@ public class Player implements InputProcessor, PlayerListener {
     public enum AnimationId {
         IDLE,
         WALK,
+        BREAK_START,
+        BREAK_LOOP,
+        BREAK_END,
         SLIDE_START,
         SLIDE_LOOP,
         SLIDE_END,
@@ -72,28 +77,34 @@ public class Player implements InputProcessor, PlayerListener {
      * PlayerModeId
      */
     public enum PlayerModeId {
-        DEFAULT,
+        WALK,
         JUMP,
         SLIDE,
-        CROUCH
+        CROUCH,
+        BREAK
     }
-    public static final PlayerMode[] modes = new PlayerMode[] {
+
+    public static final PlayerMode[] modes = new PlayerMode[]{
             new PlayerMode(),
             new PlayerMode( // JUMP
-                    true,
-                    false
+                    Strength.NORMAL,
+                    Strength.EMPTY
             ),
             new PlayerMode( // SLIDE
-                    false,
-                    false
+                    Strength.EMPTY,
+                    Strength.EMPTY
             ),
             new PlayerMode( // CROUCH
-                    false,
-                    false
+                    Strength.EMPTY,
+                    Strength.EMPTY
+            ),
+            new PlayerMode( // BREAK
+                    Strength.WEAK,
+                    Strength.EMPTY
             )
     };
 
-    private PlayerModeId modeId = PlayerModeId.DEFAULT;
+    private PlayerModeId modeId = PlayerModeId.WALK;
 
     public PlayerModeId getModeId() {
         return modeId;
@@ -162,17 +173,26 @@ public class Player implements InputProcessor, PlayerListener {
                 }
 
             // Check end of modeId
+            AnimationId newAnimationId = null;
             switch (modeId) {
                 case JUMP:
                     if (spriter.player.getAnimation().id == AnimationId.JUMP_LOOP.ordinal() &&
                             isPlayerGrounded(20))
-                        spriter.player.setAnimation(AnimationId.JUMP_END.ordinal());
+                        newAnimationId = AnimationId.JUMP_END;
                     break;
                 case SLIDE:
                     if (Math.abs(physic.body.getLinearVelocity().x) <= MIN_SLIDE_VELOCITY)
-                        spriter.player.setAnimation(AnimationId.SLIDE_END.ordinal());
+                        newAnimationId = AnimationId.SLIDE_END;
+                    break;
+                case BREAK:
+                    if (physic.body.getLinearVelocity().x == 0) {
+                        Gdx.app.debug(TAG, "Break ended!");
+                        newAnimationId = AnimationId.BREAK_END;
+                    }
                     break;
             }
+            if (newAnimationId != null)
+                spriter.player.setAnimation(newAnimationId.ordinal());
         }
 
         @Override
@@ -219,7 +239,7 @@ public class Player implements InputProcessor, PlayerListener {
             case Input.Keys.LEFT:
             case Input.Keys.RIGHT:
                 if (move == MoveDirection.NONE &&
-                        getMode().movable) {
+                        getMode().movable != Strength.EMPTY) {
                     // Move to left
                     move = (keycode == Input.Keys.LEFT)
                             ? MoveDirection.LEFT
@@ -232,13 +252,18 @@ public class Player implements InputProcessor, PlayerListener {
                         flippedX = keycode == Input.Keys.LEFT;
                     }
 
-                    // Change animation
-                    if (modeId == PlayerModeId.DEFAULT)
+                    if (modeId == PlayerModeId.WALK ||
+                            getMode().movable == Strength.WEAK) {
+                        // Change animation
                         newAnimationId = AnimationId.WALK;
+
+                        // Change mode
+                        modeId = PlayerModeId.WALK;
+                    }
                 }
                 break;
             case Input.Keys.UP:
-                if (getMode().jumpable) {
+                if (getMode().jumpable != Strength.EMPTY) {
                     // Jump physic body
                     physic.body.applyLinearImpulse(
                             new Vector2(0, JUMP_VELOCITY),
@@ -252,7 +277,7 @@ public class Player implements InputProcessor, PlayerListener {
                 }
                 break;
             case Input.Keys.DOWN:
-                if (modeId == PlayerModeId.DEFAULT)
+                if (modeId == PlayerModeId.WALK)
                     if (move == MoveDirection.RIGHT ||
                             move == MoveDirection.LEFT) {
                         // Slide
@@ -267,10 +292,10 @@ public class Player implements InputProcessor, PlayerListener {
         }
 
         // Apply
-        if(newModeId != null)
+        if (newModeId != null)
             modeId = newModeId;
-        if(newAnimationId != null)
-        spriter.player.setAnimation(newAnimationId.ordinal());
+        if (newAnimationId != null)
+            spriter.player.setAnimation(newAnimationId.ordinal());
 
         return false;
     }
@@ -294,15 +319,23 @@ public class Player implements InputProcessor, PlayerListener {
             move = MoveDirection.NONE;
 
             // Change animation
-            if (modeId == PlayerModeId.DEFAULT)
-                spriter.player.setAnimation(AnimationId.IDLE.ordinal());
+            if (modeId == PlayerModeId.WALK) {
+                if (physic.body.getLinearVelocity().x == 0)
+                    spriter.player.setAnimation(AnimationId.IDLE.ordinal());
+                else {
+                    spriter.player.setAnimation(AnimationId.BREAK_START.ordinal());
+
+                    // Mode
+                    modeId = PlayerModeId.BREAK;
+                }
+            }
         }
 
         // Stop crouch
         switch (keycode) {
             case Input.Keys.DOWN:
                 // Change animation
-                if(modeId == PlayerModeId.CROUCH)
+                if (modeId == PlayerModeId.CROUCH)
                     spriter.player.setAnimation(AnimationId.CROUCH_END.ordinal());
                 break;
         }
@@ -381,6 +414,8 @@ public class Player implements InputProcessor, PlayerListener {
 
     @Override
     public void animationFinished(Animation animation) {
+        Gdx.app.debug(TAG, "test");
+
         AnimationId finishedId = AnimationId.values()[animation.id];
         AnimationId startId = null;
 
@@ -395,23 +430,31 @@ public class Player implements InputProcessor, PlayerListener {
             case CROUCH_START:
                 startId = AnimationId.CROUCH_LOOP;
                 break;
+            case BREAK_START:
+                startId = AnimationId.BREAK_LOOP;
+                break;
         }
-        if (startId != null)
+        if (startId != null) {
+            Gdx.app.debug(TAG, "Start animation ended");
             spriter.player.setAnimation(startId.ordinal());
+        }
 
         // Bind end animations
         switch (finishedId) {
             case JUMP_END:
             case SLIDE_END:
             case CROUCH_END:
+            case BREAK_END:
+                Gdx.app.debug(TAG, "End animation ended");
+
                 // To default modeId
-                modeId = PlayerModeId.DEFAULT;
+                modeId = PlayerModeId.WALK;
 
                 // Update animation
                 updateAnimation();
 
                 // Handle pressed keys
-                for (int mKeyId: Platformer.pressedKeys) {
+                for (int mKeyId : Platformer.pressedKeys) {
                     keyDown(mKeyId);
                 }
                 break;
@@ -529,17 +572,23 @@ public class Player implements InputProcessor, PlayerListener {
 
 class PlayerMode {
     public PlayerMode() {
-        this(true, true);
+        this(Strength.NORMAL, Strength.NORMAL);
     }
 
     public PlayerMode(
-            boolean movable,
-            boolean jumpable
+            Strength movable,
+            Strength jumpable
     ) {
         this.movable = movable;
         this.jumpable = jumpable;
     }
 
-    public boolean movable;
-    public boolean jumpable;
+    enum Strength {
+        EMPTY,
+        WEAK,
+        NORMAL
+    }
+
+    public Strength movable;
+    public Strength jumpable;
 }
