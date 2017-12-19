@@ -20,8 +20,7 @@ import java.util.ArrayList;
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
-public class Platformer extends ApplicationAdapter
-        implements InputProcessor {
+public class Platformer extends ApplicationAdapter {
     private SceneLoader loader;
 
     private Player player;
@@ -80,50 +79,6 @@ public class Platformer extends ApplicationAdapter
                 10, Gdx.graphics.getHeight() - 10);
         loader.getBatch().end();
 
-    }
-
-    static final ArrayList<Integer> pressedKeys = new ArrayList<Integer>();
-
-    @Override
-    public boolean keyDown(int keycode) {
-        pressedKeys.add(keycode);
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        pressedKeys.remove((Integer)keycode);
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
     }
 
     @Override

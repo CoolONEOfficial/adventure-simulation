@@ -10,26 +10,31 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
-import com.brashmonkey.spriter.Animation;
-import com.brashmonkey.spriter.Mainline;
-import com.brashmonkey.spriter.Player.PlayerListener;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import ru.coolone.adventure_emulation.PersonModeAdapter.PlayerModeListener;
+import ru.coolone.adventure_emulation.Player.PlayerModeId;
+
 /**
- * Created by coolone on 13.12.17.
+ * Player behavior class
+ *
+ * @author coolone
  */
 
-public class Player implements InputProcessor {
+public class Player extends Person<PlayerModeId>
+        implements InputProcessor {
 
     private static final String TAG = Player.class.getSimpleName();
 
     public Player(World world) {
         this.world = world;
+        modeId = PlayerModeId.IDLE;
     }
 
     /**
@@ -54,8 +59,7 @@ public class Player implements InputProcessor {
         CROUCH_END,
         JUMP_START,
         JUMP_LOOP,
-        JUMP_END,
-        HIT
+        JUMP_END
     }
 
     /**
@@ -83,8 +87,8 @@ public class Player implements InputProcessor {
         COUNT
     }
 
-    public final PlayerMode[] modes = new PlayerMode[]{
-            new PlayerMode(
+    public static final PersonMode[] modes = new PersonMode[]{
+            new PersonMode<PlayerModeId>(
                     PlayerModeId.IDLE,
                     new AnimationNum[]{
                             AnimationNum.IDLE
@@ -96,10 +100,9 @@ public class Player implements InputProcessor {
                             true, // Slide
                             true, // Crouch
                             true  // Break
-                    },
-                    new PlayerModeListener()
+                    }
             ),
-            new PlayerMode( // WALK
+            new PersonMode<PlayerModeId>( // WALK
                     PlayerModeId.WALK,
                     new AnimationNum[]{
                             AnimationNum.WALK
@@ -111,7 +114,83 @@ public class Player implements InputProcessor {
                             true, // Slide
                             true, // Crouch
                             true  // Break
+                    }
+            ),
+            new PersonMode<PlayerModeId>( // JUMP
+                    PlayerModeId.JUMP,
+                    new AnimationNum[]{
+                            AnimationNum.JUMP_LOOP,
+                            AnimationNum.JUMP_START,
+                            AnimationNum.JUMP_END
                     },
+                    new boolean[]{
+                            true,  // Idle
+                            false, // Walk
+                            true,  // Jump
+                            false, // Slide
+                            false, // Crouch
+                            false  // Break
+                    }
+            ),
+            new PersonMode<PlayerModeId>( // SLIDE
+                    PlayerModeId.SLIDE,
+                    new AnimationNum[]{
+                            AnimationNum.SLIDE_LOOP,
+                            AnimationNum.SLIDE_START,
+                            AnimationNum.SLIDE_END
+                    },
+                    new boolean[]{
+                            true,  // Idle
+                            false, // Walk
+                            false, // Jump
+                            true,  // Slide
+                            true,  // Crouch
+                            false  // Break
+                    }
+            ),
+            new PersonMode<PlayerModeId>( // CROUCH
+                    PlayerModeId.CROUCH,
+                    new AnimationNum[]{
+                            AnimationNum.CROUCH_LOOP,
+                            AnimationNum.CROUCH_START,
+                            AnimationNum.CROUCH_END
+                    },
+                    new boolean[]{
+                            true,  // Idle
+                            false, // Walk
+                            false, // Jump
+                            false, // Slide
+                            true,  // Crouch
+                            false  // Break
+                    }
+            ),
+            new PersonMode<PlayerModeId>( // BREAK
+                    PlayerModeId.BREAK,
+                    new AnimationNum[]{
+                            AnimationNum.BREAK_LOOP,
+                            AnimationNum.BREAK_START,
+                            AnimationNum.BREAK_END
+                    },
+                    new boolean[]{
+                            true, // Idle
+                            true, // Walk
+                            true, // Jump
+                            true, // Slide
+                            true, // Crouch
+                            true  // Break
+                    }
+            )
+    };
+
+    public PersonModeAdapter[] modeAdapters = new PersonModeAdapter[]{
+            new PersonModeAdapter( // IDLE
+                    this,
+                    modes[PlayerModeId.IDLE.ordinal()],
+                    new PlayerModeListener()
+            ),
+            new PersonModeAdapter( // WALK
+                    this,
+                    modes[PlayerModeId.WALK.ordinal()],
                     new PlayerModeListener() {
                         @Override
                         public boolean checkEnd() {
@@ -124,23 +203,34 @@ public class Player implements InputProcessor {
                                     ? PlayerModeId.IDLE
                                     : PlayerModeId.BREAK;
                         }
+
+                        @Override
+                        void onSet() {
+                            boolean leftPressed =
+                                    downKeys.contains(Input.Keys.LEFT);
+                            boolean rightPressed =
+                                    downKeys.contains(Input.Keys.RIGHT);
+
+                            if (leftPressed ||
+                                    rightPressed) {
+                                // Start moving to..
+                                move = (leftPressed)
+                                        ? MoveDirection.LEFT   // ..left
+                                        : MoveDirection.RIGHT; // ..right
+
+                                // Flip image
+                                if ((leftPressed && !flipped) ||
+                                        (rightPressed && flipped)) {
+                                    spriter.player.flipX();
+                                    flipped = leftPressed;
+                                }
+                            }
+                        }
                     }
             ),
-            new PlayerMode( // JUMP
-                    PlayerModeId.JUMP,
-                    new AnimationNum[]{
-                            AnimationNum.JUMP_LOOP,
-                            AnimationNum.JUMP_START,
-                            AnimationNum.JUMP_END
-                    },
-                    new boolean[]{
-                            true,  // Idle
-                            false, // Walk
-                            true,  // Jump
-                            true,  // Slide
-                            true,  // Crouch
-                            true   // Break
-                    },
+            new PersonModeAdapter( // JUMP
+                    this,
+                    modes[PlayerModeId.JUMP.ordinal()],
                     new PlayerModeListener() {
                         @Override
                         public boolean checkEnd() {
@@ -166,21 +256,9 @@ public class Player implements InputProcessor {
                         }
                     }
             ),
-            new PlayerMode( // SLIDE
-                    PlayerModeId.SLIDE,
-                    new AnimationNum[]{
-                            AnimationNum.SLIDE_LOOP,
-                            AnimationNum.SLIDE_START,
-                            AnimationNum.SLIDE_END
-                    },
-                    new boolean[]{
-                            true, // Idle
-                            true, // Walk
-                            true, // Jump
-                            true, // Slide
-                            true, // Crouch
-                            true  // Break
-                    },
+            new PersonModeAdapter( // SLIDE
+                    this,
+                    modes[PlayerModeId.SLIDE.ordinal()],
                     new PlayerModeListener() {
                         @Override
                         public boolean checkEnd() {
@@ -191,23 +269,17 @@ public class Player implements InputProcessor {
                         public PlayerModeId getNextMode() {
                             return PlayerModeId.IDLE;
                         }
+
+                        @Override
+                        void onSet() {
+                            // Stop moving
+                            move = MoveDirection.NONE;
+                        }
                     }
             ),
-            new PlayerMode( // CROUCH
-                    PlayerModeId.CROUCH,
-                    new AnimationNum[]{
-                            AnimationNum.CROUCH_LOOP,
-                            AnimationNum.CROUCH_START,
-                            AnimationNum.CROUCH_END
-                    },
-                    new boolean[]{
-                            true, // Idle
-                            true, // Walk
-                            true, // Jump
-                            true, // Slide
-                            true, // Crouch
-                            true  // Break
-                    },
+            new PersonModeAdapter( // CROUCH
+                    this,
+                    modes[PlayerModeId.CROUCH.ordinal()],
                     new PlayerModeListener() {
                         @Override
                         public PlayerModeId getNextMode() {
@@ -215,21 +287,9 @@ public class Player implements InputProcessor {
                         }
                     }
             ),
-            new PlayerMode( // BREAK
-                    PlayerModeId.BREAK,
-                    new AnimationNum[]{
-                            AnimationNum.BREAK_LOOP,
-                            AnimationNum.BREAK_START,
-                            AnimationNum.BREAK_END
-                    },
-                    new boolean[]{
-                            true, // Idle
-                            true, // Walk
-                            true, // Jump
-                            true, // Slide
-                            true, // Crouch
-                            true  // Break
-                    },
+            new PersonModeAdapter( // BREAK
+                    this,
+                    modes[PlayerModeId.BREAK.ordinal()],
                     new PlayerModeListener() {
                         @Override
                         public boolean checkEnd() {
@@ -244,16 +304,26 @@ public class Player implements InputProcessor {
             )
     };
 
-    /**
-     * Player mode id
-     */
-    private PlayerModeId modeId = PlayerModeId.IDLE;
+    @Override
+    PersonModeAdapter[] getModeAdapters() {
+        return modeAdapters;
+    }
+
+    @Override
+    SpriterComponent getSpriter() {
+        return spriter;
+    }
 
     public PlayerModeId getModeId() {
         return modeId;
     }
 
-    public PlayerMode getMode() {
+    @Override
+    PersonMode[] getModes() {
+        return modes;
+    }
+
+    public PersonMode getCurrentMode() {
         return modes[modeId.ordinal()];
     }
 
@@ -268,8 +338,8 @@ public class Player implements InputProcessor {
      */
     private boolean flipped = false;
 
-    public static final int JUMP_VELOCITY = 1000;
-    public static final int MOVE_VELOCITY = 50;
+    private static final int JUMP_VELOCITY = 1000;
+    private static final int MOVE_VELOCITY = 50;
 
     public class CompositeScript implements IScript {
 
@@ -303,7 +373,8 @@ public class Player implements InputProcessor {
             }
 
             // Check mode end
-            getMode().checkEnd();
+            if (modeId != null)
+                getCurrentModeAdapter().checkEnd();
         }
 
         @Override
@@ -328,9 +399,13 @@ public class Player implements InputProcessor {
         }
     }
 
+    ArrayList<Integer> downKeys = new ArrayList<Integer>();
+
     @Override
     public boolean keyDown(int keycode) {
         Gdx.app.log(TAG, "Key down (" + keycode + ')');
+
+        downKeys.add(keycode);
 
         // Change modeId (and/or) animation
 
@@ -342,18 +417,6 @@ public class Player implements InputProcessor {
             case Input.Keys.LEFT:
             case Input.Keys.RIGHT:
                 if (move == MoveDirection.NONE) {
-                    // Move to..
-                    move = (keycode == Input.Keys.LEFT)
-                            ? MoveDirection.LEFT   // ..left
-                            : MoveDirection.RIGHT; // ..right
-
-                    // Flip image
-                    if ((keycode == Input.Keys.LEFT && !flipped) ||
-                            (keycode == Input.Keys.RIGHT && flipped)) {
-                        spriter.player.flipX();
-                        flipped = keycode == Input.Keys.LEFT;
-                    }
-
                     // Mode
                     newModeId = PlayerModeId.WALK;
                 }
@@ -371,7 +434,7 @@ public class Player implements InputProcessor {
 
         // Apply
         if (newModeId != null)
-            modes[newModeId.ordinal()].set();
+            getModeAdapters()[newModeId.ordinal()].set();
 
         return false;
     }
@@ -379,6 +442,8 @@ public class Player implements InputProcessor {
     @Override
     public boolean keyUp(int keycode) {
         Gdx.app.log(TAG, "Key up (" + keycode + ')');
+
+        downKeys.remove(downKeys.indexOf(keycode));
 
         // Check move direction
         boolean stopMove = false;
@@ -395,7 +460,7 @@ public class Player implements InputProcessor {
             move = MoveDirection.NONE;
 
             // End mode
-            getMode().toNextMode();
+            getCurrentModeAdapter().toNextMode();
         }
 
         // Stop crouch
@@ -404,7 +469,7 @@ public class Player implements InputProcessor {
                 // Change animation
                 if (modeId == PlayerModeId.CROUCH)
                     spriter.player.setAnimation(
-                            getMode().animationNums[AnimationNumId.END.ordinal()].ordinal()
+                            getCurrentMode().animationNums[AnimationNumId.END.ordinal()].ordinal()
                     );
                 break;
         }
@@ -517,159 +582,6 @@ public class Player implements InputProcessor {
     }
 
     /**
-     * Player state, e.g. walk, jump, slide etc.
-     */
-    class PlayerMode
-            implements PlayerListener {
-        public PlayerMode(
-                PlayerModeId selfId,
-                AnimationNum[] animationNums,
-                boolean[] accessMap,
-                PlayerModeListener listener
-        ) {
-            // Self id
-            this.selfId = selfId;
-
-            // Animation nums
-            if (animationNums.length == 1 || // One animation
-                    animationNums.length == 3) // Start, loop and end animations
-                this.animationNums = animationNums;
-            else
-                throw new AssertionError("Animation nums array length != 1 or 3");
-
-            // Access map
-            if (accessMap.length == PlayerModeId.COUNT.ordinal())
-                this.accessMap = accessMap;
-            else
-                throw new AssertionError("Access map length != player mode ids count");
-
-            // Listener
-            this.listener = listener;
-        }
-
-        private PlayerModeListener listener;
-
-        /**
-         * Change access map
-         */
-        boolean[] accessMap;
-
-        boolean checkEnd() {
-            // Check end
-            boolean checkResult = listener.checkEnd();
-            if (checkResult) {
-                if (isStartLoopEndAnimations())
-                    // Start end animation
-                    spriter.player.setAnimation(
-                            animationNums[AnimationNumId.END.ordinal()].ordinal()
-                    );
-                else
-                    // To next mode
-                    toNextMode();
-            }
-
-            return checkResult;
-        }
-
-        private void toNextMode() {
-            // Set next mode
-            PlayerModeId nextModeId = listener.getNextMode();
-            if (nextModeId != null)
-                modes[nextModeId.ordinal()].set();
-        }
-
-        /**
-         * Id in modes array
-         */
-        final PlayerModeId selfId;
-
-        /**
-         * Animation nums
-         */
-        AnimationNum[] animationNums;
-
-        /**
-         * @return Start, end, and loop animation bool
-         */
-        boolean isStartLoopEndAnimations() {
-            return animationNums.length == 3;
-        }
-
-        /**
-         * @return Only loop animation bool
-         */
-        boolean isOneAnimation() {
-            return animationNums.length == 1;
-        }
-
-        /**
-         * Changes modeId to self id
-         */
-        void set() {
-            // Check change access
-            if (getMode().accessMap[selfId.ordinal()]) {
-                // Animation
-                spriter.player.setAnimation(
-                        animationNums[(isStartLoopEndAnimations()
-                                ? AnimationNumId.START
-                                : AnimationNumId.LOOP
-                        ).ordinal()].ordinal());
-
-                // Remove old player listener
-                spriter.player.removeListener(getMode());
-
-                // Change mode
-                modeId = selfId;
-
-                // Add player listener to changed mode
-                spriter.player.addListener(getMode());
-
-                // Call onSet
-                listener.onSet();
-            }
-        }
-
-        @Override
-        public void animationFinished(Animation animation) {
-            if (isStartLoopEndAnimations()) {
-                // Check end of start animation
-                if (animation.id == animationNums[AnimationNumId.START.ordinal()].ordinal()) {
-                    // Start loop animation
-                    spriter.player.setAnimation(
-                            animationNums[AnimationNumId.LOOP.ordinal()].ordinal()
-                    );
-                }
-
-                // Check end of end animation
-                else if (animation.id == animationNums[AnimationNumId.END.ordinal()].ordinal()) {
-                    // To next mode
-                    toNextMode();
-                }
-            }
-        }
-
-        @Override
-        public void animationChanged(Animation oldAnim, Animation newAnim) {
-
-        }
-
-        @Override
-        public void preProcess(com.brashmonkey.spriter.Player player) {
-
-        }
-
-        @Override
-        public void postProcess(com.brashmonkey.spriter.Player player) {
-
-        }
-
-        @Override
-        public void mainlineKeyChanged(Mainline.Key prevKey, Mainline.Key newKey) {
-
-        }
-    }
-
-    /**
      * Animation nums ids
      */
     enum AnimationNumId {
@@ -677,30 +589,5 @@ public class Player implements InputProcessor {
         START,
         END
     }
-
-    class PlayerModeListener {
-        /**
-         * Checks end of mode
-         * Calling in every act
-         *
-         * @return Mode end bool
-         */
-        boolean checkEnd() {
-            return false;
-        }
-
-        /**
-         * @return Mode, that will be setted after end previous
-         */
-        PlayerModeId getNextMode() {
-            return null;
-        }
-
-        /**
-         * Called, when player mode has been set
-         */
-        void onSet() {
-
-        }
-    }
 }
+
