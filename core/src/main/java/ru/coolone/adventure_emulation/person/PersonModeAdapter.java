@@ -1,45 +1,52 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.person;
 
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Mainline;
-import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 
 /**
- * Created by coolone on 19.12.17.
+ * Adapter, for {@link PersonModeData}, that will be
+ *
+ * @see PersonModeData
  */
-class PersonModeAdapter
+public class PersonModeAdapter<PersonModeId extends Enum>
         implements com.brashmonkey.spriter.Player.PlayerListener {
     private static final String TAG = PersonModeAdapter.class.getSimpleName();
+    /**
+     * Player modes static array link
+     */
+    private final Person person;
+    /**
+     * Person mode events listener
+     *
+     * @see PersonModeListener
+     */
+    private final PersonModeListener listener;
+    /**
+     * Person mode
+     */
+    private PersonModeData mode;
 
-    PersonModeAdapter(
+    public PersonModeAdapter(
             Person person,
-            PersonMode mode,
-            PlayerModeListener listener) {
+            PersonModeData mode,
+            PersonModeListener<PersonModeId> listener) {
         this.person = person;
         this.mode = mode;
         this.listener = listener;
     }
 
     /**
-     * Player modes static array link
-     */
-    private final Person person;
-
-    private PersonMode mode;
-
-    private final PlayerModeListener listener;
-
-    /**
      * Changes modeId to self id
      */
-    void set() {
+    public void activate() {
         // Check change access
-        if (person.getCurrentMode().accessMap[mode.selfId.ordinal()]) {
+        if (person.getCurrentMode().accessMap[mode.selfId.ordinal()] &&
+                person.getCurrentMode().selfId != mode.selfId) {
             // Animation
             person.getSpriter().player.setAnimation(
                     mode.animationNums[(mode.isStartLoopEndAnimations()
-                            ? Player.AnimationNumId.START
-                            : Player.AnimationNumId.LOOP
+                            ? AnimationNumId.START
+                            : AnimationNumId.LOOP
                     ).ordinal()].ordinal());
 
             // Remove old player listener
@@ -56,14 +63,14 @@ class PersonModeAdapter
         }
     }
 
-    boolean checkEnd() {
+    public boolean checkEnd() {
         // Check
         boolean checkResult = listener.checkEnd();
         if (checkResult) {
             if (mode.isStartLoopEndAnimations())
                 // Start end animation
                 person.getSpriter().player.setAnimation(
-                        mode.animationNums[Player.AnimationNumId.END.ordinal()].ordinal()
+                        mode.animationNums[AnimationNumId.END.ordinal()].ordinal()
                 );
             else
                 // To next mode
@@ -73,26 +80,26 @@ class PersonModeAdapter
         return checkResult;
     }
 
-    void toNextMode() {
+    public void toNextMode() {
         // Set next mode
-        Player.PlayerModeId nextModeId = listener.getNextMode();
+        PersonModeId nextModeId = (PersonModeId) listener.getNextModeId();
         if (nextModeId != null)
-            person.getModeAdapters()[nextModeId.ordinal()].set();
+            person.getModeAdapters()[nextModeId.ordinal()].activate();
     }
 
     @Override
     public void animationFinished(Animation animation) {
         if (mode.isStartLoopEndAnimations()) {
             // Check end of start animation
-            if (animation.id == mode.animationNums[Player.AnimationNumId.START.ordinal()].ordinal()) {
+            if (animation.id == mode.animationNums[AnimationNumId.START.ordinal()].ordinal()) {
                 // Start loop animation
                 person.getSpriter().player.setAnimation(
-                        mode.animationNums[Player.AnimationNumId.LOOP.ordinal()].ordinal()
+                        mode.animationNums[AnimationNumId.LOOP.ordinal()].ordinal()
                 );
             }
 
             // Check end of end animation
-            else if (animation.id == mode.animationNums[Player.AnimationNumId.END.ordinal()].ordinal()) {
+            else if (animation.id == mode.animationNums[AnimationNumId.END.ordinal()].ordinal()) {
                 // To next mode
                 toNextMode();
             }
@@ -101,47 +108,60 @@ class PersonModeAdapter
 
     @Override
     public void animationChanged(Animation oldAnim, Animation newAnim) {
-
     }
 
     @Override
     public void preProcess(com.brashmonkey.spriter.Player player) {
-
     }
 
     @Override
     public void postProcess(com.brashmonkey.spriter.Player player) {
-
     }
 
     @Override
     public void mainlineKeyChanged(Mainline.Key prevKey, Mainline.Key newKey) {
-
     }
 
-    static class PlayerModeListener {
+    /**
+     * Animation nums ids
+     */
+    public enum AnimationNumId {
+        LOOP,
+        START,
+        END
+    }
+
+    /**
+     * Person events listener
+     */
+    static public abstract class PersonModeListener<PersonModeId extends Enum> {
         /**
          * Checks end of mode
          * Calling in every act
          *
          * @return Mode end bool
          */
-        boolean checkEnd() {
+        protected boolean checkEnd() {
             return false;
         }
 
         /**
-         * @return Mode, that will be setted after end previous
+         * @return Mode, that will be setted after end previous mode
          */
-        Player.PlayerModeId getNextMode() {
+        protected PersonModeId getNextModeId() {
             return null;
         }
 
         /**
-         * Called, when player mode has been set
+         * Called, when player mode has been activate
          */
-        void onSet() {
+        protected void onSet() {
+        }
 
+        /**
+         * Called, when player act ended
+         */
+        protected void onAct() {
         }
     }
 }
