@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.person;
+package ru.coolone.adventure_emulation.game.person;
 
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Mainline;

@@ -1,70 +1,62 @@
 package ru.coolone.adventure_emulation;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import ru.coolone.adventure_emulation.persons.Player;
+import ru.coolone.adventure_emulation.screens.MenuScreen;
 
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
-public class GameCore extends ApplicationAdapter {
+public class GameCore extends Game {
+    /**
+     * Scenes and screen size
+     */
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 480;
     private static final String TAG = GameCore.class.getSimpleName();
-
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 480;
-
     /**
      * Overlap2d scene loader
      */
-    private SceneLoader loader;
-
+    public SceneLoader loader;
     /**
-     * Player behavior for @{@link ItemWrapper}
+     * Camera to world
      */
-    private Player player;
+    public OrthographicCamera camera;
 
-    private SpriteBatch batch;
-    private BitmapFont font;
-    private Box2DDebugRenderer debugRenderer;
-    private OrthographicCamera camera;
+    public static GameCore getInstance() {
+        return SingletonHolder.HOLDER_INSTANCE;
+    }
 
     @Override
     public void create() {
-        Viewport viewport = new FitViewport(WIDTH, HEIGHT);
+        // Open scene
         loader = new SceneLoader();
-        loader.loadScene("MainScene", viewport);
 
-        // Create scripts
-        player = new Player(loader.world);
-        InputGroups.addListener(player);
-
-        // Add scripts
-        ItemWrapper root = new ItemWrapper(loader.getRoot());
-        root.getChild("playerComposite")
-                .addScript(player.new CompositeScript());
-        root.getChild("playerComposite")
-                .getChild("playerSpriter")
-                .addScript(player.new SpriterScript());
-
-        batch = new SpriteBatch();
-        debugRenderer = new Box2DDebugRenderer();
-        font = new BitmapFont();
+        // Camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false,
                 WIDTH * PhysicsBodyLoader.getScale(),
                 HEIGHT * PhysicsBodyLoader.getScale()
         );
+
+        setScreen(new MenuScreen(
+                        "MenuScene", loader
+                )
+        );
+    }
+
+    /**
+     * Root item of loader
+     */
+//    private static ItemWrapper rootItem;
+    public ItemWrapper getRootItem() {
+        return new ItemWrapper(loader.getRoot());
     }
 
     @Override
@@ -75,27 +67,17 @@ public class GameCore extends ApplicationAdapter {
         // Overlap2d scene
         loader.getEngine().update(Gdx.graphics.getDeltaTime());
 
-        // Debug box2d physic masks
-        debugRenderer.render(loader.world, camera.combined);
-
-        // Debug text
-        loader.getBatch().begin();
-        font.draw(loader.getBatch(),
-                "Move: " + player.getMove() + '\n'
-                        + "Grounded: " + player.isPlayerGrounded() + '\n'
-                        + "Mode: " + player.getModeId() + '\n'
-                        + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
-                        + '\t' + "Move speed: " + player.getCurrentMode().moveVelocity + '\n'
-                        + '\t' + "Move max speed: " + player.getCurrentMode().moveMaxVelocity + '\n'
-                        + "Player velocity: " + player.getPhysic().body.getLinearVelocity() + '\n'
-                        + "FPS: " + Gdx.graphics.getFramesPerSecond(),
-                10, HEIGHT - 10);
-        loader.getBatch().end();
+        super.render();
     }
 
     @Override
     public void dispose() {
-        font.dispose();
-        batch.dispose();
+    }
+
+    /**
+     * Singleton
+     */
+    private static class SingletonHolder {
+        private static final GameCore HOLDER_INSTANCE = new GameCore();
     }
 }

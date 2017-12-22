@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.person;
+package ru.coolone.adventure_emulation.game.person;
 
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;

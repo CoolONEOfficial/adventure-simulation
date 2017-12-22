@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.person;
+package ru.coolone.adventure_emulation.game.person;
 
 /**
  * Person mode data (state, e.g. walk, jump, slide etc.)

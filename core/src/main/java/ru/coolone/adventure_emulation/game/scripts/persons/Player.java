@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.persons;
+package ru.coolone.adventure_emulation.game.scripts.persons;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
@@ -10,15 +10,16 @@ import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
+import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import ru.coolone.adventure_emulation.InputGroups;
-import ru.coolone.adventure_emulation.InputGroups.InputGroupId;
-import ru.coolone.adventure_emulation.person.Person;
-import ru.coolone.adventure_emulation.person.PersonModeAdapter;
-import ru.coolone.adventure_emulation.person.PersonModeAdapter.AnimationNumId;
-import ru.coolone.adventure_emulation.person.PersonModeAdapter.PersonModeListener;
-import ru.coolone.adventure_emulation.person.PersonModeData;
-import ru.coolone.adventure_emulation.persons.Player.ModeId;
+import ru.coolone.adventure_emulation.game.InputGroups;
+import ru.coolone.adventure_emulation.game.InputGroups.InputGroupId;
+import ru.coolone.adventure_emulation.game.person.Person;
+import ru.coolone.adventure_emulation.game.person.PersonModeAdapter;
+import ru.coolone.adventure_emulation.game.person.PersonModeAdapter.AnimationNumId;
+import ru.coolone.adventure_emulation.game.person.PersonModeAdapter.PersonModeListener;
+import ru.coolone.adventure_emulation.game.person.PersonModeData;
+import ru.coolone.adventure_emulation.game.scripts.persons.Player.ModeId;
 
 /**
  * Player behavior class
@@ -41,6 +42,10 @@ public class Player extends Person<ModeId>
     private static final float JUMP_MOVE_MAX_VELOCITY = 10f;
     private static final float CROUCH_MOVE_VELOCITY = 50f;
     private static final float CROUCH_MOVE_MAX_VELOCITY = 6f;
+    /**
+     * Jump body velocity
+     */
+    private static final float JUMP_VELOCITY = 1000f;
     /**
      * Data, that will be using in @{@link PersonModeAdapter}
      *
@@ -168,10 +173,6 @@ public class Player extends Person<ModeId>
             )
     };
     /**
-     * Jump body velocity
-     */
-    private static final float JUMP_VELOCITY = 1000f;
-    /**
      * Box2d world
      */
     private World world;
@@ -217,9 +218,7 @@ public class Player extends Person<ModeId>
 
                         @Override
                         public ModeId getNextModeId() {
-                            return physic.body.getLinearVelocity().x == 0
-                                    ? ModeId.IDLE
-                                    : ModeId.BREAK;
+                            return ModeId.IDLE;
                         }
 
                         @Override
@@ -244,7 +243,7 @@ public class Player extends Person<ModeId>
 
                         @Override
                         public ModeId getNextModeId() {
-                            return InputGroups.getActiveGroups().contains(InputGroupId.DOWN)
+                            return InputGroups.getActiveGroups().contains(InputGroupId.CROUCH)
                                     ? ModeId.CROUCH
                                     : ModeId.IDLE;
                         }
@@ -272,13 +271,9 @@ public class Player extends Person<ModeId>
                     new PersonModeListener<ModeId>() {
                         @Override
                         public ModeId getNextModeId() {
-                            return physic.body.getLinearVelocity().x == 0 ?
-                                    (
-                                            InputGroups.getActiveGroups().contains(InputGroupId.DOWN)
-                                                    ? ModeId.CROUCH
-                                                    : ModeId.IDLE
-                                    )
-                                    : ModeId.SLIDE;
+                            return InputGroups.getActiveGroups().contains(InputGroupId.CROUCH)
+                                    ? ModeId.CROUCH
+                                    : ModeId.IDLE;
                         }
                     }
             ),
@@ -303,9 +298,24 @@ public class Player extends Person<ModeId>
      */
     private boolean flipped = false;
 
-    public Player(World world) {
+    public Player(
+            ItemWrapper root,
+            String name,
+            World world
+    ) {
+        // Physic world
         this.world = world;
+
+        // Default mode
         modeId = ModeId.IDLE;
+
+        root.getChild(name)
+                .addScript(new CompositeScript());
+        root.getChild(name)
+                .getChild("spriter")
+                .addScript(new SpriterScript());
+
+        InputGroups.addListener(this);
     }
 
     public MoveDirection getMove() {
@@ -346,8 +356,8 @@ public class Player extends Person<ModeId>
         // Change modeId (and/or) animation
         ModeId newModeId = null;
         switch (groupId) {
-            case LEFT:
-            case RIGHT:
+            case MOVE_LEFT:
+            case MOVE_RIGHT:
                 // Walk
                 if (move == MoveDirection.NONE) {
                     newModeId = getModeId() == ModeId.CROUCH
@@ -355,11 +365,11 @@ public class Player extends Person<ModeId>
                             : ModeId.WALK;
                 }
                 break;
-            case UP:
+            case JUMP:
                 // Jump
                 newModeId = ModeId.JUMP;
                 break;
-            case DOWN:
+            case CROUCH:
                 // Crouch
                 newModeId = physic.body.getLinearVelocity().x != 0
                         ? ModeId.SLIDE
@@ -374,9 +384,9 @@ public class Player extends Person<ModeId>
         if (getCurrentMode().movable) {
             // Check move
             boolean leftPressed =
-                    InputGroups.getActiveGroups().contains(InputGroupId.LEFT);
+                    InputGroups.getActiveGroups().contains(InputGroupId.MOVE_LEFT);
             boolean rightPressed =
-                    InputGroups.getActiveGroups().contains(InputGroupId.RIGHT);
+                    InputGroups.getActiveGroups().contains(InputGroupId.MOVE_RIGHT);
 
             if (leftPressed ||
                     rightPressed) {
@@ -399,10 +409,11 @@ public class Player extends Person<ModeId>
     public void onInputGroupDeactivate(InputGroupId groupId) {
 
         switch (groupId) {
-            case LEFT:
-            case RIGHT:
-                if ((groupId == InputGroupId.RIGHT && move == MoveDirection.RIGHT) ||
-                        (groupId == InputGroupId.LEFT && move == MoveDirection.LEFT)) {
+            case MOVE_LEFT:
+            case MOVE_RIGHT:
+                if (getCurrentMode().movable &&
+                        ((groupId == InputGroupId.MOVE_RIGHT && move == MoveDirection.RIGHT) ||
+                                (groupId == InputGroupId.MOVE_LEFT && move == MoveDirection.LEFT))) {
                     // Stop moving
                     move = MoveDirection.NONE;
 
@@ -410,7 +421,7 @@ public class Player extends Person<ModeId>
                     getCurrentModeAdapter().toNextMode();
                 }
                 break;
-            case DOWN:
+            case CROUCH:
                 // Change animation
                 if (modeId == ModeId.CROUCH)
                     spriter.player.setAnimation(
