@@ -51,7 +51,7 @@ public class MenuScreen extends SceneScreen {
 
                     @Override
                     public void onButtonUp() {
-                        core.openGame();
+                        core.setScreen(core.gameScreen);
                     }
                 }
         );

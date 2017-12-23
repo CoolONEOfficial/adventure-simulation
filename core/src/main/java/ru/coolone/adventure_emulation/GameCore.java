@@ -41,6 +41,10 @@ public class GameCore extends Game {
      */
     private ItemWrapper rootItem;
 
+    public ItemWrapper getRootItem() {
+        return rootItem;
+    }
+
     @Override
     public void create() {
         // Open scene
@@ -93,14 +97,6 @@ public class GameCore extends Game {
      */
     public World getWorld() {
         return loader.world;
-    }
-
-    public ItemWrapper getRootItem() {
-        return rootItem;
-    }
-
-    public void openGame() {
-        setScreen(gameScreen);
     }
 
     @Override
