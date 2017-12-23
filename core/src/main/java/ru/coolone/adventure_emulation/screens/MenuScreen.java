@@ -42,7 +42,7 @@ public class MenuScreen extends SceneScreen {
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
-
+                        core.setScreen(core.gameScreen);
                     }
 
                     @Override
@@ -51,7 +51,6 @@ public class MenuScreen extends SceneScreen {
 
                     @Override
                     public void onButtonUp() {
-                        core.setScreen(core.gameScreen);
                     }
                 }
         );

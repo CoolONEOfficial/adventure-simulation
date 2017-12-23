@@ -34,7 +34,7 @@ cloud1Night
   index: -1
 cloud2Night
   rotate: false
-  xy: 673, 75
+  xy: 813, 75
   size: 56, 35
   orig: 56, 35
   offset: 0, 0
@@ -48,7 +48,7 @@ fire
   index: -1
 glow
   rotate: false
-  xy: 673, 48
+  xy: 871, 85
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
@@ -144,9 +144,23 @@ rainDrop
   orig: 8, 17
   offset: 0, 0
   index: -1
+right
+  rotate: false
+  xy: 673, 42
+  size: 68, 68
+  orig: 68, 68
+  offset: 0, 0
+  index: -1
+rightmask
+  rotate: false
+  xy: 743, 42
+  size: 68, 68
+  orig: 68, 68
+  offset: 0, 0
+  index: -1
 sheep
   rotate: false
-  xy: 731, 68
+  xy: 813, 31
   size: 48, 42
   orig: 48, 42
   offset: 0, 0

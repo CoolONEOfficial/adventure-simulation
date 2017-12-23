@@ -8,6 +8,8 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.SceneScreen;
+import ru.coolone.adventure_emulation.game.InputGroups;
+import ru.coolone.adventure_emulation.game.scripts.Button;
 import ru.coolone.adventure_emulation.game.scripts.persons.Player;
 
 /**
@@ -22,11 +24,14 @@ public class GameScreen extends SceneScreen {
     /**
      * Player behavior for @{@link ItemWrapper}
      */
-    static private Player player;
+    private Player player;
     /**
-     * Link for @{@link GameCore}
+     * Move buttons
      */
-    private GameCore core;
+    private Button downButton;
+    private Button upButton;
+    private Button leftButton;
+    private Button rightButton;
     /**
      * Just for debug
      */
@@ -37,17 +42,102 @@ public class GameScreen extends SceneScreen {
             GameCore core
     ) {
         super(core, name);
-
-        this.core = core;
     }
 
     @Override
     public void show() {
         super.show();
 
+        // Player
         player = new Player(
                 core,
                 "player"
+        );
+
+        // Move buttons
+        downButton = new Button(
+                core,
+                "downButton"
+        );
+        downButton.addListener(
+                new Button.ButtonListener() {
+                    @Override
+                    public void onButtonClick() {
+                    }
+
+                    @Override
+                    public void onButtonDown() {
+                        InputGroups.groupActivate(InputGroups.InputGroupId.CROUCH);
+                    }
+
+                    @Override
+                    public void onButtonUp() {
+                        InputGroups.groupDeactivate(InputGroups.InputGroupId.CROUCH);
+                    }
+                }
+        );
+        upButton = new Button(
+                core,
+                "upButton"
+        );
+        upButton.addListener(
+                new Button.ButtonListener() {
+                    @Override
+                    public void onButtonClick() {
+                    }
+
+                    @Override
+                    public void onButtonDown() {
+                        InputGroups.groupActivate(InputGroups.InputGroupId.JUMP);
+                    }
+
+                    @Override
+                    public void onButtonUp() {
+                        InputGroups.groupDeactivate(InputGroups.InputGroupId.JUMP);
+                    }
+                }
+        );
+        leftButton = new Button(
+                core,
+                "leftButton"
+        );
+        leftButton.addListener(
+                new Button.ButtonListener() {
+                    @Override
+                    public void onButtonClick() {
+                    }
+
+                    @Override
+                    public void onButtonDown() {
+                        InputGroups.groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
+                    }
+
+                    @Override
+                    public void onButtonUp() {
+                        InputGroups.groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
+                    }
+                }
+        );
+        rightButton = new Button(
+                core,
+                "rightButton"
+        );
+        rightButton.addListener(
+                new Button.ButtonListener() {
+                    @Override
+                    public void onButtonClick() {
+                    }
+
+                    @Override
+                    public void onButtonDown() {
+                        InputGroups.groupActivate(InputGroups.InputGroupId.MOVE_RIGHT);
+                    }
+
+                    @Override
+                    public void onButtonUp() {
+                        InputGroups.groupDeactivate(InputGroups.InputGroupId.MOVE_RIGHT);
+                    }
+                }
         );
 
         // Debug info
@@ -57,13 +147,14 @@ public class GameScreen extends SceneScreen {
 
     @Override
     public void render(float delta) {
-        // Debug Box2d physics
-        debugRenderer.render(core.getWorld(), core.camera.combined);
+        // Debug
+        if (GameCore.DEBUG) {
+            // Debug Box2d physics
+            debugRenderer.render(core.getWorld(), core.camera.combined);
 
-        Batch coreBatch = core.getBatch();
-        coreBatch.begin();
+            Batch coreBatch = core.getBatch();
+            coreBatch.begin();
 
-        if (player.getPhysic().body != null)
             // Debug player text
             font.draw(coreBatch,
                     "Move: " + player.getMove() + '\n'
@@ -72,11 +163,17 @@ public class GameScreen extends SceneScreen {
                             + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
                             + '\t' + "Move speed: " + player.getCurrentMode().moveVelocity + '\n'
                             + '\t' + "Move max speed: " + player.getCurrentMode().moveMaxVelocity + '\n'
-                            + "Player velocity: " + player.getPhysic().body.getLinearVelocity() + '\n'
+                            + "Player velocity: " +
+                            (
+                                    player.getPhysic().body != null
+                                            ? player.getPhysic().body.getLinearVelocity()
+                                            : "null"
+                            ) + '\n'
                             + "FPS: " + Gdx.graphics.getFramesPerSecond(),
                     10, GameCore.HEIGHT - 10);
 
-        coreBatch.end();
+            coreBatch.end();
+        }
     }
 
     @Override

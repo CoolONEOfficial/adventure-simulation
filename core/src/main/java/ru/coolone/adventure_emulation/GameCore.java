@@ -19,6 +19,8 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
  */
 public class GameCore extends Game {
 
+    static public final boolean DEBUG = true;
+
     /**
      * Scenes and screen size
      */
@@ -111,17 +113,19 @@ public class GameCore extends Game {
         super.render();
 
         // Debug
-        Batch batch = loader.getBatch();
-        batch.begin();
+        if (DEBUG) {
+            Batch batch = loader.getBatch();
+            batch.begin();
 
-        // Current scene and screen
-        font.draw(batch,
-                "Screen: " + getScreen().getClass().getSimpleName() + '\n'
-                        + "Scene: " + loader.getSceneVO().sceneName,
-                WIDTH / 2, HEIGHT - 10
-        );
+            // Current scene and screen
+            font.draw(batch,
+                    "Screen: " + getScreen().getClass().getSimpleName() + '\n'
+                            + "Scene: " + loader.getSceneVO().sceneName,
+                    WIDTH / 2, HEIGHT - 10
+            );
 
-        batch.end();
+            batch.end();
+        }
     }
 
     @Override

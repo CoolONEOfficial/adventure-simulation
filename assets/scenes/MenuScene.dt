@@ -8,8 +8,8 @@
         "tags": [
           "button"
         ],
-        "x": 203,
-        "y": 285,
+        "x": 216,
+        "y": 191,
         "originX": 0,
         "originY": 0,
         "layerName": "Default",
@@ -70,8 +70,8 @@
         "tags": [
           "button"
         ],
-        "x": 202,
-        "y": 100,
+        "x": 215,
+        "y": 39,
         "originX": 0,
         "originY": 0,
         "zIndex": 1,

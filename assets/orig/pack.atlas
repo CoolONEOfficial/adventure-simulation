@@ -48,7 +48,7 @@ fire
   index: -1
 glow
   rotate: false
-  xy: 674, 427
+  xy: 858, 533
   size: 42, 42
   orig: 42, 42
   offset: 0, 0
@@ -139,9 +139,23 @@ ninja
   index: -1
 rainDrop
   rotate: false
-  xy: 1617, 614
+  xy: 1473, 866
   size: 13, 28
   orig: 13, 28
+  offset: 0, 0
+  index: -1
+right
+  rotate: false
+  xy: 674, 356
+  size: 113, 113
+  orig: 113, 113
+  offset: 0, 0
+  index: -1
+rightmask
+  rotate: false
+  xy: 789, 356
+  size: 113, 113
+  orig: 113, 113
   offset: 0, 0
   index: -1
 sheep
@@ -202,7 +216,7 @@ watertower
   index: -1
 windMain
   rotate: false
-  xy: 858, 492
+  xy: 1617, 559
   size: 24, 83
   orig: 24, 83
   offset: 0, 0
