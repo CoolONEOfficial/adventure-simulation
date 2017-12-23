@@ -2,14 +2,14 @@ package ru.coolone.adventure_emulation.game.scripts;
 
 import com.badlogic.ashley.core.Entity;
 import com.uwsoft.editor.renderer.components.LayerMapComponent;
-import com.uwsoft.editor.renderer.components.NinePatchComponent;
 import com.uwsoft.editor.renderer.components.additional.ButtonComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
-import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
+
+import ru.coolone.adventure_emulation.GameCore;
 
 /**
  * Created by coolone on 20.12.17.
@@ -19,14 +19,6 @@ public class Button
         implements IScript, ButtonComponent.ButtonListener {
     private static final String TAG = Button.class.getSimpleName();
     /**
-     * Outer image component
-     */
-    public NinePatchComponent outer;
-    /**
-     * Inner image component
-     */
-    public NinePatchComponent inner;
-    /**
      * Composite layers component
      */
     public LayerMapComponent layers;
@@ -34,6 +26,10 @@ public class Button
      * Button composite component
      */
     public ButtonComponent button;
+    /**
+     * Link for @{@link GameCore}
+     */
+    private GameCore core;
     /**
      * Layer with normal button
      */
@@ -50,10 +46,14 @@ public class Button
     private ArrayList<ButtonListener> listeners = new ArrayList<ButtonListener>();
 
     public Button(
-            ItemWrapper root,
+            GameCore core,
             String name
     ) {
-        root.getChild(name)
+        this.core = core;
+
+        // Button script
+        this.core.getRootItem()
+                .getChild(name)
                 .addScript(this);
     }
 
@@ -135,46 +135,5 @@ public class Button
         void onButtonDown();
 
         void onButtonUp();
-    }
-
-    /**
-     * Outer button image script
-     */
-    public class OuterImageScript
-            implements IScript {
-
-        @Override
-        public void init(Entity entity) {
-            // Outer image component
-            outer = ComponentRetriever.get(entity, NinePatchComponent.class);
-        }
-
-        @Override
-        public void act(float delta) {
-        }
-
-        @Override
-        public void dispose() {
-        }
-    }
-
-    public class InnerImageScript
-            implements IScript {
-
-        @Override
-        public void init(Entity entity) {
-            // Inner image component
-            inner = ComponentRetriever.get(entity, NinePatchComponent.class);
-        }
-
-        @Override
-        public void act(float delta) {
-
-        }
-
-        @Override
-        public void dispose() {
-
-        }
     }
 }

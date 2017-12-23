@@ -13,7 +13,7 @@ public class DesktopLauncher {
     }
 
     private static LwjglApplication createApplication() {
-        return new LwjglApplication(GameCore.getInstance(), getDefaultConfiguration());
+        return new LwjglApplication(new GameCore(), getDefaultConfiguration());
     }
 
     private static LwjglApplicationConfiguration getDefaultConfiguration() {

@@ -1,0 +1,147 @@
+{
+  "sceneName": "MenuScene",
+  "composite": {
+    "sComposites": [
+      {
+        "uniqueId": 3,
+        "itemIdentifier": "buttonGame",
+        "tags": [
+          "button"
+        ],
+        "x": 203,
+        "y": 285,
+        "originX": 0,
+        "originY": 0,
+        "layerName": "Default",
+        "composite": {
+          "sImages": [
+            {
+              "uniqueId": 2,
+              "tags": [],
+              "originX": 186.5,
+              "originY": 51,
+              "layerName": "Default",
+              "imageName": "groundGrass"
+            },
+            {
+              "uniqueId": 4,
+              "tags": [],
+              "x": 38,
+              "y": 3,
+              "originX": 154,
+              "originY": 49.5,
+              "zIndex": 1,
+              "layerName": "normal",
+              "imageName": "hill1Night"
+            },
+            {
+              "uniqueId": 5,
+              "tags": [],
+              "x": 36,
+              "y": 6,
+              "originX": 152.5,
+              "originY": 48.5,
+              "zIndex": 2,
+              "layerName": "pressed",
+              "imageName": "hill1"
+            }
+          ],
+          "layers": [
+            {
+              "layerName": "Default",
+              "isVisible": true
+            },
+            {
+              "layerName": "normal",
+              "isVisible": true
+            },
+            {
+              "layerName": "pressed",
+              "isVisible": true
+            }
+          ]
+        },
+        "width": 373,
+        "height": 102
+      },
+      {
+        "uniqueId": 6,
+        "itemIdentifier": "buttonExit",
+        "tags": [
+          "button"
+        ],
+        "x": 202,
+        "y": 100,
+        "originX": 0,
+        "originY": 0,
+        "zIndex": 1,
+        "layerName": "Default",
+        "composite": {
+          "sImages": [
+            {
+              "uniqueId": 7,
+              "tags": [],
+              "originX": 186.5,
+              "originY": 51,
+              "layerName": "Default",
+              "imageName": "groundGrass"
+            },
+            {
+              "uniqueId": 8,
+              "tags": [],
+              "x": 38,
+              "y": 3,
+              "originX": 154,
+              "originY": 49.5,
+              "zIndex": 1,
+              "layerName": "normal",
+              "imageName": "hill1Night"
+            },
+            {
+              "uniqueId": 9,
+              "tags": [],
+              "x": 36,
+              "y": 6,
+              "originX": 152.5,
+              "originY": 48.5,
+              "zIndex": 2,
+              "layerName": "pressed",
+              "imageName": "hill1"
+            }
+          ],
+          "layers": [
+            {
+              "layerName": "Default",
+              "isVisible": true
+            },
+            {
+              "layerName": "normal",
+              "isVisible": true
+            },
+            {
+              "layerName": "pressed",
+              "isVisible": true
+            }
+          ]
+        },
+        "width": 373,
+        "height": 102
+      }
+    ],
+    "layers": [
+      {
+        "layerName": "Default",
+        "isVisible": true
+      }
+    ]
+  },
+  "physicsPropertiesVO": {},
+  "verticalGuides": [
+    -0.375,
+    800.6249
+  ],
+  "horizontalGuides": [
+    -0.125,
+    480.875
+  ]
+}

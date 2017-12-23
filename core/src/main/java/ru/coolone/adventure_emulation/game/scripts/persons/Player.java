@@ -12,6 +12,7 @@ import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
+import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.game.InputGroups;
 import ru.coolone.adventure_emulation.game.InputGroups.InputGroupId;
 import ru.coolone.adventure_emulation.game.person.Person;
@@ -173,6 +174,10 @@ public class Player extends Person<ModeId>
             )
     };
     /**
+     * Link for @{@link GameCore}
+     */
+    GameCore core;
+    /**
      * Box2d world
      */
     private World world;
@@ -297,18 +302,19 @@ public class Player extends Person<ModeId>
      * Horizontal flipped image flag
      */
     private boolean flipped = false;
-
     public Player(
-            ItemWrapper root,
-            String name,
-            World world
+            GameCore core,
+            String name
     ) {
+        this.core = core;
+
         // Physic world
-        this.world = world;
+        this.world = this.core.getWorld();
 
         // Default mode
         modeId = ModeId.IDLE;
 
+        ItemWrapper root = this.core.getRootItem();
         root.getChild(name)
                 .addScript(new CompositeScript());
         root.getChild(name)

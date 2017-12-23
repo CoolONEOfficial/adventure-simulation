@@ -1,7 +1,6 @@
 package ru.coolone.adventure_emulation.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.uwsoft.editor.renderer.SceneLoader;
 
 import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.SceneScreen;
@@ -11,13 +10,23 @@ import ru.coolone.adventure_emulation.game.scripts.Button;
  * Created by coolone on 22.12.17.
  */
 
-public class MenuScreen extends SceneScreen
-        implements Button.ButtonListener {
+public class MenuScreen extends SceneScreen {
     private static final String TAG = MenuScreen.class.getSimpleName();
-    Button button;
 
-    public MenuScreen(String sceneName, SceneLoader loader) {
-        super(sceneName, loader);
+    private static final String name = "MenuScene";
+    /**
+     * Button open's @{@link GameScreen}
+     */
+    Button buttonGame;
+    /**
+     * Button exit's application
+     */
+    Button buttonExit;
+
+    public MenuScreen(
+            GameCore core
+    ) {
+        super(core, name);
     }
 
     @Override
@@ -25,19 +34,52 @@ public class MenuScreen extends SceneScreen
         super.show();
 
         // Button
-        button = new Button(
-                GameCore.getInstance().getRootItem(),
-                "button"
+        buttonGame = new Button(
+                core,
+                "buttonGame"
+        );
+        buttonGame.addListener(
+                new Button.ButtonListener() {
+                    @Override
+                    public void onButtonClick() {
+
+                    }
+
+                    @Override
+                    public void onButtonDown() {
+                    }
+
+                    @Override
+                    public void onButtonUp() {
+                        core.openGame();
+                    }
+                }
+        );
+
+        buttonExit = new Button(
+                core,
+                "buttonExit"
+        );
+        buttonExit.addListener(
+                new Button.ButtonListener() {
+                    @Override
+                    public void onButtonClick() {
+                        Gdx.app.exit();
+                    }
+
+                    @Override
+                    public void onButtonDown() {
+                    }
+
+                    @Override
+                    public void onButtonUp() {
+                    }
+                }
         );
     }
 
     @Override
     public void render(float delta) {
-        // Overlap2d scene
-        GameCore.getInstance()
-                .loader
-                .getEngine()
-                .update(Gdx.graphics.getDeltaTime());
     }
 
     @Override
@@ -63,20 +105,5 @@ public class MenuScreen extends SceneScreen
     @Override
     public void dispose() {
 
-    }
-
-    @Override
-    public void onButtonClick() {
-        Gdx.app.log(TAG, "Click");
-    }
-
-    @Override
-    public void onButtonDown() {
-        Gdx.app.log(TAG, "Down");
-    }
-
-    @Override
-    public void onButtonUp() {
-        Gdx.app.log(TAG, "Up");
     }
 }

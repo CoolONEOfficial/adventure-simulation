@@ -1,7 +1,6 @@
 package ru.coolone.adventure_emulation;
 
 import com.badlogic.gdx.Screen;
-import com.uwsoft.editor.renderer.SceneLoader;
 
 /**
  * Class, unite's LibGDX screen and Overlap2d scene
@@ -9,25 +8,30 @@ import com.uwsoft.editor.renderer.SceneLoader;
 abstract public class SceneScreen implements Screen {
 
     /**
-     * Scene loader
+     * Link for @{@link GameCore}
      */
-    SceneLoader loader;
+    protected GameCore core;
     /**
      * Scene name
      */
-    String sceneName;
+    protected String name;
 
     public SceneScreen(
-            String sceneName,
-            SceneLoader loader
+            GameCore core,
+            String name
     ) {
-        this.sceneName = sceneName;
-        this.loader = loader;
+        this.core = core;
+        this.name = name;
+    }
+
+    String getName() {
+        return name;
     }
 
     @Override
     public void show() {
-        loader.loadScene(sceneName);
+        // Load scene
+        core.loadScene(name);
     }
 
     @Override

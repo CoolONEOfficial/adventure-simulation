@@ -1,9 +1,9 @@
 package ru.coolone.adventure_emulation.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import ru.coolone.adventure_emulation.GameCore;
@@ -16,18 +16,29 @@ import ru.coolone.adventure_emulation.game.scripts.persons.Player;
 
 public class GameScreen extends SceneScreen {
 
+    public static final String TAG = GameScreen.class.getSimpleName();
+
+    private static final String name = "GameScene";
     /**
      * Player behavior for @{@link ItemWrapper}
      */
     static private Player player;
+    /**
+     * Link for @{@link GameCore}
+     */
+    private GameCore core;
     /**
      * Just for debug
      */
     private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
 
-    public GameScreen(String sceneName, SceneLoader loader) {
-        super(sceneName, loader);
+    public GameScreen(
+            GameCore core
+    ) {
+        super(core, name);
+
+        this.core = core;
     }
 
     @Override
@@ -35,11 +46,8 @@ public class GameScreen extends SceneScreen {
         super.show();
 
         player = new Player(
-                GameCore.getInstance()
-                        .getRootItem(),
-                "player",
-                GameCore.getInstance()
-                        .loader.world
+                core,
+                "player"
         );
 
         // Debug info
@@ -49,22 +57,26 @@ public class GameScreen extends SceneScreen {
 
     @Override
     public void render(float delta) {
-        // Debug text
-        GameCore.getInstance()
-                .loader.getBatch().begin();
-        font.draw(GameCore.getInstance()
-                        .loader.getBatch(),
-                "Move: " + player.getMove() + '\n'
-                        + "Grounded: " + player.isPlayerGrounded() + '\n'
-                        + "Mode: " + player.getModeId() + '\n'
-                        + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
-                        + '\t' + "Move speed: " + player.getCurrentMode().moveVelocity + '\n'
-                        + '\t' + "Move max speed: " + player.getCurrentMode().moveMaxVelocity + '\n'
-                        + "Player velocity: " + player.getPhysic().body.getLinearVelocity() + '\n'
-                        + "FPS: " + Gdx.graphics.getFramesPerSecond(),
-                10, GameCore.HEIGHT - 10);
-        GameCore.getInstance()
-                .loader.getBatch().end();
+        // Debug Box2d physics
+        debugRenderer.render(core.getWorld(), core.camera.combined);
+
+        Batch coreBatch = core.getBatch();
+        coreBatch.begin();
+
+        if (player.getPhysic().body != null)
+            // Debug player text
+            font.draw(coreBatch,
+                    "Move: " + player.getMove() + '\n'
+                            + "Grounded: " + player.isPlayerGrounded() + '\n'
+                            + "Mode: " + player.getModeId() + '\n'
+                            + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
+                            + '\t' + "Move speed: " + player.getCurrentMode().moveVelocity + '\n'
+                            + '\t' + "Move max speed: " + player.getCurrentMode().moveMaxVelocity + '\n'
+                            + "Player velocity: " + player.getPhysic().body.getLinearVelocity() + '\n'
+                            + "FPS: " + Gdx.graphics.getFramesPerSecond(),
+                    10, GameCore.HEIGHT - 10);
+
+        coreBatch.end();
     }
 
     @Override
