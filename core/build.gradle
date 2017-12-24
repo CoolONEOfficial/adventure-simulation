@@ -2,12 +2,11 @@
 eclipse.project.name = appName + '-core'
 
 dependencies {
-  compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-  compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
-  compile "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
-  compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-  compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
-  compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-  compile files('libs/winfix-overlap2d-runtime-0.1.2.jar')
-  //compile "com.underwaterapps.overlap2druntime:overlap2d-runtime-libgdx:$overlap2dVersion"
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+    compile "com.badlogicgames.box2dlights:box2dlights:$box2dlightsVersion"
+    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
+    compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    compile "com.github.CoolONEOfficial:overlap2d-runtime-libgdx:$overlap2dVersion"
 }

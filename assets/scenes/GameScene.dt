@@ -465,36 +465,47 @@
         "height": 240
       },
       {
-        "uniqueId": 46,
+        "uniqueId": 45,
         "itemIdentifier": "upButton",
         "tags": [
           "button"
         ],
-        "x": 605,
-        "y": 42,
+        "x": 655,
+        "y": 25,
         "originX": 0,
         "originY": 0,
-        "rotation": 90,
         "zIndex": 19,
         "layerName": "ui",
         "composite": {
           "sImages": [
             {
               "uniqueId": 36,
+              "itemIdentifier": "downButton",
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "originX": 55,
+              "originY": 55,
               "layerName": "Default",
-              "imageName": "right"
+              "imageName": "mbuttonbg"
             },
             {
-              "uniqueId": 47,
+              "uniqueId": 54,
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "x": -6,
+              "y": 6,
+              "originX": 55,
+              "originY": 55,
               "zIndex": 1,
+              "layerName": "normal",
+              "imageName": "mbuttonupnormal"
+            },
+            {
+              "uniqueId": 53,
+              "tags": [],
+              "originX": 55,
+              "originY": 55,
+              "zIndex": 2,
               "layerName": "pressed",
-              "imageName": "rightmask"
+              "imageName": "mbuttonupclicked"
             }
           ],
           "layers": [
@@ -512,40 +523,51 @@
             }
           ]
         },
-        "width": 113,
-        "height": 113
+        "width": 110,
+        "height": 110
       },
       {
-        "uniqueId": 60,
-        "itemIdentifier": "downButton",
+        "uniqueId": 44,
+        "itemIdentifier": "rightButton",
         "tags": [
           "button"
         ],
-        "x": 643,
-        "y": 157,
+        "x": 179,
+        "y": 25,
         "originX": 0,
         "originY": 0,
-        "rotation": 270,
         "zIndex": 20,
         "layerName": "ui",
         "composite": {
           "sImages": [
             {
-              "uniqueId": 61,
+              "uniqueId": 37,
+              "itemIdentifier": "rightButton",
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "originX": 55,
+              "originY": 55,
               "layerName": "Default",
-              "imageName": "right"
+              "imageName": "mbuttonbg"
             },
             {
-              "uniqueId": 62,
+              "uniqueId": 46,
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "x": -6,
+              "y": 6,
+              "originX": 55,
+              "originY": 55,
               "zIndex": 1,
+              "layerName": "normal",
+              "imageName": "mbuttonrightnormal"
+            },
+            {
+              "uniqueId": 50,
+              "tags": [],
+              "originX": 55,
+              "originY": 55,
+              "zIndex": 2,
               "layerName": "pressed",
-              "imageName": "rightmask"
+              "imageName": "mbuttonrightclicked"
             }
           ],
           "layers": [
@@ -563,17 +585,17 @@
             }
           ]
         },
-        "width": 113,
-        "height": 113
+        "width": 116,
+        "height": 116
       },
       {
-        "uniqueId": 57,
-        "itemIdentifier": "rightButton",
+        "uniqueId": 41,
+        "itemIdentifier": "leftButton",
         "tags": [
           "button"
         ],
-        "x": 201,
-        "y": 30,
+        "x": 41,
+        "y": 25,
         "originX": 0,
         "originY": 0,
         "zIndex": 21,
@@ -581,21 +603,33 @@
         "composite": {
           "sImages": [
             {
-              "uniqueId": 58,
+              "uniqueId": 35,
+              "itemIdentifier": "leftButton",
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "originX": 55,
+              "originY": 55,
               "layerName": "Default",
-              "imageName": "right"
+              "imageName": "mbuttonbg"
             },
             {
-              "uniqueId": 59,
+              "uniqueId": 52,
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "x": -6,
+              "y": 6,
+              "originX": 55,
+              "originY": 55,
               "zIndex": 1,
+              "layerName": "normal",
+              "imageName": "mbuttonleftnormal"
+            },
+            {
+              "uniqueId": 51,
+              "tags": [],
+              "originX": 55,
+              "originY": 55,
+              "zIndex": 2,
               "layerName": "pressed",
-              "imageName": "rightmask"
+              "imageName": "mbuttonleftclicked"
             }
           ],
           "layers": [
@@ -613,40 +647,50 @@
             }
           ]
         },
-        "width": 113,
-        "height": 113
+        "width": 116,
+        "height": 116
       },
       {
-        "uniqueId": 54,
-        "itemIdentifier": "leftButton",
+        "uniqueId": 38,
+        "itemIdentifier": "downButton",
         "tags": [
           "button"
         ],
-        "x": 152,
-        "y": 142,
+        "x": 517,
+        "y": 25,
         "originX": 0,
         "originY": 0,
-        "rotation": 180,
         "zIndex": 22,
         "layerName": "ui",
         "composite": {
           "sImages": [
             {
-              "uniqueId": 55,
+              "uniqueId": 33,
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "originX": 55,
+              "originY": 55,
               "layerName": "Default",
-              "imageName": "right"
+              "imageName": "mbuttonbg"
             },
             {
-              "uniqueId": 56,
+              "uniqueId": 39,
               "tags": [],
-              "originX": 56.5,
-              "originY": 56.5,
+              "x": -6,
+              "y": 6,
+              "originX": 55,
+              "originY": 55,
               "zIndex": 1,
+              "layerName": "normal",
+              "imageName": "mbuttondownnormal"
+            },
+            {
+              "uniqueId": 40,
+              "tags": [],
+              "originX": 55,
+              "originY": 55,
+              "zIndex": 2,
               "layerName": "pressed",
-              "imageName": "rightmask"
+              "imageName": "mbuttondownclicked"
             }
           ],
           "layers": [
@@ -664,8 +708,8 @@
             }
           ]
         },
-        "width": 113,
-        "height": 113
+        "width": 110,
+        "height": 110
       }
     ],
     "sParticleEffects": [

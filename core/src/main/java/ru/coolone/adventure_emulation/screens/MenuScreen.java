@@ -4,7 +4,8 @@ import com.badlogic.gdx.Gdx;
 
 import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.SceneScreen;
-import ru.coolone.adventure_emulation.game.scripts.Button;
+import ru.coolone.adventure_emulation.game.button.ButtonBase;
+import ru.coolone.adventure_emulation.game.button.ButtonSingletouch;
 
 /**
  * Created by coolone on 22.12.17.
@@ -15,13 +16,13 @@ public class MenuScreen extends SceneScreen {
 
     private static final String name = "MenuScene";
     /**
-     * Button open's @{@link GameScreen}
+     * ButtonBase open's @{@link GameScreen}
      */
-    Button buttonGame;
+    ButtonSingletouch buttonGame;
     /**
-     * Button exit's application
+     * ButtonBase exit's application
      */
-    Button buttonExit;
+    ButtonSingletouch buttonExit;
 
     public MenuScreen(
             GameCore core
@@ -33,13 +34,13 @@ public class MenuScreen extends SceneScreen {
     public void show() {
         super.show();
 
-        // Button
-        buttonGame = new Button(
+        // ButtonBase
+        buttonGame = new ButtonSingletouch(
                 core,
                 "buttonGame"
         );
         buttonGame.addListener(
-                new Button.ButtonListener() {
+                new ButtonBase.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                         core.setScreen(core.gameScreen);
@@ -55,12 +56,12 @@ public class MenuScreen extends SceneScreen {
                 }
         );
 
-        buttonExit = new Button(
+        buttonExit = new ButtonSingletouch(
                 core,
                 "buttonExit"
         );
         buttonExit.addListener(
-                new Button.ButtonListener() {
+                new ButtonBase.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                         Gdx.app.exit();

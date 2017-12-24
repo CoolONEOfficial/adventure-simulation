@@ -48,7 +48,7 @@ fire
   index: -1
 glow
   rotate: false
-  xy: 858, 533
+  xy: 97, 19
   size: 42, 42
   orig: 42, 42
   offset: 0, 0
@@ -123,6 +123,69 @@ lamp1
   orig: 38, 119
   offset: 0, 0
   index: -1
+mbuttonbg
+  rotate: false
+  xy: 1617, 532
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttondownclicked
+  rotate: false
+  xy: 786, 359
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttondownnormal
+  rotate: false
+  xy: 779, 247
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttonleftclicked
+  rotate: false
+  xy: 1841, 553
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttonleftnormal
+  rotate: false
+  xy: 1729, 543
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttonrightclicked
+  rotate: false
+  xy: 552, 135
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttonrightnormal
+  rotate: false
+  xy: 555, 247
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttonupclicked
+  rotate: false
+  xy: 674, 359
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
+mbuttonupnormal
+  rotate: false
+  xy: 667, 247
+  size: 110, 110
+  orig: 110, 110
+  offset: 0, 0
+  index: -1
 miniPond
   rotate: false
   xy: 303, 585
@@ -142,20 +205,6 @@ rainDrop
   xy: 1473, 866
   size: 13, 28
   orig: 13, 28
-  offset: 0, 0
-  index: -1
-right
-  rotate: false
-  xy: 674, 356
-  size: 113, 113
-  orig: 113, 113
-  offset: 0, 0
-  index: -1
-rightmask
-  rotate: false
-  xy: 789, 356
-  size: 113, 113
-  orig: 113, 113
   offset: 0, 0
   index: -1
 sheep
@@ -216,7 +265,7 @@ watertower
   index: -1
 windMain
   rotate: false
-  xy: 1617, 559
+  xy: 858, 492
   size: 24, 83
   orig: 24, 83
   offset: 0, 0

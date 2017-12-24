@@ -1,11 +1,13 @@
-package ru.coolone.adventure_emulation.game.scripts.persons;
+package ru.coolone.adventure_emulation.game.scripts;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
+import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
@@ -13,14 +15,14 @@ import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.game.InputGroups;
-import ru.coolone.adventure_emulation.game.InputGroups.InputGroupId;
+import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups.InputGroupId;
 import ru.coolone.adventure_emulation.game.person.Person;
 import ru.coolone.adventure_emulation.game.person.PersonModeAdapter;
 import ru.coolone.adventure_emulation.game.person.PersonModeAdapter.AnimationNumId;
 import ru.coolone.adventure_emulation.game.person.PersonModeAdapter.PersonModeListener;
 import ru.coolone.adventure_emulation.game.person.PersonModeData;
-import ru.coolone.adventure_emulation.game.scripts.persons.Player.ModeId;
+import ru.coolone.adventure_emulation.game.scripts.Player.ModeId;
 
 /**
  * Player behavior class
@@ -53,19 +55,19 @@ public class Player extends Person<ModeId>
      * @see PersonModeAdapter
      */
     private static final PersonModeData[] modes = new PersonModeData[]{
-            new PersonModeData<ModeId, AnimationNum>(
+            new PersonModeData<ModeId, AnimationNum>( // IDLE
                     ModeId.IDLE,
                     new AnimationNum[]{
                             AnimationNum.IDLE
                     },
                     new boolean[]{
-                            true, // Idle
-                            true, // Walk
-                            true, // Jump
-                            true, // Slide
-                            true, // Crouch
-                            true, // Crouch walk
-                            true  // Break
+                            true,  // Idle
+                            true,  // Walk
+                            true,  // Jump
+                            false, // Slide
+                            true,  // Crouch
+                            false, // Crouch walk
+                            true   // Break
                     }
             ),
             new PersonModeData<ModeId, AnimationNum>( // WALK
@@ -96,12 +98,12 @@ public class Player extends Person<ModeId>
                     },
                     new boolean[]{
                             true,  // Idle
-                            false, // Walk
+                            false,  // Walk
                             true,  // Jump
                             false, // Slide
                             false, // Crouch
-                            true, // Crouch walk
-                            false  // Break
+                            true,  // Crouch walk
+                            true   // Break
                     }
             ),
             new PersonModeData<ModeId, AnimationNum>( // SLIDE
@@ -181,12 +183,12 @@ public class Player extends Person<ModeId>
      * Box2d world
      */
     private World world;
-    private MoveDirection move = MoveDirection.NONE;
     /**
      * Components
      */
     private PhysicsBodyComponent physic;
     private SpriterComponent spriter;
+    private DimensionsComponent dimensions;
     private PersonModeAdapter[] modeAdapters = new PersonModeAdapter[]{
             new PersonModeAdapter<ModeId>( // IDLE
                     this,
@@ -218,12 +220,14 @@ public class Player extends Person<ModeId>
                         @Override
                         public boolean checkEnd() {
                             return spriter.player.getAnimation().id == AnimationNum.JUMP_LOOP.ordinal() &&
-                                    isPlayerGrounded();
+                                    isGrounded();
                         }
 
                         @Override
                         public ModeId getNextModeId() {
-                            return ModeId.IDLE;
+                            return isGrounded()
+                                    ? ModeId.IDLE
+                                    : null;
                         }
 
                         @Override
@@ -302,6 +306,7 @@ public class Player extends Person<ModeId>
      * Horizontal flipped image flag
      */
     private boolean flipped = false;
+
     public Player(
             GameCore core,
             String name
@@ -341,6 +346,11 @@ public class Player extends Person<ModeId>
     @Override
     public PhysicsBodyComponent getPhysic() {
         return physic;
+    }
+
+    @Override
+    public DimensionsComponent getDimensions() {
+        return dimensions;
     }
 
     public ModeId getModeId() {
@@ -442,7 +452,7 @@ public class Player extends Person<ModeId>
      *
      * @return Player grounded bool
      */
-    public boolean isPlayerGrounded() {
+    public boolean isGrounded() {
         // Check all contacts
         Array<Contact> contactList = world.getContactList();
         for (int i = 0; i < contactList.size; i++) {
@@ -464,12 +474,29 @@ public class Player extends Person<ModeId>
         return false;
     }
 
+    /**
+     * @return Physic body created bool
+     */
+    public boolean isSpawned() {
+        return physic.body != null;
+    }
+
+    /**
+     * @return Physic body position
+     */
     public Vector2 getPosition() {
         return physic.body.getPosition();
     }
 
+    /**
+     * @return Physic body rotation angle
+     */
     public float getAngle() {
         return physic.body.getAngle();
+    }
+
+    public Rectangle getBoundRect() {
+        return getDimensions().boundBox;
     }
 
     /**
@@ -494,15 +521,6 @@ public class Player extends Person<ModeId>
     }
 
     /**
-     * Move direction
-     */
-    public enum MoveDirection {
-        NONE,
-        LEFT,
-        RIGHT
-    }
-
-    /**
      * Person mode ids
      */
     public enum ModeId {
@@ -520,6 +538,7 @@ public class Player extends Person<ModeId>
         @Override
         public void init(Entity entity) {
             physic = ComponentRetriever.get(entity, PhysicsBodyComponent.class);
+            dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
         }
 
         @Override
@@ -586,7 +605,6 @@ public class Player extends Person<ModeId>
 
         @Override
         public void dispose() {
-
         }
     }
 }

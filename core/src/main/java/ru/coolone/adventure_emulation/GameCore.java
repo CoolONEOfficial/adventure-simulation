@@ -2,11 +2,13 @@ package ru.coolone.adventure_emulation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
@@ -19,21 +21,25 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
  */
 public class GameCore extends Game {
 
+    /**
+     * Debug output flag
+     */
     static public final boolean DEBUG = true;
-
     /**
      * Scenes and screen size
      */
     public static final int WIDTH = 800;
     public static final int HEIGHT = 480;
     private static final String TAG = GameCore.class.getSimpleName();
+    /**
+     * Screens
+     */
     public MenuScreen menuScreen;
     public GameScreen gameScreen;
     /**
-     * Camera to world
+     * Font for debug text
      */
-    public OrthographicCamera camera;
-    BitmapFont font;
+    private BitmapFont font;
     /**
      * Overlap2d scene loader
      */
@@ -42,24 +48,22 @@ public class GameCore extends Game {
      * Root item of loader
      */
     private ItemWrapper rootItem;
-
-    public ItemWrapper getRootItem() {
-        return rootItem;
-    }
+    /**
+     * Viewport to scene
+     */
+    private FitViewport viewport = new FitViewport(WIDTH, HEIGHT);
+    /**
+     * Butch for drawing ui
+     */
+    private Batch uiBatch;
 
     @Override
     public void create() {
         // Open scene
         loader = new SceneLoader();
 
-        // Camera
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false,
-                WIDTH * PhysicsBodyLoader.getScale(),
-                HEIGHT * PhysicsBodyLoader.getScale()
-        );
-
         // Debug
+        uiBatch = new SpriteBatch();
         font = new BitmapFont();
 
         // Screens
@@ -69,6 +73,14 @@ public class GameCore extends Game {
         setScreen(
                 menuScreen
         );
+    }
+
+    public ItemWrapper getRootItem() {
+        return rootItem;
+    }
+
+    public Camera getCamera() {
+        return viewport.getCamera();
     }
 
     /**
@@ -81,17 +93,24 @@ public class GameCore extends Game {
         loader = new SceneLoader();
 
         // Load scene
-        loader.loadScene(sceneName);
+        loader.loadScene(sceneName, viewport);
 
         // Refresh root item
-        this.rootItem = new ItemWrapper(loader.getRoot());
+        rootItem = new ItemWrapper(loader.getRoot());
     }
 
     /**
      * @return Current loaded scene @{@link Batch} for drawing in scene
      */
-    public Batch getBatch() {
+    public Batch getGameBatch() {
         return loader.getBatch();
+    }
+
+    /**
+     * @return Ui @{@link Batch} for drawing some top of all
+     */
+    public Batch getUiBatch() {
+        return uiBatch;
     }
 
     /**
@@ -114,17 +133,18 @@ public class GameCore extends Game {
 
         // Debug
         if (DEBUG) {
-            Batch batch = loader.getBatch();
-            batch.begin();
+            uiBatch.begin();
 
             // Current scene and screen
-            font.draw(batch,
+            font.draw(uiBatch,
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
-                            + "Scene: " + loader.getSceneVO().sceneName,
+                            + "Scene: " + loader.getSceneVO().sceneName + '\n'
+                            + "Camera position: " + viewport.getCamera().position
+                            + "World scale: " + PhysicsBodyLoader.getScale(),
                     WIDTH / 2, HEIGHT - 10
             );
 
-            batch.end();
+            uiBatch.end();
         }
     }
 

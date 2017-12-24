@@ -20,7 +20,7 @@ public class PersonModeAdapter<PersonModeId extends Enum>
      *
      * @see PersonModeListener
      */
-    private final PersonModeListener listener;
+    private final PersonModeListener<PersonModeId> listener;
     /**
      * Person mode
      */
@@ -58,6 +58,10 @@ public class PersonModeAdapter<PersonModeId extends Enum>
             // Add player listener to changed mode
             person.getSpriter().player.addListener(this);
 
+            // Stop moving
+            if (!mode.movable)
+                person.move = Person.MoveDirection.NONE;
+
             // Call onSet
             listener.onSet();
         }
@@ -82,7 +86,7 @@ public class PersonModeAdapter<PersonModeId extends Enum>
 
     public void toNextMode() {
         // Set next mode
-        PersonModeId nextModeId = (PersonModeId) listener.getNextModeId();
+        PersonModeId nextModeId = listener.getNextModeId();
         if (nextModeId != null)
             person.getModeAdapters()[nextModeId.ordinal()].activate();
     }

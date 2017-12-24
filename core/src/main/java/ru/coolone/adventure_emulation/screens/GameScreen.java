@@ -3,14 +3,18 @@ package ru.coolone.adventure_emulation.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.SceneScreen;
-import ru.coolone.adventure_emulation.game.InputGroups;
-import ru.coolone.adventure_emulation.game.scripts.Button;
-import ru.coolone.adventure_emulation.game.scripts.persons.Player;
+import ru.coolone.adventure_emulation.game.button.ButtonBase;
+import ru.coolone.adventure_emulation.game.button.ButtonMultitouch;
+import ru.coolone.adventure_emulation.game.scripts.Player;
 
 /**
  * Created by coolone on 22.12.17.
@@ -21,6 +25,7 @@ public class GameScreen extends SceneScreen {
     public static final String TAG = GameScreen.class.getSimpleName();
 
     private static final String name = "GameScene";
+    private static final int BUTTON_INDENT = 30;
     /**
      * Player behavior for @{@link ItemWrapper}
      */
@@ -28,16 +33,15 @@ public class GameScreen extends SceneScreen {
     /**
      * Move buttons
      */
-    private Button downButton;
-    private Button upButton;
-    private Button leftButton;
-    private Button rightButton;
+    private ButtonMultitouch downButton;
+    private ButtonMultitouch upButton;
+    private ButtonMultitouch leftButton;
+    private ButtonMultitouch rightButton;
     /**
      * Just for debug
      */
     private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
-
     public GameScreen(
             GameCore core
     ) {
@@ -55,12 +59,12 @@ public class GameScreen extends SceneScreen {
         );
 
         // Move buttons
-        downButton = new Button(
+        downButton = new ButtonMultitouch(
                 core,
                 "downButton"
         );
         downButton.addListener(
-                new Button.ButtonListener() {
+                new ButtonBase.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                     }
@@ -76,12 +80,12 @@ public class GameScreen extends SceneScreen {
                     }
                 }
         );
-        upButton = new Button(
+        upButton = new ButtonMultitouch(
                 core,
                 "upButton"
         );
         upButton.addListener(
-                new Button.ButtonListener() {
+                new ButtonBase.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                     }
@@ -97,14 +101,15 @@ public class GameScreen extends SceneScreen {
                     }
                 }
         );
-        leftButton = new Button(
+        leftButton = new ButtonMultitouch(
                 core,
                 "leftButton"
         );
         leftButton.addListener(
-                new Button.ButtonListener() {
+                new ButtonBase.ButtonListener() {
                     @Override
                     public void onButtonClick() {
+                        Gdx.app.log(TAG, "Left button");
                     }
 
                     @Override
@@ -118,12 +123,12 @@ public class GameScreen extends SceneScreen {
                     }
                 }
         );
-        rightButton = new Button(
+        rightButton = new ButtonMultitouch(
                 core,
                 "rightButton"
         );
         rightButton.addListener(
-                new Button.ButtonListener() {
+                new ButtonBase.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                     }
@@ -147,18 +152,83 @@ public class GameScreen extends SceneScreen {
 
     @Override
     public void render(float delta) {
+
+        if (player.isSpawned()) {
+
+            // Camera coords
+            final Vector2 playerPos = player.getPosition();
+            playerPos.x /= PhysicsBodyLoader.getScale();
+            playerPos.y /= PhysicsBodyLoader.getScale();
+//            playerPos.y += player.getBoundRect().height;
+
+            final Vector2 cameraPos = new Vector2();
+
+            switch (player.getMove()) {
+                case RIGHT:
+                    cameraPos.x = playerPos.x + (GameCore.WIDTH / 3) + player.getBoundRect().width;
+                    break;
+                case LEFT:
+                    cameraPos.x = playerPos.x - GameCore.WIDTH / 3;
+                    break;
+                case NONE:
+                    cameraPos.x = playerPos.x;
+                    break;
+            }
+
+            cameraPos.y = playerPos.y;
+
+            if (cameraPos.x < GameCore.WIDTH / 2)
+                cameraPos.x = GameCore.WIDTH / 2;
+
+            if (cameraPos.y < GameCore.HEIGHT / 2)
+                cameraPos.y = GameCore.HEIGHT / 2;
+
+            core.getCamera().position.set(
+                    new Vector3(
+                            cameraPos,
+                            0
+                    )
+            );
+
+            // --- Buttons ---
+
+            // Left
+            leftButton.setCoord(
+                    cameraPos.x - (GameCore.WIDTH / 2) + BUTTON_INDENT,
+                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
+            );
+
+            // Right
+            rightButton.setCoord(
+                    leftButton.getCoord().x + leftButton.getBoundRect().width + BUTTON_INDENT,
+                    leftButton.getCoord().y
+            );
+
+            // Up
+            upButton.setCoord(
+                    cameraPos.x + (GameCore.WIDTH / 2) - upButton.getBoundRect().width - BUTTON_INDENT,
+                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
+            );
+
+            // Down
+            downButton.setCoord(
+                    upButton.getCoord().x - downButton.getBoundRect().width - BUTTON_INDENT,
+                    upButton.getCoord().y
+            );
+        }
+
         // Debug
         if (GameCore.DEBUG) {
             // Debug Box2d physics
-            debugRenderer.render(core.getWorld(), core.camera.combined);
+            debugRenderer.render(core.getWorld(), core.getCamera().combined);
 
-            Batch coreBatch = core.getBatch();
-            coreBatch.begin();
+            Batch uiBatch = core.getUiBatch();
+            uiBatch.begin();
 
             // Debug player text
-            font.draw(coreBatch,
+            font.draw(uiBatch,
                     "Move: " + player.getMove() + '\n'
-                            + "Grounded: " + player.isPlayerGrounded() + '\n'
+                            + "Grounded: " + player.isGrounded() + '\n'
                             + "Mode: " + player.getModeId() + '\n'
                             + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
                             + '\t' + "Move speed: " + player.getCurrentMode().moveVelocity + '\n'
@@ -172,7 +242,7 @@ public class GameScreen extends SceneScreen {
                             + "FPS: " + Gdx.graphics.getFramesPerSecond(),
                     10, GameCore.HEIGHT - 10);
 
-            coreBatch.end();
+            uiBatch.end();
         }
     }
 

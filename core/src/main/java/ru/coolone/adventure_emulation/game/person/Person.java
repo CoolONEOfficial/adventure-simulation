@@ -1,33 +1,70 @@
 package ru.coolone.adventure_emulation.game.person;
 
+import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
+
+import ru.coolone.adventure_emulation.game.scripts.Player;
 
 /**
  * Person abstract class
  * Person is entity, that have mode, modeAdapter and spriter component for change animations
  */
 public abstract class Person<PlayerModeId extends Enum> {
-    // Mode id (adapters or modes)
+
+    /**
+     * Move direction
+     */
+    protected Player.MoveDirection move = Player.MoveDirection.NONE;
+    /**
+     * Current id of @{@link PersonModeData} and @{@link PersonModeAdapter}
+     */
     protected PlayerModeId modeId;
 
-    // Modes
+    /**
+     * @return Array of @{@link PersonModeData}
+     */
     public abstract PersonModeData[] getModes();
 
+    /**
+     * @return Current @{@link PersonModeData}
+     */
     public PersonModeData getCurrentMode() {
         return getModes()[modeId.ordinal()];
     }
 
-    // Mode adapters
+    /**
+     * @return Array of @{@link PersonModeAdapter}
+     */
     public abstract PersonModeAdapter[] getModeAdapters();
 
+    /**
+     * @return Current @{@link PersonModeAdapter}
+     */
     public PersonModeAdapter getCurrentModeAdapter() {
         return getModeAdapters()[modeId.ordinal()];
     }
 
-    // Spriter component
+    /**
+     * @return @{@link SpriterComponent} of person entity
+     */
     public abstract SpriterComponent getSpriter();
 
-    // Physic component
+    // --- Components ---
+
+    /**
+     * @return @{@link PhysicsBodyComponent} of person entity
+     */
     public abstract PhysicsBodyComponent getPhysic();
+
+    /**
+     * @return @{@link DimensionsComponent} of person entity
+     */
+    public abstract DimensionsComponent getDimensions();
+
+    public enum MoveDirection {
+        NONE,
+        LEFT,
+        RIGHT
+    }
 }

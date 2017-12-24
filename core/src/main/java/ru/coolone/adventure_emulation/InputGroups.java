@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.game;
+package ru.coolone.adventure_emulation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -14,7 +14,6 @@ import java.util.Map;
  */
 public class InputGroups
         implements InputProcessor {
-
     /**
      * Keycodes groups
      */
@@ -55,6 +54,7 @@ public class InputGroups
     public static InputMultiplexer multiplexer = new InputMultiplexer(
             getInstance()
     );
+    public static int touchCount = 0;
     /**
      * Array of active @{@link InputGroupId}
      */
@@ -179,11 +179,15 @@ public class InputGroups
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        touchCount++;
+
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        touchCount--;
+
         return false;
     }
 
