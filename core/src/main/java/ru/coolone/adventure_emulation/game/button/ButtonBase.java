@@ -39,7 +39,7 @@ abstract public class ButtonBase
     /**
      * Link for @{@link GameCore}
      */
-    private GameCore core;
+    protected GameCore core;
     /**
      * Transform component
      */

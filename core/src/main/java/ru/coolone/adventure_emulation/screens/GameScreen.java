@@ -9,6 +9,8 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
+import java.util.ArrayList;
+
 import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.SceneScreen;
@@ -42,6 +44,7 @@ public class GameScreen extends SceneScreen {
      */
     private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
+
     public GameScreen(
             GameCore core
     ) {
@@ -159,30 +162,28 @@ public class GameScreen extends SceneScreen {
             final Vector2 playerPos = player.getPosition();
             playerPos.x /= PhysicsBodyLoader.getScale();
             playerPos.y /= PhysicsBodyLoader.getScale();
-//            playerPos.y += player.getBoundRect().height;
 
             final Vector2 cameraPos = new Vector2();
 
-            switch (player.getMove()) {
-                case RIGHT:
-                    cameraPos.x = playerPos.x + (GameCore.WIDTH / 3) + player.getBoundRect().width;
-                    break;
-                case LEFT:
-                    cameraPos.x = playerPos.x - GameCore.WIDTH / 3;
-                    break;
-                case NONE:
-                    cameraPos.x = playerPos.x;
-                    break;
-            }
+            final ArrayList<InputGroups.InputGroupId> activeGroups = InputGroups.getActiveGroups();
+            final float playerCenterX = playerPos.x + (player.getBoundRect().width / 2);
+            cameraPos.x = playerCenterX;
+
+            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
+                cameraPos.x -= GameCore.WIDTH / 3;
+            else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
+                cameraPos.x += (GameCore.WIDTH / 3);
+
 
             cameraPos.y = playerPos.y;
 
+            // Limit coords
             if (cameraPos.x < GameCore.WIDTH / 2)
                 cameraPos.x = GameCore.WIDTH / 2;
-
             if (cameraPos.y < GameCore.HEIGHT / 2)
                 cameraPos.y = GameCore.HEIGHT / 2;
 
+            // Set camera coords
             core.getCamera().position.set(
                     new Vector3(
                             cameraPos,
@@ -240,7 +241,7 @@ public class GameScreen extends SceneScreen {
                                             : "null"
                             ) + '\n'
                             + "FPS: " + Gdx.graphics.getFramesPerSecond(),
-                    10, GameCore.HEIGHT - 10);
+                    10, Gdx.graphics.getHeight() - 10);
 
             uiBatch.end();
         }

@@ -141,7 +141,7 @@ public class GameCore extends Game {
                             + "Scene: " + loader.getSceneVO().sceneName + '\n'
                             + "Camera position: " + viewport.getCamera().position
                             + "World scale: " + PhysicsBodyLoader.getScale(),
-                    WIDTH / 2, HEIGHT - 10
+                    Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );
 
             uiBatch.end();
