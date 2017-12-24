@@ -4,8 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
-
-import java.awt.Rectangle;
+import com.badlogic.gdx.math.Rectangle;
 
 import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.InputGroups;
@@ -23,13 +22,18 @@ public class ButtonMultitouch extends ButtonBase implements InputProcessor {
 
     public ButtonMultitouch(GameCore core, String name) {
         super(core, name);
+        setTouchState(false);
+    }
+
+    @Override
+    void setTouchState(boolean isTouched) {
+        getLayerPressed().isVisible = isTouched;
+        getLayerNormal().isVisible = !isTouched;
     }
 
     @Override
     public void init(Entity entity) {
         super.init(entity);
-
-        button.setTouchState(false);
 
         InputGroups.multiplexer.addProcessor(this);
     }
@@ -69,10 +73,6 @@ public class ButtonMultitouch extends ButtonBase implements InputProcessor {
     private boolean intercept(float x, float y) {
         y = Gdx.graphics.getHeight() - y; // y is down!
 
-        final Vector2 scale = new Vector2(
-                Gdx.graphics.getWidth() / GameCore.WIDTH,
-                Gdx.graphics.getHeight() / GameCore.HEIGHT
-        );
 
         final Vector2 cameraCoord = new Vector2(
                 core.getCamera().position.x - (GameCore.WIDTH / 2),
@@ -80,19 +80,27 @@ public class ButtonMultitouch extends ButtonBase implements InputProcessor {
         );
 
         final Rectangle buttonRect = new Rectangle(
-                (int) ((getCoord().x * scale.x) - cameraCoord.x),
-                (int) ((getCoord().y * scale.y) - cameraCoord.y),
-                (int) (getBoundRect().width * scale.x),
-                (int) (getBoundRect().height * scale.y)
+                getCoord().x - cameraCoord.x,
+                getCoord().y - cameraCoord.y,
+                getBoundRect().width,
+                getBoundRect().height
         );
+
+        final Vector2 scale = new Vector2(
+                (float) Gdx.graphics.getWidth() / GameCore.WIDTH,
+                (float) Gdx.graphics.getHeight() / GameCore.HEIGHT
+        );
+
+        buttonRect.x *= scale.x;
+        buttonRect.y *= scale.y;
+        buttonRect.width *= scale.x;
+        buttonRect.height *= scale.y;
 
         return buttonRect.contains(x, y);
     }
 
     private boolean intercept(Vector2 coord) {
-        return intercept(
-                coord.x, coord.y
-        );
+        return intercept(coord.x, coord.y);
     }
 
     @Override
@@ -102,7 +110,7 @@ public class ButtonMultitouch extends ButtonBase implements InputProcessor {
             touchPointer = pointer;
 
             // Change state
-            this.button.setTouchState(true);
+            setTouchState(true);
 
             // Handle
             down();
@@ -115,7 +123,7 @@ public class ButtonMultitouch extends ButtonBase implements InputProcessor {
         // Check pointer
         if (touchPointer == pointer) {
             // Change state
-            this.button.setTouchState(false);
+            setTouchState(false);
 
             // Handle
             click();

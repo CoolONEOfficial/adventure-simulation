@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
-import com.uwsoft.editor.renderer.components.additional.ButtonComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
@@ -22,10 +21,7 @@ import ru.coolone.adventure_emulation.GameCore;
 abstract public class ButtonBase
         implements IScript {
     protected static final String TAG = ButtonBase.class.getSimpleName();
-    /**
-     * Button component
-     */
-    public ButtonComponent button;
+
     /**
      * Composite layers component
      */
@@ -55,7 +51,7 @@ abstract public class ButtonBase
     /**
      * Layer with clicked button
      */
-    private LayerItemVO layerClicked;
+    private LayerItemVO layerPressed;
 
     public ButtonBase(
             GameCore core,
@@ -69,19 +65,21 @@ abstract public class ButtonBase
                 .addScript(this);
     }
 
+    abstract void setTouchState(boolean touchState);
+
     public LayerItemVO getLayerNormal() {
         return layerNormal;
     }
 
-    public LayerItemVO getLayerClicked() {
-        return layerClicked;
+    public LayerItemVO getLayerPressed() {
+        return layerPressed;
     }
 
     @Override
     public void init(Entity entity) {
         // Layers component
         layers = ComponentRetriever.get(entity, LayerMapComponent.class);
-        layerClicked = layers.getLayer("clicked");
+        layerPressed = layers.getLayer("pressed");
         layerNormal = layers.getLayer("normal");
 
         // Transform component
@@ -89,10 +87,6 @@ abstract public class ButtonBase
 
         // Dimension component
         dimension = ComponentRetriever.get(entity, DimensionsComponent.class);
-
-        // Button touch component
-        button = new ButtonComponent();
-        entity.add(button);
     }
 
     public void addListener(ButtonListener listener) {

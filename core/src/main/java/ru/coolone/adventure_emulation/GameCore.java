@@ -94,6 +94,7 @@ public class GameCore extends Game {
 
         // Load scene
         loader.loadScene(sceneName, viewport);
+        Gdx.app.log(TAG, "Horizontal: " + loader.getSceneVO().horizontalGuides);
 
         // Refresh root item
         rootItem = new ItemWrapper(loader.getRoot());
@@ -139,7 +140,7 @@ public class GameCore extends Game {
             font.draw(uiBatch,
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
                             + "Scene: " + loader.getSceneVO().sceneName + '\n'
-                            + "Camera position: " + viewport.getCamera().position
+                            + "Camera position: " + viewport.getCamera().position + '\n'
                             + "World scale: " + PhysicsBodyLoader.getScale(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );

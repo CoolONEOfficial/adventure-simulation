@@ -17,8 +17,22 @@ public class ButtonSingletouch extends ButtonBase
     }
 
     @Override
+    void setTouchState(boolean touchState) {
+        button.setTouchState(touchState);
+    }
+
+    /**
+     * Button component
+     */
+    public ButtonComponent button;
+
+    @Override
     public void init(Entity entity) {
         super.init(entity);
+        // Button touch component
+        button = new ButtonComponent();
+        entity.add(button);
+
         button.addListener(this);
     }
 
