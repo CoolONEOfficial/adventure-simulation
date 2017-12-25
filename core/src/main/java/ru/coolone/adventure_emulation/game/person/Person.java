@@ -1,9 +1,11 @@
 package ru.coolone.adventure_emulation.game.person;
 
+import com.badlogic.gdx.InputAdapter;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 
+import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.game.scripts.Player;
 
 /**
@@ -62,6 +64,11 @@ public abstract class Person<PlayerModeId extends Enum> {
      */
     public abstract DimensionsComponent getDimensions();
 
+    public abstract InputGroups.InputGroupsListener getInputListener();
+
+    /**
+     * Move direction
+     */
     public enum MoveDirection {
         NONE,
         LEFT,

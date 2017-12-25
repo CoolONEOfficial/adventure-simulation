@@ -3,6 +3,8 @@ package ru.coolone.adventure_emulation.game.person;
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Mainline;
 
+import ru.coolone.adventure_emulation.InputGroups;
+
 /**
  * Adapter, for {@link PersonModeData}, that will be
  *
@@ -89,6 +91,10 @@ public class PersonModeAdapter<PersonModeId extends Enum>
         PersonModeId nextModeId = listener.getNextModeId();
         if (nextModeId != null)
             person.getModeAdapters()[nextModeId.ordinal()].activate();
+
+        // Handle activated @InputGroupId's
+        for(InputGroups.InputGroupId mInputGroupId: InputGroups.getActiveGroups())
+            person.getInputListener().onInputGroupActivate(mInputGroupId);
     }
 
     @Override
