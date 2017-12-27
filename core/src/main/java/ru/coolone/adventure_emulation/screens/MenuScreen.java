@@ -3,26 +3,27 @@ package ru.coolone.adventure_emulation.screens;
 import com.badlogic.gdx.Gdx;
 
 import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.SceneScreen;
-import ru.coolone.adventure_emulation.game.button.ButtonBase;
-import ru.coolone.adventure_emulation.game.button.ButtonSingletouch;
+import ru.coolone.adventure_emulation.screen.ScreenScene;
+import ru.coolone.adventure_emulation.game.button.Button;
 
 /**
- * Created by coolone on 22.12.17.
+ * Main menu scene
+ *
+ * @author coolone
  */
 
-public class MenuScreen extends SceneScreen {
+public class MenuScreen extends ScreenScene {
     private static final String TAG = MenuScreen.class.getSimpleName();
 
     private static final String name = "MenuScene";
     /**
      * ButtonBase open's @{@link GameScreen}
      */
-    ButtonSingletouch buttonGame;
+    private Button buttonPlay;
     /**
      * ButtonBase exit's application
      */
-    ButtonSingletouch buttonExit;
+    private Button buttonExit;
 
     public MenuScreen(
             GameCore core
@@ -34,16 +35,17 @@ public class MenuScreen extends SceneScreen {
     public void show() {
         super.show();
 
-        // ButtonBase
-        buttonGame = new ButtonSingletouch(
+        // Button play
+        buttonPlay = new Button(
                 core,
-                "buttonGame"
+                "buttonPlay"
         );
-        buttonGame.addListener(
-                new ButtonBase.ButtonListener() {
+        buttonPlay.addListener(
+                new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
-                        core.setScreen(core.gameScreen);
+                        core.getScreenManager()
+                                .openScreen(GameScreen.class);
                     }
 
                     @Override
@@ -56,12 +58,13 @@ public class MenuScreen extends SceneScreen {
                 }
         );
 
-        buttonExit = new ButtonSingletouch(
+        // Button exit
+        buttonExit = new Button(
                 core,
                 "buttonExit"
         );
         buttonExit.addListener(
-                new ButtonBase.ButtonListener() {
+                new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                         Gdx.app.exit();
@@ -99,7 +102,8 @@ public class MenuScreen extends SceneScreen {
 
     @Override
     public void hide() {
-
+        buttonExit.dispose();
+        buttonPlay.dispose();
     }
 
     @Override

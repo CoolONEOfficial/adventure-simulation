@@ -1,7 +1,6 @@
 package ru.coolone.adventure_emulation.game.scripts;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -16,8 +15,8 @@ import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.InputGroups;
-import ru.coolone.adventure_emulation.InputGroups.InputGroupId;
+import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.input.InputGroups.InputGroupId;
 import ru.coolone.adventure_emulation.game.person.Person;
 import ru.coolone.adventure_emulation.game.person.PersonModeAdapter;
 import ru.coolone.adventure_emulation.game.person.PersonModeAdapter.AnimationNumId;
@@ -40,11 +39,11 @@ public class Player extends Person<ModeId>
      *
      * @see PersonModeData
      */
-    private static final float IDLE_MOVE_VELOCITY = 50f;
+    private static final float IDLE_MOVE_VELOCITY = 5000f;
     private static final float IDLE_MOVE_MAX_VELOCITY = 10f;
-    private static final float JUMP_MOVE_VELOCITY = 25f;
+    private static final float JUMP_MOVE_VELOCITY = 2000f;
     private static final float JUMP_MOVE_MAX_VELOCITY = 10f;
-    private static final float CROUCH_MOVE_VELOCITY = 50f;
+    private static final float CROUCH_MOVE_VELOCITY = 5000f;
     private static final float CROUCH_MOVE_MAX_VELOCITY = 6f;
     /**
      * Jump body velocity
@@ -99,7 +98,7 @@ public class Player extends Person<ModeId>
                     },
                     new boolean[]{
                             true,  // Idle
-                            false,  // Walk
+                            false, // Walk
                             true,  // Jump
                             false, // Slide
                             false, // Crouch
@@ -315,12 +314,16 @@ public class Player extends Person<ModeId>
         this.core = core;
 
         // Physic world
-        this.world = this.core.getWorld();
+        this.world = this.core
+                .getScreenManager()
+                .getWorld();
 
         // Default mode
         modeId = ModeId.IDLE;
 
-        ItemWrapper root = this.core.getRootItem();
+        ItemWrapper root = this.core
+                .getScreenManager()
+                .getRootItem();
         root.getChild(name)
                 .addScript(new CompositeScript());
         root.getChild(name)
@@ -561,14 +564,14 @@ public class Player extends Person<ModeId>
                 switch (move) {
                     case LEFT:
                         physic.body.applyLinearImpulse(
-                                new Vector2(-currentMode.moveVelocity, 0),
+                                new Vector2(-currentMode.moveVelocity * delta, 0),
                                 physic.body.getPosition(),
                                 true
                         );
                         break;
                     case RIGHT:
                         physic.body.applyLinearImpulse(
-                                new Vector2(currentMode.moveVelocity, 0),
+                                new Vector2(currentMode.moveVelocity * delta, 0),
                                 physic.body.getPosition(),
                                 true
                         );

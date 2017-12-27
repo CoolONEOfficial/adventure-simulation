@@ -12,17 +12,17 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 import java.util.ArrayList;
 
 import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.InputGroups;
-import ru.coolone.adventure_emulation.SceneScreen;
-import ru.coolone.adventure_emulation.game.button.ButtonBase;
-import ru.coolone.adventure_emulation.game.button.ButtonMultitouch;
+import ru.coolone.adventure_emulation.game.button.Button;
+import ru.coolone.adventure_emulation.game.scripts.Joystick;
 import ru.coolone.adventure_emulation.game.scripts.Player;
+import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.screen.ScreenScene;
 
 /**
  * Created by coolone on 22.12.17.
  */
 
-public class GameScreen extends SceneScreen {
+public class GameScreen extends ScreenScene {
 
     public static final String TAG = GameScreen.class.getSimpleName();
 
@@ -35,10 +35,14 @@ public class GameScreen extends SceneScreen {
     /**
      * Move buttons
      */
-    private ButtonMultitouch downButton;
-    private ButtonMultitouch upButton;
-    private ButtonMultitouch leftButton;
-    private ButtonMultitouch rightButton;
+    private Button downButton;
+    private Button upButton;
+    private Button leftButton;
+    private Button rightButton;
+    /**
+     * Joystick for move @{@link Player}
+     */
+    private Joystick joystick;
     /**
      * Just for debug
      */
@@ -61,13 +65,19 @@ public class GameScreen extends SceneScreen {
                 "player"
         );
 
+        // Joystick
+        joystick = new Joystick(
+                core,
+                "joystick"
+        );
+
         // Move buttons
-        downButton = new ButtonMultitouch(
+        downButton = new Button(
                 core,
                 "downButton"
         );
         downButton.addListener(
-                new ButtonBase.ButtonListener() {
+                new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                     }
@@ -83,12 +93,12 @@ public class GameScreen extends SceneScreen {
                     }
                 }
         );
-        upButton = new ButtonMultitouch(
+        upButton = new Button(
                 core,
                 "upButton"
         );
         upButton.addListener(
-                new ButtonBase.ButtonListener() {
+                new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                     }
@@ -104,12 +114,12 @@ public class GameScreen extends SceneScreen {
                     }
                 }
         );
-        leftButton = new ButtonMultitouch(
+        leftButton = new Button(
                 core,
                 "leftButton"
         );
         leftButton.addListener(
-                new ButtonBase.ButtonListener() {
+                new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                         Gdx.app.log(TAG, "Left button");
@@ -126,12 +136,12 @@ public class GameScreen extends SceneScreen {
                     }
                 }
         );
-        rightButton = new ButtonMultitouch(
+        rightButton = new Button(
                 core,
                 "rightButton"
         );
         rightButton.addListener(
-                new ButtonBase.ButtonListener() {
+                new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
                     }
@@ -184,7 +194,9 @@ public class GameScreen extends SceneScreen {
                 cameraPos.y = GameCore.HEIGHT / 2;
 
             // Set camera coords
-            core.getCamera().position.set(
+            core.getScreenManager()
+                    .getCamera()
+                    .position.set(
                     new Vector3(
                             cameraPos,
                             0
@@ -221,7 +233,10 @@ public class GameScreen extends SceneScreen {
         // Debug
         if (GameCore.DEBUG) {
             // Debug Box2d physics
-            debugRenderer.render(core.getWorld(), core.getCamera().combined);
+            debugRenderer.render(
+                    core.getScreenManager().getWorld(),
+                    core.getScreenManager().getCamera().combined
+            );
 
             Batch uiBatch = core.getUiBatch();
             uiBatch.begin();
@@ -264,7 +279,10 @@ public class GameScreen extends SceneScreen {
 
     @Override
     public void hide() {
-
+        leftButton.dispose();
+        rightButton.dispose();
+        upButton.dispose();
+        downButton.dispose();
     }
 
     @Override

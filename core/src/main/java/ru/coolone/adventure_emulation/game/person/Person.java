@@ -1,16 +1,17 @@
 package ru.coolone.adventure_emulation.game.person;
 
-import com.badlogic.gdx.InputAdapter;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 
-import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.game.scripts.Player;
+import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
  * Person abstract class
  * Person is entity, that have mode, modeAdapter and spriter component for change animations
+ *
+ * @author coolone
  */
 public abstract class Person<PlayerModeId extends Enum> {
 

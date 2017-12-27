@@ -7,12 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
-import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
+import ru.coolone.adventure_emulation.screen.ScreenManager;
+import ru.coolone.adventure_emulation.screen.ScreenScene;
 import ru.coolone.adventure_emulation.screens.GameScreen;
 import ru.coolone.adventure_emulation.screens.MenuScreen;
 
@@ -20,6 +21,8 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
 public class GameCore extends Game {
+
+    private static final String TAG = GameCore.class.getSimpleName();
 
     /**
      * Debug output flag
@@ -30,81 +33,36 @@ public class GameCore extends Game {
      */
     public static final int WIDTH = 800;
     public static final int HEIGHT = 480;
-    private static final String TAG = GameCore.class.getSimpleName();
     /**
-     * Screens
+     * Screen class pointer, that will be opens on startup
      */
-    public MenuScreen menuScreen;
-    public GameScreen gameScreen;
+    private static final Class<? extends ScreenScene> START_SCREEN = MenuScreen.class;
     /**
      * Font for debug text
      */
     private BitmapFont font;
     /**
-     * Overlap2d scene loader
-     */
-    private SceneLoader loader;
-    /**
-     * Root item of loader
-     */
-    private ItemWrapper rootItem;
-    /**
-     * Viewport to scene
-     */
-    private FitViewport viewport = new FitViewport(WIDTH, HEIGHT);
-    /**
      * Butch for drawing ui
      */
     private Batch uiBatch;
+    /**
+     * Manages @{@link ru.coolone.adventure_emulation.screen.ScreenScene}'s
+     */
+    private ScreenManager screenManager;
 
     @Override
     public void create() {
-        // Open scene
-        loader = new SceneLoader();
+        // Screen manager
+        screenManager = new ScreenManager(this);
+        screenManager.openScreen(START_SCREEN);
 
         // Debug
         uiBatch = new SpriteBatch();
         font = new BitmapFont();
-
-        // Screens
-        menuScreen = new MenuScreen(this);
-        gameScreen = new GameScreen(this);
-
-        setScreen(
-                menuScreen
-        );
     }
 
-    public ItemWrapper getRootItem() {
-        return rootItem;
-    }
-
-    public Camera getCamera() {
-        return viewport.getCamera();
-    }
-
-    /**
-     * Loads and opens scene
-     *
-     * @param sceneName Name of loading scene
-     */
-    public void loadScene(String sceneName) {
-        // Refresh loader
-        loader = new SceneLoader();
-
-        // Load scene
-        loader.loadScene(sceneName, viewport);
-        Gdx.app.log(TAG, "Horizontal: " + loader.getSceneVO().horizontalGuides);
-
-        // Refresh root item
-        rootItem = new ItemWrapper(loader.getRoot());
-    }
-
-    /**
-     * @return Current loaded scene @{@link Batch} for drawing in scene
-     */
-    public Batch getGameBatch() {
-        return loader.getBatch();
+    public ScreenManager getScreenManager() {
+        return screenManager;
     }
 
     /**
@@ -114,11 +72,14 @@ public class GameCore extends Game {
         return uiBatch;
     }
 
-    /**
-     * @return Current loaded scene @{@link World}
-     */
-    public World getWorld() {
-        return loader.world;
+    public Vector2 screenToWorldCoord(final Vector2 coord) {
+        Vector3 screenCoord3d = new Vector3(coord.x, coord.y, 0f);
+
+        Vector3 worldCoord3d = screenManager.getCamera().unproject(screenCoord3d);
+
+        Vector2 worldCoord = new Vector2(worldCoord3d.x, worldCoord3d.y);
+
+        return worldCoord;
     }
 
     @Override
@@ -127,7 +88,7 @@ public class GameCore extends Game {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Update Overlap2d scene
-        loader.getEngine().update(Gdx.graphics.getDeltaTime());
+        screenManager.updateEngine(Gdx.graphics.getDeltaTime());
 
         // Render current screen
         super.render();
@@ -139,8 +100,8 @@ public class GameCore extends Game {
             // Current scene and screen
             font.draw(uiBatch,
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
-                            + "Scene: " + loader.getSceneVO().sceneName + '\n'
-                            + "Camera position: " + viewport.getCamera().position + '\n'
+                            + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
+                            + "Camera position: " + screenManager.getCamera().position + '\n'
                             + "World scale: " + PhysicsBodyLoader.getScale(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );

@@ -3,12 +3,13 @@ package ru.coolone.adventure_emulation.game.person;
 import com.brashmonkey.spriter.Animation;
 import com.brashmonkey.spriter.Mainline;
 
-import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
  * Adapter, for {@link PersonModeData}, that will be
  *
  * @see PersonModeData
+ * @author coolone
  */
 public class PersonModeAdapter<PersonModeId extends Enum>
         implements com.brashmonkey.spriter.Player.PlayerListener {

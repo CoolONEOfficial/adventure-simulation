@@ -1,11 +1,15 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.screen;
 
 import com.badlogic.gdx.Screen;
 
+import ru.coolone.adventure_emulation.GameCore;
+
 /**
- * Class, unite's LibGDX screen and Overlap2d scene
+ * Class, unite's LibGDX screen and @{@link com.uwsoft.editor.renderer.SceneLoader} scene
+ *
+ * @author coolone
  */
-abstract public class SceneScreen implements Screen {
+abstract public class ScreenScene implements Screen {
 
     /**
      * Link for @{@link GameCore}
@@ -16,7 +20,7 @@ abstract public class SceneScreen implements Screen {
      */
     protected String name;
 
-    public SceneScreen(
+    public ScreenScene(
             GameCore core,
             String name
     ) {
@@ -24,14 +28,12 @@ abstract public class SceneScreen implements Screen {
         this.name = name;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
     @Override
     public void show() {
-        // Load scene
-        core.loadScene(name);
     }
 
     @Override
@@ -40,26 +42,21 @@ abstract public class SceneScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void hide() {
-
     }
 
     @Override
     public void dispose() {
-
     }
 }

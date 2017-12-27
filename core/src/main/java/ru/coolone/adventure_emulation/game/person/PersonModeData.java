@@ -2,6 +2,8 @@ package ru.coolone.adventure_emulation.game.person;
 
 /**
  * Person mode data (state, e.g. walk, jump, slide etc.)
+ *
+ * @author coolone
  */
 public class PersonModeData<PersonModeId extends Enum, PersonAnimationNum extends Enum> {
     private static final String TAG = com.brashmonkey.spriter.Player.PlayerListener.class.getSimpleName();

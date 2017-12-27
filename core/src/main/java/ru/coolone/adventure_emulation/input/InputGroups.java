@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -11,6 +11,8 @@ import java.util.Map;
 
 /**
  * Class, handle's group of keycode's to {@link InputGroupId}
+ *
+ * @author coolone
  */
 public class InputGroups
         implements InputProcessor {
