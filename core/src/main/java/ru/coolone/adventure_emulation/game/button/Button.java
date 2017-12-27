@@ -176,7 +176,8 @@ public class Button extends Composite
     /**
      * Pointer of touch, pressed at button
      */
-    private int touchPointer;
+    private static final int TOUCH_POINTER_EMPTY = -1;
+    private int touchPointer = TOUCH_POINTER_EMPTY;
 
     @Override
     public boolean keyDown(int keycode) {
@@ -266,6 +267,9 @@ public class Button extends Composite
             // Handle
             click();
             up();
+
+            // Clear touch pointer
+            touchPointer = TOUCH_POINTER_EMPTY;
         }
         return false;
     }

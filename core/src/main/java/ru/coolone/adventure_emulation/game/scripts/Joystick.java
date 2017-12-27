@@ -77,7 +77,11 @@ public class Joystick extends Composite
         return false;
     }
 
-    private int touchPointer = -1;
+    /**
+     * Pressed touch pointer
+     */
+    private static final int TOUCH_POINTER_EMPTY = -1;
+    private int touchPointer = TOUCH_POINTER_EMPTY;
 
     private boolean intercepts(float x, float y) {
         x -= transform.x + bg.transform.x + bg.dimensions.width / 2;
@@ -126,7 +130,7 @@ public class Joystick extends Composite
                     - stick.dimensions.height / 2f;
 
             // Clear touchPointer
-            touchPointer = -1;
+            touchPointer = TOUCH_POINTER_EMPTY;
         }
 
         return false;
