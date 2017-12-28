@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.game.button;
+package ru.coolone.adventure_emulation.game.scripts.button;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;

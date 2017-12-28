@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.game.scripts;
+package ru.coolone.adventure_emulation.game.scripts.joystick;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.InputProcessor;

@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
+import com.uwsoft.editor.renderer.systems.PhysicsSystem;
 
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
@@ -102,7 +104,8 @@ public class GameCore extends Game {
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
                             + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
                             + "Camera position: " + screenManager.getCamera().position + '\n'
-                            + "World scale: " + PhysicsBodyLoader.getScale(),
+                            + "World scale: " + PhysicsBodyLoader.getScale() + '\n'
+                    + "Delta: " + Gdx.graphics.getDeltaTime(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );
 
@@ -112,5 +115,12 @@ public class GameCore extends Game {
 
     @Override
     public void dispose() {
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        screenManager.openScreen(screenManager.getCurrentScreen().getClass());
+
+        super.resize(width, height);
     }
 }

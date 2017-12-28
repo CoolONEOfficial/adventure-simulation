@@ -3,8 +3,8 @@ package ru.coolone.adventure_emulation.screens;
 import com.badlogic.gdx.Gdx;
 
 import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.game.scripts.button.Button;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
-import ru.coolone.adventure_emulation.game.button.Button;
 
 /**
  * Main menu scene
