@@ -240,8 +240,8 @@ public class GameScreen extends ScreenScene {
 
             // Debug player text
             font.draw(uiBatch,
-                    //"Move: " + player.getMove() + '\n'
-                             "Grounded: " + player.isGrounded() + '\n'
+                    "Move: " + player.getMoveDir() + '\n'
+                            +"Grounded: " + player.isGrounded() + '\n'
                             + "Mode: " + player.getCurrentModeId() + '\n'
                             + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
                             + '\t' + "Move velocity: " + player.getCurrentMode().moveVelocity + '\n'

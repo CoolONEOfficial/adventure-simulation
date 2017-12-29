@@ -2,21 +2,17 @@ package ru.coolone.adventure_emulation;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
-import com.uwsoft.editor.renderer.systems.PhysicsSystem;
 
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
-import ru.coolone.adventure_emulation.screens.GameScreen;
 import ru.coolone.adventure_emulation.screens.MenuScreen;
 
 /**
@@ -105,7 +101,7 @@ public class GameCore extends Game {
                             + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
                             + "Camera position: " + screenManager.getCamera().position + '\n'
                             + "World scale: " + PhysicsBodyLoader.getScale() + '\n'
-                    + "Delta: " + Gdx.graphics.getDeltaTime(),
+                            + "Active input groups: " + InputGroups.getActiveGroups(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );
 

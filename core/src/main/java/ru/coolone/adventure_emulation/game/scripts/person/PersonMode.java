@@ -1,9 +1,5 @@
 package ru.coolone.adventure_emulation.game.scripts.person;
 
-import com.badlogic.gdx.Gdx;
-
-import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
-
 import java.util.ArrayList;
 
 /**
@@ -34,9 +30,27 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     final boolean animationStartLoopEnd;
 
     /**
-     * Map of change @{@link PersonMode}'s
+     * Map of @{@link ChangeMode}'s of @{@link PersonMode}'s
      */
-    final boolean[] changeMap;
+    final ChangeMode[] changeMap;
+
+    /**
+     * Change modes
+     */
+    public enum ChangeMode {
+        /**
+         * Change without end animation anyway
+         */
+        ALLOWED_HARD,
+        /**
+         * Change with end animation if he available
+         */
+        ALLOWED_SOFT,
+        /**
+         * Change not allowed
+         */
+        NOT_ALLOWED
+    }
 
     /**
      * Movable flag
@@ -79,7 +93,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
             float moveAcceleration,
             float moveVelocity,
             AnimationId[] animationIds,
-            boolean[] changeMap,
+            ChangeMode[] changeMap,
             Behavior<PersonModeId> behavior,
             Listener listener
     ) {
@@ -98,7 +112,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
 
     public PersonMode(
             AnimationId[] animationIds,
-            boolean[] changeMap,
+            ChangeMode[] changeMap,
             Behavior<PersonModeId> behavior
     ) {
         this(false, 0.0f, 0.0f,
@@ -115,7 +129,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
      */
     public PersonMode(
             AnimationId[] animationIds,
-            boolean[] changeMap,
+            ChangeMode[] changeMap,
             Behavior<PersonModeId> behavior,
             Listener listener
     ) {
@@ -132,7 +146,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     public PersonMode(
             float moveAcceleration, float moveVelocity,
             AnimationId[] animationIds,
-            boolean[] changeMap,
+            ChangeMode[] changeMap,
             Behavior<PersonModeId> behavior
     ) {
         this(true, moveAcceleration, moveVelocity,
@@ -150,7 +164,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     public PersonMode(
             float moveAcceleration, float moveVelocity,
             AnimationId[] animationIds,
-            boolean[] changeMap,
+            ChangeMode[] changeMap,
             Behavior<PersonModeId> behavior,
             Listener listener
     ) {
@@ -177,7 +191,9 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     }
 
     AnimationId getAnimationId(AnimationType type) {
-        return animationIds[type.ordinal()];
+        return (animationIds.length > type.ordinal())
+                ? animationIds[type.ordinal()]
+                : null;
     }
 
     /**
@@ -197,6 +213,13 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
          * @return Next @{@link PersonMode} id
          */
         PersonModeId getNextModeId();
+
+        /**
+         * Called on end of end animation and if mode canceled
+         *
+         * @return Default next @{@link PersonMode} id
+         */
+        PersonModeId getDefaultNextModeId();
     }
 
     /**
@@ -204,13 +227,13 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
      */
     static abstract public class Listener {
         /**
-         * Called on active this @{@link PersonMode}
+         * Called on activate this @{@link PersonMode}
          */
         protected void onActivate() {
         }
 
         /**
-         * Called on deactive this @{@link PersonMode}
+         * Called on deactivate this @{@link PersonMode}
          */
         protected void onDeactivate() {
         }

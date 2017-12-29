@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 
+import org.omg.IOP.TAG_ALTERNATE_IIOP_ADDRESS;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +18,22 @@ import java.util.Map;
  */
 public class InputGroups
         implements InputProcessor {
+    private static final String TAG = InputGroups.class.getSimpleName();
+
+    /**
+     * Input groups ids
+     */
+    public enum InputGroupId {
+        JUMP,
+        MOVE_LEFT,
+        CROUCH,
+        MOVE_RIGHT
+    }
+
     /**
      * Keycodes groups
      */
-    static final Map<InputGroupId, Integer[]> keyGroups = new HashMap<InputGroupId, Integer[]>() {{
+    private static final Map<InputGroupId, Integer[]> keyGroups = new HashMap<InputGroupId, Integer[]>() {{
         put(
                 InputGroupId.JUMP,
                 new Integer[]{
@@ -56,7 +70,6 @@ public class InputGroups
     public static InputMultiplexer multiplexer = new InputMultiplexer(
             getInstance()
     );
-    public static int touchCount = 0;
     /**
      * Array of active @{@link InputGroupId}
      */
@@ -70,6 +83,8 @@ public class InputGroups
         // Set input processor
         Gdx.input.setInputProcessor(multiplexer);
     }
+
+    // TODO: delete signgleton
 
     public static InputGroups getInstance() {
         return SingletonHolder.HOLDER_INSTANCE;
@@ -122,6 +137,8 @@ public class InputGroups
      * @param groupId Id of activated group
      */
     public static void groupActivate(InputGroupId groupId) {
+        Gdx.app.log(TAG, "Input group " + groupId + " activating...");
+
         // Start group
         activeGroups.add(groupId);
 
@@ -137,6 +154,8 @@ public class InputGroups
      * @param groupId Id of deactivated group
      */
     public static boolean groupDeactivate(InputGroupId groupId) {
+        Gdx.app.log(TAG, "Input group " + groupId + " DEactivating...");
+
         // Deactivate group
         int deactivateIndex = activeGroups.indexOf(groupId);
         if (deactivateIndex != -1)
@@ -181,15 +200,11 @@ public class InputGroups
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        touchCount++;
-
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        touchCount--;
-
         return false;
     }
 
@@ -208,30 +223,20 @@ public class InputGroups
         return false;
     }
 
-    /**
-     * Input groups ids
-     */
-    public enum InputGroupId {
-        JUMP,
-        MOVE_LEFT,
-        CROUCH,
-        MOVE_RIGHT
-    }
-
     public interface InputGroupsListener {
         /**
          * Calls, after activate group
          *
          * @param groupId Id of activated group
          */
-        void onInputGroupActivate(InputGroupId groupId);
+        boolean onInputGroupActivate(InputGroupId groupId);
 
         /**
          * Calls, after deactivate group
          *
          * @param groupId Id of deactivated group
          */
-        void onInputGroupDeactivate(InputGroupId groupId);
+        boolean onInputGroupDeactivate(InputGroupId groupId);
     }
 
     /**

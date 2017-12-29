@@ -158,6 +158,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         if (currentMode.behavior.checkEnd()) {
             final PersonModeId nextModeId = currentMode.behavior.getNextModeId();
 
+            Gdx.app.log(TAG, "End of mode " + getCurrentModeId() + " detected");
+
             // Activate next mode
             activateMode(nextModeId, null);
         }
@@ -173,35 +175,42 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     private InputGroups.InputGroupId endInputGroupId = null;
 
     protected void activateMode(
-            PersonModeId modeId,
+            PersonModeId newModeId,
             InputGroups.InputGroupId checkInputGroupId
     ) {
-        Gdx.app.log(TAG, "Start activating mode " + modeId);
-
         PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();
+        PersonMode.ChangeMode changeMode = currentMode.changeMap[newModeId.ordinal()];
 
         // Check in changeMap
-        if (currentMode.changeMap[modeId.ordinal()]) {
+        if (changeMode != PersonMode.ChangeMode.NOT_ALLOWED) {
 
-            if (currentMode.animationStartLoopEnd) {
+            Gdx.app.log(TAG, "Start activating mode " + newModeId);
+
+            if (changeMode == PersonMode.ChangeMode.ALLOWED_SOFT &&
+                    currentMode.animationStartLoopEnd) {
+                Gdx.app.log(TAG, "Starting end animation");
+
                 // Start end animation
                 spriter.setAnimation(currentMode.getAnimationId(
                         PersonMode.AnimationType.END
                 ).ordinal());
 
                 // Save mode id
-                endModeId = modeId;
+                endModeId = newModeId;
 
                 // Save input group
                 endInputGroupId = checkInputGroupId;
-            } else
+            } else {
                 // Activate mode
-                onActivateMode(modeId);
-        }
+                onActivateMode(newModeId);
+            }
+        } else Gdx.app.log(TAG, "Start mode "
+                + newModeId + " not allowed in "
+                + currentModeId + " changeMap");
     }
 
-    private void onActivateMode(PersonModeId modeId) {
-        Gdx.app.log(TAG, "Activating mode " + modeId);
+    private void onActivateMode(PersonModeId newModeId) {
+        Gdx.app.log(TAG, "Activating mode " + newModeId);
 
         PersonMode<PersonModeId, AnimationId> oldMode = getCurrentMode();
 
@@ -210,9 +219,13 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             oldMode.onDeactivate();
 
         // Activate mode
-        currentModeId = modeId;
+        currentModeId = newModeId;
 
         PersonMode<PersonModeId, AnimationId> newMode = getCurrentMode();
+
+        // Stop moving
+        if(!newMode.movable)
+            setMoveDir(MoveDir.NONE);
 
         // Start animation
         spriter.setAnimation(
@@ -259,7 +272,22 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 
     /**
-     * Checks physic body collision of other @{@link World} bodies
+     * Set's move dir and handle's move end
+     *
+     * @param moveDir New @{@link MoveDir}
+     */
+    protected void setMoveDir(MoveDir moveDir) {
+        // Handle move end
+        if(this.moveDir != moveDir &&
+                moveDir == MoveDir.NONE)
+            getCurrentMode().onMoveEnded();
+
+        // Set move
+        this.moveDir = moveDir;
+    }
+
+    /**
+     * Checks physic body collision of other @{@link com.badlogic.gdx.physics.box2d.Body}'ies
      *
      * @return Grounded bool
      */
@@ -285,9 +313,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         return false;
     }
 
-    @Override
-    public void onInputGroupActivate(InputGroups.InputGroupId groupId) {
-        if (getCurrentMode().movable)
+    private void refreshMoveDir(InputGroups.InputGroupId groupId) {
+        if (getCurrentMode().movable) {
             // Handle move @InputGroupId's
             if (groupId == inputMoveLeft) {
                 // Start moving at left
@@ -302,22 +329,36 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 // Not flip animation
                 spriter.setFlipped(false);
             }
-    }
-
-    @Override
-    public void onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
-        if (groupId == inputMoveLeft ||
-                groupId == inputMoveRight) {
-            // Stop moving
-            moveDir = MoveDir.NONE;
-
-            // Handle move end
-            getCurrentMode().onMoveEnded();
         }
     }
 
     @Override
+    public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
+        // Refresh move direction
+        refreshMoveDir(groupId);
+        return false;
+    }
+
+    @Override
+    public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
+        if (groupId == inputMoveLeft ||
+                groupId == inputMoveRight) {
+            PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();
+
+            if (currentMode.movable) {
+                // Stop moving
+                setMoveDir(MoveDir.NONE);
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void animationFinished(Animation animation) {
+
+        Gdx.app.log(TAG, "Animation end detected");
 
         int animationId = animation.id;
 
@@ -329,20 +370,34 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             if (animationId == currentMode.getAnimationId(
                     PersonMode.AnimationType.END
             ).ordinal()) {
-                // To next mode
-                onActivateMode((endInputGroupId == null ||
-                        InputGroups.getActiveGroups().contains(endInputGroupId))
-                        ? endModeId                                   // To saved previous start end animation next mode
-                        : getCurrentMode().behavior.getNextModeId()); // To get at this moment next mode
+                boolean checkEndGroupIdResult = (endInputGroupId == null ||
+                        InputGroups.getActiveGroups().contains(endInputGroupId));
+
+                Gdx.app.log(
+                        TAG,
+                        "End of end animation of mode " + currentModeId + " detected" + '\n'
+                                + "endModeId: " + endModeId + '\n'
+                                + "endInputGroupId: " + endInputGroupId + '\n'
+                                + "checkEndGroupIdResult: " + checkEndGroupIdResult + '\n'
+                                + "active input groups: " + InputGroups.getActiveGroups()
+                );
+
+                // To...
+                if (checkEndGroupIdResult && endModeId != null)
+                    // ...endModeId
+                    onActivateMode(endModeId);
+                else
+                    // ...default mode
+                    onActivateMode(currentMode.behavior.getDefaultNextModeId());
+
+                // Refresh move direction
+                for (InputGroups.InputGroupId mInputGroupId : InputGroups.getActiveGroups()) {
+                    refreshMoveDir(mInputGroupId);
+                }
 
                 // Clear saved modeId and input group id
                 endModeId = null;
                 endInputGroupId = null;
-
-                // Handle all active @InputGroups
-                for (InputGroups.InputGroupId mInputGroupId : InputGroups.getActiveGroups()) {
-                    onInputGroupActivate(mInputGroupId);
-                }
             }
 
             // Check end of start
@@ -354,7 +409,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                         PersonMode.AnimationType.LOOP
                 ).ordinal());
             }
-        }
+        } else Gdx.app.log(TAG, "Ignored because animation only loop");
     }
 
     @Override
