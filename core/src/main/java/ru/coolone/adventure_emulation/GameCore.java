@@ -47,6 +47,10 @@ public class GameCore extends Game {
      * Manages @{@link ru.coolone.adventure_emulation.screen.ScreenScene}'s
      */
     private ScreenManager screenManager;
+    /**
+     * @see InputGroups
+     */
+    private InputGroups inputGroups;
 
     @Override
     public void create() {
@@ -54,13 +58,26 @@ public class GameCore extends Game {
         screenManager = new ScreenManager(this);
         screenManager.openScreen(START_SCREEN);
 
+        // Input groups
+        inputGroups = new InputGroups();
+
         // Debug
         uiBatch = new SpriteBatch();
         font = new BitmapFont();
     }
 
+    /**
+     * @return @{@link ScreenManager}
+     */
     public ScreenManager getScreenManager() {
         return screenManager;
+    }
+
+    /**
+     * @return @{@link InputGroups}
+     */
+    public InputGroups getInputGroups() {
+        return inputGroups;
     }
 
     /**
@@ -101,7 +118,7 @@ public class GameCore extends Game {
                             + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
                             + "Camera position: " + screenManager.getCamera().position + '\n'
                             + "World scale: " + PhysicsBodyLoader.getScale() + '\n'
-                            + "Active input groups: " + InputGroups.getActiveGroups(),
+                            + "Active input groups: " + inputGroups.getActiveGroups(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );
 

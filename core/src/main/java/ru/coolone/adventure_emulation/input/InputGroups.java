@@ -64,33 +64,32 @@ public class InputGroups
                 }
         );
     }};
+
+    public InputGroups() {
+        // Set input multiplexer
+        Gdx.input.setInputProcessor(multiplexer);
+
+        // Listen input
+        multiplexer.addProcessor(this);
+    }
+
     /**
      * General input multiplexer
      */
-    public static InputMultiplexer multiplexer = new InputMultiplexer(
-            getInstance()
-    );
+    public static final InputMultiplexer multiplexer = new InputMultiplexer();
     /**
      * Array of active @{@link InputGroupId}
      */
-    static private ArrayList<InputGroupId> activeGroups = new ArrayList<InputGroupId>();
+    private final ArrayList<InputGroupId> activeGroups = new ArrayList<InputGroupId>();
     /**
      * Array of listeners
      */
-    private static ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
+    private final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
 
-    static {
-        // Set input processor
-        Gdx.input.setInputProcessor(multiplexer);
-    }
-
-    // TODO: delete signgleton
-
-    public static InputGroups getInstance() {
-        return SingletonHolder.HOLDER_INSTANCE;
-    }
-
-    public static ArrayList<InputGroupId> getActiveGroups() {
+    /**
+     * @return Active @{@link InputGroupId}'s
+     */
+    public ArrayList<InputGroupId> getActiveGroups() {
         return activeGroups;
     }
 
@@ -100,7 +99,7 @@ public class InputGroups
      * @param keycode Keycode, that has been pressed
      * @return Converted @{@link InputGroupId}
      */
-    public static InputGroupId keyToInputGroup(int keycode) {
+    private static InputGroupId keyToInputGroup(int keycode) {
         InputGroupId groupId = null;
 
         // Find keycode in groups
@@ -114,12 +113,12 @@ public class InputGroups
         return groupId;
     }
 
-    public static void addListener(InputGroupsListener listener) {
+    public void addListener(InputGroupsListener listener) {
         // Add listener
         listeners.add(listener);
     }
 
-    public static boolean removeListener(InputGroupsListener listener) {
+    public boolean removeListener(InputGroupsListener listener) {
         // Find listener
         int removeIndex = listeners.indexOf(listener);
         if (removeIndex != -1) {
@@ -136,7 +135,7 @@ public class InputGroups
      *
      * @param groupId Id of activated group
      */
-    public static void groupActivate(InputGroupId groupId) {
+    public void groupActivate(InputGroupId groupId) {
         Gdx.app.log(TAG, "Input group " + groupId + " activating...");
 
         // Start group
@@ -153,7 +152,7 @@ public class InputGroups
      *
      * @param groupId Id of deactivated group
      */
-    public static boolean groupDeactivate(InputGroupId groupId) {
+    public boolean groupDeactivate(InputGroupId groupId) {
         Gdx.app.log(TAG, "Input group " + groupId + " DEactivating...");
 
         // Deactivate group
@@ -237,12 +236,5 @@ public class InputGroups
          * @param groupId Id of deactivated group
          */
         boolean onInputGroupDeactivate(InputGroupId groupId);
-    }
-
-    /**
-     * Singleton
-     */
-    private static class SingletonHolder {
-        private static final InputGroups HOLDER_INSTANCE = new InputGroups();
     }
 }

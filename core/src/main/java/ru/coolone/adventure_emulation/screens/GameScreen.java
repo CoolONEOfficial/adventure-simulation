@@ -79,12 +79,12 @@ public class GameScreen extends ScreenScene {
 
                     @Override
                     public void onButtonDown() {
-                        InputGroups.groupActivate(InputGroups.InputGroupId.CROUCH);
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.CROUCH);
                     }
 
                     @Override
                     public void onButtonUp() {
-                        InputGroups.groupDeactivate(InputGroups.InputGroupId.CROUCH);
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.CROUCH);
                     }
                 }
         );
@@ -100,12 +100,12 @@ public class GameScreen extends ScreenScene {
 
                     @Override
                     public void onButtonDown() {
-                        InputGroups.groupActivate(InputGroups.InputGroupId.JUMP);
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
                     }
 
                     @Override
                     public void onButtonUp() {
-                        InputGroups.groupDeactivate(InputGroups.InputGroupId.JUMP);
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
                     }
                 }
         );
@@ -122,12 +122,12 @@ public class GameScreen extends ScreenScene {
 
                     @Override
                     public void onButtonDown() {
-                        InputGroups.groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
                     }
 
                     @Override
                     public void onButtonUp() {
-                        InputGroups.groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
                     }
                 }
         );
@@ -143,12 +143,12 @@ public class GameScreen extends ScreenScene {
 
                     @Override
                     public void onButtonDown() {
-                        InputGroups.groupActivate(InputGroups.InputGroupId.MOVE_RIGHT);
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_RIGHT);
                     }
 
                     @Override
                     public void onButtonUp() {
-                        InputGroups.groupDeactivate(InputGroups.InputGroupId.MOVE_RIGHT);
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_RIGHT);
                     }
                 }
         );

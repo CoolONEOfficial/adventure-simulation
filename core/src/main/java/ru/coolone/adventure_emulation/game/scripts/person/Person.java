@@ -100,7 +100,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         spriter.spriter.player.addListener(this);
 
         // Start listen input
-        InputGroups.addListener(this);
+        this.core.getInputGroups().addListener(this);
 
         // Input groups
         this.inputMoveLeft = inputMoveLeft;
@@ -371,7 +371,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                     PersonMode.AnimationType.END
             ).ordinal()) {
                 boolean checkEndGroupIdResult = (endInputGroupId == null ||
-                        InputGroups.getActiveGroups().contains(endInputGroupId));
+                        core.getInputGroups().getActiveGroups().contains(endInputGroupId));
 
                 Gdx.app.log(
                         TAG,
@@ -379,7 +379,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                                 + "endModeId: " + endModeId + '\n'
                                 + "endInputGroupId: " + endInputGroupId + '\n'
                                 + "checkEndGroupIdResult: " + checkEndGroupIdResult + '\n'
-                                + "active input groups: " + InputGroups.getActiveGroups()
+                                + "active input groups: " + core.getInputGroups().getActiveGroups()
                 );
 
                 // To...
@@ -391,7 +391,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                     onActivateMode(currentMode.behavior.getDefaultNextModeId());
 
                 // Refresh move direction
-                for (InputGroups.InputGroupId mInputGroupId : InputGroups.getActiveGroups()) {
+                for (InputGroups.InputGroupId mInputGroupId : core.getInputGroups().getActiveGroups()) {
                     refreshMoveDir(mInputGroupId);
                 }
 
@@ -430,10 +430,10 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
     @Override
     public void dispose() {
-        super.dispose();
-
         // Stop listen input
-        InputGroups.removeListener(this);
+        core.getInputGroups().removeListener(this);
+
+        super.dispose();
 
         // Stop listen spriter
         spriter.spriter.player.removeListener(this);

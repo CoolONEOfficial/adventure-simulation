@@ -31,7 +31,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         currentModeId = PlayerModeId.IDLE;
 
         // Listen input
-        InputGroups.addListener(this);
+        core.getInputGroups().addListener(this);
     }
 
     @Override
@@ -434,9 +434,9 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
 
     @Override
     public void dispose() {
-        super.dispose();
-
         // Stop listen input
-        InputGroups.removeListener(this);
+        core.getInputGroups().removeListener(this);
+
+        super.dispose();
     }
 }
