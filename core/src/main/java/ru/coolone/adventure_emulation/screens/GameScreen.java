@@ -3,11 +3,16 @@ package ru.coolone.adventure_emulation.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
+import java.util.ArrayList;
+
 import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.game.scripts.button.Button;
+import ru.coolone.adventure_emulation.scripts.button.Button;
 import ru.coolone.adventure_emulation.game.scripts.joystick.Joystick;
 import ru.coolone.adventure_emulation.game.scripts.persons.Player;
 import ru.coolone.adventure_emulation.input.InputGroups;
@@ -161,71 +166,69 @@ public class GameScreen extends ScreenScene {
     @Override
     public void render(float delta) {
 
-//        if (player.isSpawned()) {
-//
-//            // Camera coords
-//            final Vector2 playerPos = new Vector2(
-//                    player.transform.x,
-//                    player.transform.y
-//            );
-//            playerPos.x /= PhysicsBodyLoader.getScale();
-//            playerPos.y /= PhysicsBodyLoader.getScale();
-//
-//            final Vector2 cameraPos = new Vector2();
-//
-//            final ArrayList<InputGroups.InputGroupId> activeGroups = InputGroups.getActiveGroups();
-//            cameraPos.x = playerPos.x + (player.dimensions.width / 2);
-//
-//            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
-//                cameraPos.x -= GameCore.WIDTH / 3;
-//            else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
-//                cameraPos.x += (GameCore.WIDTH / 3);
-//
-//
-//            cameraPos.y = playerPos.y;
-//
-//            // Limit coords
-//            if (cameraPos.x < GameCore.WIDTH / 2)
-//                cameraPos.x = GameCore.WIDTH / 2;
-//            if (cameraPos.y < GameCore.HEIGHT / 2)
-//                cameraPos.y = GameCore.HEIGHT / 2;
-//
-//            // Set camera coords
-//            core.getScreenManager()
-//                    .getCamera()
-//                    .position.set(
-//                    new Vector3(
-//                            cameraPos,
-//                            0
-//                    )
-//            );
-//
-//            // --- Buttons ---
-//
-//            // Left
-//            leftButton.setCoord(
-//                    cameraPos.x - (GameCore.WIDTH / 2) + BUTTON_INDENT,
-//                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
-//            );
-//
-//            // Right
-//            rightButton.setCoord(
-//                    leftButton.getCoord().x + leftButton.getBoundRect().width + BUTTON_INDENT,
-//                    leftButton.getCoord().y
-//            );
-//
-//            // Up
-//            upButton.setCoord(
-//                    cameraPos.x + (GameCore.WIDTH / 2) - upButton.getBoundRect().width - BUTTON_INDENT,
-//                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
-//            );
-//
-//            // Down
-//            downButton.setCoord(
-//                    upButton.getCoord().x - downButton.getBoundRect().width - BUTTON_INDENT,
-//                    upButton.getCoord().y
-//            );
-//        }
+        if (player.isSpawned()) {
+
+            // Camera coords
+            final Vector2 playerPos = new Vector2(
+                    player.transform.x,
+                    player.transform.y
+            );
+
+            final Vector2 cameraPos = new Vector2();
+
+            final ArrayList<InputGroups.InputGroupId> activeGroups = core.getInputGroups().getActiveGroups();
+            cameraPos.x = playerPos.x + (player.dimensions.width / 2);
+
+            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
+                cameraPos.x -= GameCore.WIDTH / 3;
+            else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
+                cameraPos.x += (GameCore.WIDTH / 3);
+
+
+            cameraPos.y = playerPos.y;
+
+            // Limit coords
+            if (cameraPos.x < GameCore.WIDTH / 2)
+                cameraPos.x = GameCore.WIDTH / 2;
+            if (cameraPos.y < GameCore.HEIGHT / 2)
+                cameraPos.y = GameCore.HEIGHT / 2;
+
+            // Set camera coords
+            core.getScreenManager()
+                    .getCamera()
+                    .position.set(
+                    new Vector3(
+                            cameraPos,
+                            0
+                    )
+            );
+
+            // --- Buttons ---
+
+            // Left
+            leftButton.setCoord(
+                    cameraPos.x - (GameCore.WIDTH / 2) + BUTTON_INDENT,
+                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
+            );
+
+            // Right
+            rightButton.setCoord(
+                    leftButton.getCoord().x + leftButton.getBoundRect().width + BUTTON_INDENT,
+                    leftButton.getCoord().y
+            );
+
+            // Up
+            upButton.setCoord(
+                    cameraPos.x + (GameCore.WIDTH / 2) - upButton.getBoundRect().width - BUTTON_INDENT,
+                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
+            );
+
+            // Down
+            downButton.setCoord(
+                    upButton.getCoord().x - downButton.getBoundRect().width - BUTTON_INDENT,
+                    upButton.getCoord().y
+            );
+        }
 
         // Debug
         if (GameCore.DEBUG) {

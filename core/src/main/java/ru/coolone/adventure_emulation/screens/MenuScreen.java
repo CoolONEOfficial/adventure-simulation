@@ -3,7 +3,7 @@ package ru.coolone.adventure_emulation.screens;
 import com.badlogic.gdx.Gdx;
 
 import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.game.scripts.button.Button;
+import ru.coolone.adventure_emulation.scripts.button.Button;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
 
 /**

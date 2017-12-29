@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.WorldManifold;
 import com.badlogic.gdx.utils.Array;
 import com.brashmonkey.spriter.Animation;
@@ -166,11 +165,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 
     /**
-     * That @{@link PersonMode} id will be set after end of end animation
-     */
-    private PersonModeId endModeId = null;
-    /**
-     * That @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId} will be checked after end of end animation
+     * That @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId} will be handled after end of end animation
      */
     private InputGroups.InputGroupId endInputGroupId = null;
 
@@ -194,9 +189,6 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 spriter.setAnimation(currentMode.getAnimationId(
                         PersonMode.AnimationType.END
                 ).ordinal());
-
-                // Save mode id
-                endModeId = newModeId;
 
                 // Save input group
                 endInputGroupId = checkInputGroupId;
@@ -224,7 +216,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         PersonMode<PersonModeId, AnimationId> newMode = getCurrentMode();
 
         // Stop moving
-        if(!newMode.movable)
+        if (!newMode.movable)
             setMoveDir(MoveDir.NONE);
 
         // Start animation
@@ -278,7 +270,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      */
     protected void setMoveDir(MoveDir moveDir) {
         // Handle move end
-        if(this.moveDir != moveDir &&
+        if (this.moveDir != moveDir &&
                 moveDir == MoveDir.NONE)
             getCurrentMode().onMoveEnded();
 
@@ -336,6 +328,11 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
         // Refresh move direction
         refreshMoveDir(groupId);
+
+        // Change endInputGroupId
+        if(endInputGroupId != null)
+            endInputGroupId = groupId;
+
         return false;
     }
 
@@ -370,22 +367,24 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             if (animationId == currentMode.getAnimationId(
                     PersonMode.AnimationType.END
             ).ordinal()) {
-                boolean checkEndGroupIdResult = (endInputGroupId == null ||
-                        core.getInputGroups().getActiveGroups().contains(endInputGroupId));
+                boolean checkEndGroupIdResult = (
+                        endInputGroupId == null ||
+                                core.getInputGroups().getActiveGroups().contains(endInputGroupId)
+                );
 
                 Gdx.app.log(
                         TAG,
                         "End of end animation of mode " + currentModeId + " detected" + '\n'
-                                + "endModeId: " + endModeId + '\n'
                                 + "endInputGroupId: " + endInputGroupId + '\n'
                                 + "checkEndGroupIdResult: " + checkEndGroupIdResult + '\n'
                                 + "active input groups: " + core.getInputGroups().getActiveGroups()
                 );
 
                 // To...
-                if (checkEndGroupIdResult && endModeId != null)
+                if (checkEndGroupIdResult && endInputGroupId != null)
                     // ...endModeId
-                    onActivateMode(endModeId);
+                    onInputGroupActivate(endInputGroupId);
+                    // onActivateMode(endModeId);
                 else
                     // ...default mode
                     onActivateMode(currentMode.behavior.getDefaultNextModeId());
@@ -396,7 +395,6 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 }
 
                 // Clear saved modeId and input group id
-                endModeId = null;
                 endInputGroupId = null;
             }
 
