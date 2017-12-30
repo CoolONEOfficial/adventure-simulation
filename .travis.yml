@@ -1,12 +1,12 @@
-os:
-  - linux
-
 language: android # can be 'java' if there is no android build target
 android:
   components:
     - build-tools-20.0.0
     - android-20
 jdk: oraclejdk8
+
+os:
+  - linux
 
 # Cache gradle dependencies (should be faster to download them from cache)
 cache:
@@ -45,7 +45,3 @@ deploy:
     repo: {GITHUB_USER}/{PROJECT_NAME}
     branches: master
     condition: "$TRAVIS_TAG =~ ^v\d+\.\d+\.\d+.*$" # Only deploy tags that match something like v1.0.0
-
-notifications:
-  email:
-    - coolone.official@gmail.com
