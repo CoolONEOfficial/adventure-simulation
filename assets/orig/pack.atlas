@@ -14,7 +14,7 @@ repeat: none
   index: -1
 9pbuttonnormal
   rotate: false
-  xy: 590, 145
+  xy: 581, 167
   size: 148, 149
   split: 92, 53, 93, 53
   pad: 33, 35, 36, 35
@@ -23,7 +23,7 @@ repeat: none
   index: -1
 9pbuttonpressed
   rotate: false
-  xy: 881, 172
+  xy: 581, 17
   size: 148, 148
   split: 92, 53, 93, 51
   pad: 33, 34, 36, 33
@@ -39,7 +39,7 @@ barrack
   index: -1
 cabinNight
   rotate: false
-  xy: 505, 411
+  xy: 303, 411
   size: 225, 164
   orig: 225, 164
   offset: 0, 0
@@ -53,7 +53,7 @@ car
   index: -1
 cloud1Night
   rotate: false
-  xy: 505, 296
+  xy: 930, 423
   size: 177, 113
   orig: 177, 113
   offset: 0, 0
@@ -74,7 +74,7 @@ fire
   index: -1
 glow
   rotate: false
-  xy: 303, 331
+  xy: 734, 427
   size: 42, 42
   orig: 42, 42
   offset: 0, 0
@@ -95,7 +95,7 @@ groundGrass
   index: -1
 heli
   rotate: false
-  xy: 885, 322
+  xy: 303, 301
   size: 227, 108
   orig: 227, 108
   offset: 0, 0
@@ -144,84 +144,112 @@ hill5Night
   index: -1
 joystickbg
   rotate: false
-  xy: 303, 375
-  size: 200, 200
-  orig: 200, 200
+  xy: 778, 425
+  size: 150, 150
+  orig: 150, 150
   offset: 0, 0
   index: -1
 joystickstick
   rotate: false
-  xy: 1753, 745
-  size: 50, 50
-  orig: 50, 50
+  xy: 694, 318
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+joysticktriggerleftactive
+  rotate: false
+  xy: 1965, 824
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+joysticktriggerleftnormal
+  rotate: false
+  xy: 846, 388
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+joysticktriggerrightactive
+  rotate: false
+  xy: 97, 26
+  size: 30, 35
+  orig: 30, 35
+  offset: 0, 0
+  index: -1
+joysticktriggerrightnormal
+  rotate: false
+  xy: 731, 52
+  size: 30, 35
+  orig: 30, 35
   offset: 0, 0
   index: -1
 lamp1
   rotate: false
-  xy: 540, 22
+  xy: 694, 350
   size: 38, 119
   orig: 38, 119
   offset: 0, 0
   index: -1
 mbuttonbg
   rotate: false
-  xy: 1133, 426
+  xy: 1698, 586
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttondownclicked
   rotate: false
-  xy: 971, 60
+  xy: 1605, 434
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttondownnormal
   rotate: false
-  xy: 1698, 586
+  xy: 731, 89
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttonleftclicked
   rotate: false
-  xy: 1357, 432
+  xy: 1717, 362
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttonleftnormal
   rotate: false
-  xy: 1245, 432
+  xy: 1717, 474
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttonrightclicked
   rotate: false
-  xy: 428, 31
+  xy: 1810, 668
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttonrightnormal
   rotate: false
-  xy: 1469, 434
+  xy: 734, 313
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttonupclicked
   rotate: false
-  xy: 859, 60
+  xy: 1374, 432
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
   index: -1
 mbuttonupnormal
   rotate: false
-  xy: 1581, 434
+  xy: 731, 201
   size: 110, 110
   orig: 110, 110
   offset: 0, 0
@@ -235,14 +263,14 @@ miniPond
   index: -1
 ninja
   rotate: false
-  xy: 1031, 200
+  xy: 1250, 422
   size: 122, 120
   orig: 122, 120
   offset: 0, 0
   index: -1
 rainDrop
   rotate: false
-  xy: 684, 296
+  xy: 1473, 866
   size: 13, 28
   orig: 13, 28
   offset: 0, 0
@@ -263,7 +291,7 @@ tree3
   index: -1
 treeBack1
   rotate: false
-  xy: 428, 143
+  xy: 532, 318
   size: 160, 151
   orig: 160, 151
   offset: 0, 0
@@ -284,28 +312,28 @@ treeFront2
   index: -1
 treeback2
   rotate: false
-  xy: 740, 86
+  xy: 1486, 434
   size: 117, 110
   orig: 117, 110
   offset: 0, 0
   index: -1
 ufocrash
   rotate: false
-  xy: 885, 432
+  xy: 530, 471
   size: 246, 104
   orig: 246, 104
   offset: 0, 0
   index: -1
 watertower
   rotate: false
-  xy: 285, 92
+  xy: 438, 65
   size: 141, 234
   orig: 141, 234
   offset: 0, 0
   index: -1
 windMain
   rotate: false
-  xy: 684, 326
+  xy: 1753, 712
   size: 24, 83
   orig: 24, 83
   offset: 0, 0
@@ -319,14 +347,14 @@ windRotor
   index: -1
 windmillMain
   rotate: false
-  xy: 732, 340
+  xy: 285, 64
   size: 151, 235
   orig: 151, 235
   offset: 0, 0
   index: -1
 windmillRotating
   rotate: false
-  xy: 740, 198
+  xy: 1109, 396
   size: 139, 140
   orig: 139, 140
   offset: 0, 0

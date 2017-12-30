@@ -191,7 +191,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 ).ordinal());
 
                 // Save input group
-                endInputGroupId = checkInputGroupId;
+                if (endInputGroupId == null)
+                    endInputGroupId = checkInputGroupId;
             } else {
                 // Activate mode
                 onActivateMode(newModeId);
@@ -330,14 +331,18 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         refreshMoveDir(groupId);
 
         // Change endInputGroupId
-        if(endInputGroupId != null)
-            endInputGroupId = groupId;
+        endInputGroupId = groupId;
 
         return false;
     }
 
     @Override
     public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
+        // Deactivate endInputGroupId
+        if(groupId == endInputGroupId)
+            endInputGroupId = null;
+
+        // Stop moving
         if (groupId == inputMoveLeft ||
                 groupId == inputMoveRight) {
             PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
@@ -27,11 +26,32 @@ public class GameScreen extends ScreenScene {
     public static final String TAG = GameScreen.class.getSimpleName();
 
     private static final String name = "GameScene";
-    private static final int BUTTON_INDENT = 30;
+    /**
+     * Intent between ui components, e.g. @{@link Button} or @{@link Joystick}
+     */
+    private static final int UI_INDENT = 30;
     /**
      * Player behavior for @{@link ItemWrapper}
      */
     private Player player;
+
+    /**
+     * Move @{@link Player} modes
+     */
+    enum MoveMode {
+        /**
+         * With move buttons
+         */
+        BUTTONS,
+        /**
+         * With joystick
+         */
+        JOYSTICK
+    }
+    /**
+     * Using @{@link MoveMode}
+     */
+    private static final MoveMode moveMode = MoveMode.BUTTONS;
     /**
      * Move buttons
      */
@@ -74,7 +94,7 @@ public class GameScreen extends ScreenScene {
         // Move buttons
         downButton = new Button(
                 core,
-                "downButton"
+                "buttonDown"
         );
         downButton.addListener(
                 new Button.ButtonListener() {
@@ -95,7 +115,7 @@ public class GameScreen extends ScreenScene {
         );
         upButton = new Button(
                 core,
-                "upButton"
+                "buttonUp"
         );
         upButton.addListener(
                 new Button.ButtonListener() {
@@ -116,7 +136,7 @@ public class GameScreen extends ScreenScene {
         );
         leftButton = new Button(
                 core,
-                "leftButton"
+                "buttonLeft"
         );
         leftButton.addListener(
                 new Button.ButtonListener() {
@@ -138,7 +158,7 @@ public class GameScreen extends ScreenScene {
         );
         rightButton = new Button(
                 core,
-                "rightButton"
+                "buttonRight"
         );
         rightButton.addListener(
                 new Button.ButtonListener() {
@@ -183,8 +203,6 @@ public class GameScreen extends ScreenScene {
                 cameraPos.x -= GameCore.WIDTH / 3;
             else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
                 cameraPos.x += (GameCore.WIDTH / 3);
-
-
             cameraPos.y = playerPos.y;
 
             // Limit coords
@@ -203,31 +221,38 @@ public class GameScreen extends ScreenScene {
                     )
             );
 
-            // --- Buttons ---
+            switch (moveMode) {
+                case BUTTONS:
+                    // Left
+                    leftButton.setCoord(
+                            cameraPos.x - (GameCore.WIDTH / 2) + UI_INDENT,
+                            cameraPos.y - (GameCore.HEIGHT / 2) + UI_INDENT
+                    );
 
-            // Left
-            leftButton.setCoord(
-                    cameraPos.x - (GameCore.WIDTH / 2) + BUTTON_INDENT,
-                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
-            );
+                    // Right
+                    rightButton.setCoord(
+                            leftButton.getCoord().x + leftButton.getBoundRect().width + UI_INDENT,
+                            leftButton.getCoord().y
+                    );
 
-            // Right
-            rightButton.setCoord(
-                    leftButton.getCoord().x + leftButton.getBoundRect().width + BUTTON_INDENT,
-                    leftButton.getCoord().y
-            );
+                    // Up
+                    upButton.setCoord(
+                            cameraPos.x + (GameCore.WIDTH / 2) - upButton.getBoundRect().width - UI_INDENT,
+                            cameraPos.y - (GameCore.HEIGHT / 2) + UI_INDENT
+                    );
 
-            // Up
-            upButton.setCoord(
-                    cameraPos.x + (GameCore.WIDTH / 2) - upButton.getBoundRect().width - BUTTON_INDENT,
-                    cameraPos.y - (GameCore.HEIGHT / 2) + BUTTON_INDENT
-            );
-
-            // Down
-            downButton.setCoord(
-                    upButton.getCoord().x - downButton.getBoundRect().width - BUTTON_INDENT,
-                    upButton.getCoord().y
-            );
+                    // Down
+                    downButton.setCoord(
+                            upButton.getCoord().x - downButton.getBoundRect().width - UI_INDENT,
+                            upButton.getCoord().y
+                    );
+                    break;
+                case JOYSTICK:
+                    // Joystick
+                    joystick.transform.x = cameraPos.x - (GameCore.WIDTH / 2) + UI_INDENT;
+                    joystick.transform.y = cameraPos.y - (GameCore.HEIGHT / 2) + UI_INDENT;
+                    break;
+            }
         }
 
         // Debug

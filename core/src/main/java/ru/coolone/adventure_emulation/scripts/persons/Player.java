@@ -3,13 +3,11 @@ package ru.coolone.adventure_emulation.game.scripts.persons;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.ArrayList;
-
 import ru.coolone.adventure_emulation.GameCore;
 import ru.coolone.adventure_emulation.game.scripts.person.Person;
 import ru.coolone.adventure_emulation.game.scripts.person.PersonMode;
-import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.game.scripts.person.PersonMode.ChangeMode;
+import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
  * Player behavior to CompositeItem and spriter animation
