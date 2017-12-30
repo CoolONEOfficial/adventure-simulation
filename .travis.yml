@@ -1,11 +1,3 @@
-language: java
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-cache:
-  directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
 os:
   - linux
 android:
@@ -19,3 +11,33 @@ android:
 
     # The SDK version used to compile your project
     - android-27
+
+matrix:
+  include:
+
+  # Desktop
+  - language: java
+    before_cache:
+      - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+      - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+    cache:
+     directories:
+      - $HOME/.gradle/caches/
+      - $HOME/.gradle/wrapper/
+
+  # Android
+  - language: android
+    jdk: oraclejdk8
+    android:
+      components:
+        - tools
+        - android-27
+        - build-tools-27.0.2
+    before_script:
+      - cd android/AppName
+    script:
+      - gradle lint
+
+notifications:
+  email:
+    - coolone.official@gmail.com
