@@ -6,17 +6,17 @@ import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 
 /**
  * CompositeItem trigger with layers with custom names
  */
 
-abstract public class CompositeTrigger extends Composite {
+abstract public class AbsTrigger extends AbsTriggerComposite {
     /**
-     * Link to @{@link GameCore}
+     * Link to @{@link Core}
      */
-    protected GameCore core;
+    protected Core core;
 
     /**
      * Layers names
@@ -36,14 +36,14 @@ abstract public class CompositeTrigger extends Composite {
     private boolean active;
 
     /**
-     * @param core             Link to @{@link GameCore}
-     * @param name             Name of CompositeItem on @{@link GameCore:getRootItem}
+     * @param core             Link to @{@link Core}
+     * @param name             Name of CompositeItem on @{@link Core :getRootItem}
      * @param activeLayerName  Active layer name in CompositeItem
      * @param passiveLayerName Passive layer name in CompositeItem
      * @param active           Active or passive on init
      */
-    protected CompositeTrigger(
-            GameCore core,
+    protected AbsTrigger(
+            Core core,
             String name,
             String activeLayerName,
             String passiveLayerName,
@@ -96,7 +96,7 @@ abstract public class CompositeTrigger extends Composite {
     }
 }
 
-abstract class Composite implements IScript {
+abstract class AbsTriggerComposite implements IScript {
 
     /**
      * Components

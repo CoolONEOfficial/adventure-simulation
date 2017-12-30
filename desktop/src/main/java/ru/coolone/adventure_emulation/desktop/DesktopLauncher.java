@@ -4,7 +4,7 @@ import com.badlogic.gdx.Files.FileType;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 
 /** Launches the desktop (LWJGL) application. */
 public class DesktopLauncher {
@@ -13,7 +13,7 @@ public class DesktopLauncher {
     }
 
     private static LwjglApplication createApplication() {
-        return new LwjglApplication(new GameCore(), getDefaultConfiguration());
+        return new LwjglApplication(new Core(), getDefaultConfiguration());
     }
 
     private static LwjglApplicationConfiguration getDefaultConfiguration() {

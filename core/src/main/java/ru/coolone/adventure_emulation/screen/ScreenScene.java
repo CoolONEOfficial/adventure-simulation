@@ -2,7 +2,7 @@ package ru.coolone.adventure_emulation.screen;
 
 import com.badlogic.gdx.Screen;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 
 /**
  * Class, unite's LibGDX screen and @{@link com.uwsoft.editor.renderer.SceneLoader} scene
@@ -12,16 +12,16 @@ import ru.coolone.adventure_emulation.GameCore;
 abstract public class ScreenScene implements Screen {
 
     /**
-     * Link for @{@link GameCore}
+     * Link for @{@link Core}
      */
-    protected GameCore core;
+    protected Core core;
     /**
      * Scene name
      */
     protected String name;
 
     public ScreenScene(
-            GameCore core,
+            Core core,
             String name
     ) {
         this.core = core;

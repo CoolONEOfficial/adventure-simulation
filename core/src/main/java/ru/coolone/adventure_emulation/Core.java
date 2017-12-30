@@ -18,9 +18,9 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
 /**
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
-public class GameCore extends Game {
+public class Core extends Game {
 
-    private static final String TAG = GameCore.class.getSimpleName();
+    private static final String TAG = Core.class.getSimpleName();
 
     /**
      * Debug output flag

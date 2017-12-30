@@ -1,12 +1,12 @@
-package ru.coolone.adventure_emulation.game.scripts.persons;
+package ru.coolone.adventure_emulation.scripts.persons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.game.scripts.person.Person;
-import ru.coolone.adventure_emulation.game.scripts.person.PersonMode;
-import ru.coolone.adventure_emulation.game.scripts.person.PersonMode.ChangeMode;
+import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.scripts.person.Person;
+import ru.coolone.adventure_emulation.scripts.person.PersonMode;
+import ru.coolone.adventure_emulation.scripts.person.PersonMode.ChangeMode;
 import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
@@ -17,10 +17,10 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         implements InputGroups.InputGroupsListener {
 
     /**
-     * @param core Link to @{@link GameCore}
+     * @param core Link to @{@link Core}
      * @param name Name of CompositeItem
      */
-    public Player(GameCore core, String name) {
+    public Player(Core core, String name) {
         super(core, name,
                 InputGroups.InputGroupId.MOVE_LEFT,
                 InputGroups.InputGroupId.MOVE_RIGHT);

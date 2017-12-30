@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 
 /**
  * Manages @{@link ScreenScene}'s
@@ -28,12 +28,12 @@ public class ScreenManager {
     /**
      * Link to @{@link Game}
      */
-    private GameCore core;
+    private Core core;
 
     /**
      * Viewport to scene
      */
-    private final FitViewport viewport = new FitViewport(GameCore.WIDTH, GameCore.HEIGHT);
+    private final FitViewport viewport = new FitViewport(Core.WIDTH, Core.HEIGHT);
 
     /**
      * Loads {@link ru.coolone.adventure_emulation.screen.ScreenScene}'s scene
@@ -55,12 +55,12 @@ public class ScreenManager {
      */
     private ItemWrapper rootItem;
 
-    public ScreenManager(GameCore core) {
+    public ScreenManager(Core core) {
         this.core = core;
     }
 
     /**
-     * Updates current loaded @{@link ScreenScene:scene}
+     * Updates current loaded @{@link ScreenScene :scene}
      *
      * @param delta Delta time in milliseconds
      */
@@ -85,7 +85,7 @@ public class ScreenManager {
             // Get constructor
             Constructor<? extends ScreenScene> screenConstr = null;
             try {
-                screenConstr = screenClass.getConstructor(GameCore.class);
+                screenConstr = screenClass.getConstructor(Core.class);
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }

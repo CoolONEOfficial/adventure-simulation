@@ -10,12 +10,12 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
 
-import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.scripts.button.Button;
-import ru.coolone.adventure_emulation.game.scripts.joystick.Joystick;
-import ru.coolone.adventure_emulation.game.scripts.persons.Player;
+import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.scripts.Joystick;
+import ru.coolone.adventure_emulation.scripts.persons.Player;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
+import ru.coolone.adventure_emulation.scripts.Button;
 
 /**
  * Created by coolone on 22.12.17.
@@ -70,7 +70,7 @@ public class GameScreen extends ScreenScene {
     private Box2DDebugRenderer debugRenderer;
 
     public GameScreen(
-            GameCore core
+            Core core
     ) {
         super(core, name);
     }
@@ -200,16 +200,16 @@ public class GameScreen extends ScreenScene {
             cameraPos.x = playerPos.x + (player.dimensions.width / 2);
 
             if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
-                cameraPos.x -= GameCore.WIDTH / 3;
+                cameraPos.x -= Core.WIDTH / 3;
             else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
-                cameraPos.x += (GameCore.WIDTH / 3);
+                cameraPos.x += (Core.WIDTH / 3);
             cameraPos.y = playerPos.y;
 
             // Limit coords
-            if (cameraPos.x < GameCore.WIDTH / 2)
-                cameraPos.x = GameCore.WIDTH / 2;
-            if (cameraPos.y < GameCore.HEIGHT / 2)
-                cameraPos.y = GameCore.HEIGHT / 2;
+            if (cameraPos.x < Core.WIDTH / 2)
+                cameraPos.x = Core.WIDTH / 2;
+            if (cameraPos.y < Core.HEIGHT / 2)
+                cameraPos.y = Core.HEIGHT / 2;
 
             // Set camera coords
             core.getScreenManager()
@@ -225,8 +225,8 @@ public class GameScreen extends ScreenScene {
                 case BUTTONS:
                     // Left
                     leftButton.setCoord(
-                            cameraPos.x - (GameCore.WIDTH / 2) + UI_INDENT,
-                            cameraPos.y - (GameCore.HEIGHT / 2) + UI_INDENT
+                            cameraPos.x - (Core.WIDTH / 2) + UI_INDENT,
+                            cameraPos.y - (Core.HEIGHT / 2) + UI_INDENT
                     );
 
                     // Right
@@ -237,8 +237,8 @@ public class GameScreen extends ScreenScene {
 
                     // Up
                     upButton.setCoord(
-                            cameraPos.x + (GameCore.WIDTH / 2) - upButton.getBoundRect().width - UI_INDENT,
-                            cameraPos.y - (GameCore.HEIGHT / 2) + UI_INDENT
+                            cameraPos.x + (Core.WIDTH / 2) - upButton.getBoundRect().width - UI_INDENT,
+                            cameraPos.y - (Core.HEIGHT / 2) + UI_INDENT
                     );
 
                     // Down
@@ -249,14 +249,14 @@ public class GameScreen extends ScreenScene {
                     break;
                 case JOYSTICK:
                     // Joystick
-                    joystick.transform.x = cameraPos.x - (GameCore.WIDTH / 2) + UI_INDENT;
-                    joystick.transform.y = cameraPos.y - (GameCore.HEIGHT / 2) + UI_INDENT;
+                    joystick.transform.x = cameraPos.x - (Core.WIDTH / 2) + UI_INDENT;
+                    joystick.transform.y = cameraPos.y - (Core.HEIGHT / 2) + UI_INDENT;
                     break;
             }
         }
 
         // Debug
-        if (GameCore.DEBUG) {
+        if (Core.DEBUG) {
             // Debug Box2d physics
             debugRenderer.render(
                     core.getScreenManager().getWorld(),

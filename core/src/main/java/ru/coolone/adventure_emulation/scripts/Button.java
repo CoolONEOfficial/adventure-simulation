@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.scripts.button;
+package ru.coolone.adventure_emulation.scripts;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -13,9 +13,8 @@ import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
 import java.util.ArrayList;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
-import ru.coolone.adventure_emulation.scripts.CompositeTrigger;
 
 /**
  * My button implementation, copy of @{@link com.uwsoft.editor.renderer.components.additional.ButtonComponent.ButtonListener}
@@ -24,7 +23,7 @@ import ru.coolone.adventure_emulation.scripts.CompositeTrigger;
  * @author coolone
  */
 
-public class Button extends Composite
+public class Button extends ButtonComposite
         implements InputProcessor {
 
     private static final String TAG = Button.class.getSimpleName();
@@ -45,7 +44,7 @@ public class Button extends Composite
     private DimensionsComponent dimension;
 
     public Button(
-            GameCore core,
+            Core core,
             String name
     ) {
         super(core, name);
@@ -209,8 +208,8 @@ public class Button extends Composite
 
         // Get camera coord
         final Vector2 cameraCoord = new Vector2(
-                cameraCenterCoord3.x - (GameCore.WIDTH / 2),
-                cameraCenterCoord3.y - (GameCore.HEIGHT / 2)
+                cameraCenterCoord3.x - (Core.WIDTH / 2),
+                cameraCenterCoord3.y - (Core.HEIGHT / 2)
         );
 
         // Get button collision rect
@@ -223,8 +222,8 @@ public class Button extends Composite
 
         // Scale
         final Vector2 scale = new Vector2(
-                (float) Gdx.graphics.getWidth() / GameCore.WIDTH,
-                (float) Gdx.graphics.getHeight() / GameCore.HEIGHT
+                (float) Gdx.graphics.getWidth() / Core.WIDTH,
+                (float) Gdx.graphics.getHeight() / Core.HEIGHT
         );
         buttonRect.x *= scale.x;
         buttonRect.y *= scale.y;
@@ -290,8 +289,8 @@ public class Button extends Composite
     }
 }
 
-class Composite extends CompositeTrigger {
-    public Composite(GameCore core, String name) {
+class ButtonComposite extends AbsTrigger {
+    public ButtonComposite(Core core, String name) {
         super(
                 core,
                 name,

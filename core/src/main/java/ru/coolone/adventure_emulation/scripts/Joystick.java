@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.game.scripts.joystick;
+package ru.coolone.adventure_emulation.scripts;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.InputProcessor;
@@ -10,7 +10,7 @@ import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
@@ -19,27 +19,27 @@ import ru.coolone.adventure_emulation.input.InputGroups;
  * @author coolone
  */
 
-public class Joystick extends Composite
+public class Joystick extends JoystickComposite
         implements InputProcessor {
     private static final String TAG = Joystick.class.getSimpleName();
 
     /**
-     * Link to @{@link GameCore}
+     * Link to @{@link Core}
      */
-    private GameCore core;
+    private Core core;
 
     /**
-     * @see Stick
+     * @see JoystickStick
      */
-    public Stick stick;
+    public JoystickStick stick;
 
     /**
-     * @see Background
+     * @see JoystickBackground
      */
-    public Background bg;
+    public JoystickBackground bg;
 
     public Joystick(
-            GameCore core,
+            Core core,
             String name
     ) {
         this.core = core;
@@ -52,10 +52,10 @@ public class Joystick extends Composite
 
         // Add scripts
         composite.addScript(this);
-        stick = new Stick();
+        stick = new JoystickStick();
         composite.getChild("stick")
                 .addScript(stick);
-        bg = new Background();
+        bg = new JoystickBackground();
         composite.getChild("bg")
                 .addScript(bg);
 
@@ -172,7 +172,7 @@ public class Joystick extends Composite
     }
 }
 
-class Composite implements IScript {
+class JoystickComposite implements IScript {
 
     /**
      * Components
@@ -198,7 +198,7 @@ class Composite implements IScript {
     }
 }
 
-class Stick implements IScript {
+class JoystickStick implements IScript {
 
     /**
      * Components
@@ -224,7 +224,7 @@ class Stick implements IScript {
     }
 }
 
-class Background implements IScript {
+class JoystickBackground implements IScript {
 
     /**
      * Components

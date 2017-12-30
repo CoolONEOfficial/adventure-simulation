@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.game.scripts.person;
+package ru.coolone.adventure_emulation.scripts.person;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -18,7 +18,7 @@ import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import ru.coolone.adventure_emulation.GameCore;
+import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
@@ -27,16 +27,16 @@ import ru.coolone.adventure_emulation.input.InputGroups;
  * @author coolone
  */
 
-abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum> extends Composite
+abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum> extends PersonComposite
         implements Player.PlayerListener,
         InputGroups.InputGroupsListener {
 
     protected static final String TAG = Person.class.getSimpleName();
 
     /**
-     * Link to @{@link GameCore}
+     * Link to @{@link Core}
      */
-    protected GameCore core;
+    protected Core core;
 
     /**
      * @see Spriter
@@ -69,11 +69,11 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     final public InputGroups.InputGroupId inputMoveRight;
 
     /**
-     * @param core Link to @{@link GameCore}
+     * @param core Link to @{@link Core}
      * @param name Name of CompositeItem
      */
     public Person(
-            GameCore core,
+            Core core,
             String name,
             InputGroups.InputGroupId inputMoveLeft,
             InputGroups.InputGroupId inputMoveRight
@@ -87,7 +87,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 .getRootItem()
                 .getChild(name);
 
-        // Composite
+        // PersonComposite
         selfItem.addScript(this);
 
         // Spriter
@@ -500,7 +500,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 }
 
-abstract class Composite implements IScript {
+abstract class PersonComposite implements IScript {
 
     /**
      * Components

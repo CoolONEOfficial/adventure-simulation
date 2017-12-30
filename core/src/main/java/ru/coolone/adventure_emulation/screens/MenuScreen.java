@@ -2,9 +2,9 @@ package ru.coolone.adventure_emulation.screens;
 
 import com.badlogic.gdx.Gdx;
 
-import ru.coolone.adventure_emulation.GameCore;
-import ru.coolone.adventure_emulation.scripts.button.Button;
+import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
+import ru.coolone.adventure_emulation.scripts.Button;
 
 /**
  * Main menu scene
@@ -26,7 +26,7 @@ public class MenuScreen extends ScreenScene {
     private Button buttonExit;
 
     public MenuScreen(
-            GameCore core
+            Core core
     ) {
         super(core, name);
     }

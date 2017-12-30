@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.game.scripts.person;
+package ru.coolone.adventure_emulation.scripts.person;
 
 import java.util.ArrayList;
 
