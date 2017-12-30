@@ -6,6 +6,8 @@ import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
+import java.util.ArrayList;
+
 import ru.coolone.adventure_emulation.Core;
 
 /**
@@ -37,14 +39,12 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
 
     /**
      * @param core             Link to @{@link Core}
-     * @param name             Name of CompositeItem on @{@link Core :getRootItem}
      * @param activeLayerName  Active layer name in CompositeItem
      * @param passiveLayerName Passive layer name in CompositeItem
      * @param active           Active or passive on init
      */
     protected AbsTrigger(
             Core core,
-            String name,
             String activeLayerName,
             String passiveLayerName,
             boolean active
@@ -53,9 +53,6 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
         this.activeName = activeLayerName;
         this.passiveName = passiveLayerName;
         this.active = active;
-        core.getScreenManager().getRootItem()
-                .getChild(name)
-                .addScript(this);
     }
 
     @Override
@@ -77,22 +74,84 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
      * Show active layer and hide passive
      */
     public void activate() {
-        activeLayer.isVisible = true;
-        passiveLayer.isVisible = false;
-        active = true;
+        setActiveState(true);
     }
 
     /**
      * Show passive layer and hide active
      */
     public void deactivate() {
-        activeLayer.isVisible = false;
-        passiveLayer.isVisible = true;
-        active = false;
+        setActiveState(false);
+    }
+
+    /**
+     * Changes active flag and show/hide layers
+     *
+     * @param active New active flag state
+     */
+    public void setActiveState(boolean active) {
+        activeLayer.isVisible = active;
+        passiveLayer.isVisible = !active;
+        if(this.active != active) {
+            this.active = active;
+
+            // Handle
+            if(active)
+                // Activate
+                for(Listener mListener: listeners)
+                    mListener.onTriggerActivate();
+            else
+                // Deactivate
+                for(Listener mListener: listeners)
+                    mListener.onTriggerDeactivate();
+        }
     }
 
     public boolean isActive() {
         return active;
+    }
+
+    /**
+     * Listeners array
+     */
+    private ArrayList<Listener> listeners = new ArrayList<Listener>();
+
+    /**
+     * @param listener @{@link Listener}, that will be added
+     */
+    public void addListener(Listener listener) {
+        // Add listener
+        listeners.add(listener);
+    }
+
+    /**
+     * @param listener @{@link Listener}, that will be removed
+     * @return Remove result
+     */
+    public boolean removeListener(Listener listener) {
+        // Find listener
+        int index = listeners.indexOf(listener);
+        if (index != -1) {
+            // Remove listener
+            listeners.remove(listener);
+
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Listener interface
+     */
+    public interface Listener {
+        /**
+         * Called, on trigger has been activated
+         */
+        void onTriggerActivate();
+        /**
+         * Called, on trigger has been deactivated
+         */
+        void onTriggerDeactivate();
     }
 }
 

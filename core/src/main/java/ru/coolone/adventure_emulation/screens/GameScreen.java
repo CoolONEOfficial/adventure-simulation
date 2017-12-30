@@ -11,18 +11,20 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 import java.util.ArrayList;
 
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.scripts.Joystick;
-import ru.coolone.adventure_emulation.scripts.persons.Player;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
+import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 import ru.coolone.adventure_emulation.scripts.Button;
+import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
+import ru.coolone.adventure_emulation.scripts.persons.Player;
 
 /**
- * Created by coolone on 22.12.17.
+ * Game @{@link ScreenScene}
+ *
+ * @author coolone
  */
 
 public class GameScreen extends ScreenScene {
-
     public static final String TAG = GameScreen.class.getSimpleName();
 
     private static final String name = "GameScene";
@@ -48,10 +50,11 @@ public class GameScreen extends ScreenScene {
          */
         JOYSTICK
     }
+
     /**
      * Using @{@link MoveMode}
      */
-    private static final MoveMode moveMode = MoveMode.BUTTONS;
+    private static final MoveMode moveMode = MoveMode.JOYSTICK;
     /**
      * Move buttons
      */
@@ -89,6 +92,34 @@ public class GameScreen extends ScreenScene {
         joystick = new Joystick(
                 core,
                 "joystick"
+        );
+
+        joystick.triggerLeft.addListener(
+                new AbsTrigger.Listener() {
+                    @Override
+                    public void onTriggerActivate() {
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
+                    }
+
+                    @Override
+                    public void onTriggerDeactivate() {
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
+                    }
+                }
+        );
+
+        joystick.triggerRight.addListener(
+                new AbsTrigger.Listener() {
+                    @Override
+                    public void onTriggerActivate() {
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_RIGHT);
+                    }
+
+                    @Override
+                    public void onTriggerDeactivate() {
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_RIGHT);
+                    }
+                }
         );
 
         // Move buttons
@@ -269,7 +300,7 @@ public class GameScreen extends ScreenScene {
             // Debug player text
             font.draw(uiBatch,
                     "Move: " + player.getMoveDir() + '\n'
-                            +"Grounded: " + player.isGrounded() + '\n'
+                            + "Grounded: " + player.isGrounded() + '\n'
                             + "Mode: " + player.getCurrentModeId() + '\n'
                             + '\t' + "Movable: " + player.getCurrentMode().movable + '\n'
                             + '\t' + "Move velocity: " + player.getCurrentMode().moveVelocity + '\n'
@@ -308,6 +339,7 @@ public class GameScreen extends ScreenScene {
         rightButton.dispose();
         upButton.dispose();
         downButton.dispose();
+        joystick.dispose();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.scripts;
+package ru.coolone.adventure_emulation.scripts.joystick;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.InputProcessor;
@@ -12,6 +12,7 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
 /**
  * Joystick class (based on CompositeItem)
@@ -32,6 +33,12 @@ public class Joystick extends JoystickComposite
      * @see JoystickStick
      */
     public JoystickStick stick;
+
+    /**
+     * Move @{@link JoystickTrigger}'s
+     */
+    public JoystickTrigger triggerLeft;
+    public JoystickTrigger triggerRight;
 
     /**
      * @see JoystickBackground
@@ -58,6 +65,12 @@ public class Joystick extends JoystickComposite
         bg = new JoystickBackground();
         composite.getChild("bg")
                 .addScript(bg);
+        triggerLeft = new JoystickTrigger(core);
+        composite.getChild("triggerLeft")
+                .addScript(triggerLeft);
+        triggerRight = new JoystickTrigger(core);
+        composite.getChild("triggerRight")
+                .addScript(triggerRight);
 
         InputGroups.multiplexer.addProcessor(this);
     }
@@ -83,20 +96,53 @@ public class Joystick extends JoystickComposite
     private static final int TOUCH_POINTER_EMPTY = -1;
     private int touchPointer = TOUCH_POINTER_EMPTY;
 
-    private boolean intercepts(float x, float y) {
-        x -= transform.x + bg.transform.x + bg.dimensions.width / 2;
-        y -= transform.y + bg.transform.y + bg.dimensions.height / 2;
-        final float radius = dimensions.width / 2f;
+    /**
+     * @param point Check point
+     * @param circlePoint Circle center point
+     * @param radius Circle radius
+     * @return Intercepts circle and @point bool
+     */
+    static private boolean getCircleIntercepts(
+            Vector2 point,
+            Vector2 circlePoint,
+            float radius
+    ) {
+        Vector2 distVec = new Vector2(
+                circlePoint.x - point.x,
+                circlePoint.y - point.y
+        );
 
-        return Math.sqrt(x * x + y * y) < radius;
+        double dist = Math.sqrt(
+                distVec.x * distVec.x
+                        + distVec.y * distVec.y
+        );
+
+        return dist <= radius;
     }
 
-    private boolean intercepts(Vector2 coord) {
-        return intercepts(coord.x, coord.y);
+    private boolean intercepts(float x, float y, float radius) {
+        return getCircleIntercepts(
+                new Vector2(
+                        x,
+                        y
+                ),
+                new Vector2(
+                        transform.x + bg.transform.x + bg.dimensions.width / 2,
+                        transform.y + bg.transform.y + bg.dimensions.height / 2
+                ),
+                radius
+        );
+    }
+    private boolean intercepts(float x, float y) {
+        return intercepts(x, y, dimensions.width / 2f);
     }
 
     private boolean intercepts(Vector3 coord) {
         return intercepts(coord.x, coord.y);
+    }
+
+    private boolean intercepts(Vector3 coord, float radius) {
+        return intercepts(coord.x, coord.y, radius);
     }
 
     @Override
@@ -150,12 +196,26 @@ public class Joystick extends JoystickComposite
             newStickCoord.x -= transform.x;
             newStickCoord.y -= transform.y;
 
-            // To center of stick
-            newStickCoord.x -= stick.dimensions.width / 2f;
-            newStickCoord.y -= stick.dimensions.height / 2f;
+            if (intercepts(
+                    core.getScreenManager()
+                            .getCamera()
+                            .unproject(
+                                    new Vector3(
+                                            screenX,
+                                            screenY,
+                                            0f
+                                    )
+                            ),
+                    dimensions.width
+            )) {
+                // Move stick
+                stick.transform.x = newStickCoord.x - stick.dimensions.width / 2f;
+                stick.transform.y = newStickCoord.y - stick.dimensions.height / 2f;
 
-            stick.transform.x = newStickCoord.x;
-            stick.transform.y = newStickCoord.y;
+                // Update triggers active states
+                triggerLeft.setActiveState(triggerLeft.intercepts(newStickCoord));
+                triggerRight.setActiveState(triggerRight.intercepts(newStickCoord));
+            }
         }
 
         return false;
@@ -163,6 +223,7 @@ public class Joystick extends JoystickComposite
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        touchDragged(screenX, screenY, 0);
         return false;
     }
 
@@ -249,3 +310,4 @@ class JoystickBackground implements IScript {
 
     }
 }
+

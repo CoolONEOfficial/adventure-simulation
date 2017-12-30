@@ -47,7 +47,7 @@ public class Button extends ButtonComposite
             Core core,
             String name
     ) {
-        super(core, name);
+        super(core);
 
         // Button script
         this.core
@@ -290,10 +290,9 @@ public class Button extends ButtonComposite
 }
 
 class ButtonComposite extends AbsTrigger {
-    public ButtonComposite(Core core, String name) {
+    public ButtonComposite(Core core) {
         super(
                 core,
-                name,
                 "pressed", "normal",
                 false
         );
