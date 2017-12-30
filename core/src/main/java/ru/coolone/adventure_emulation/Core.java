@@ -44,7 +44,7 @@ public class Core extends Game {
      */
     private Batch uiBatch;
     /**
-     * Manages @{@link ru.coolone.adventure_emulation.screen.ScreenScene}'s
+     * @see ScreenManager
      */
     private ScreenManager screenManager;
     /**
