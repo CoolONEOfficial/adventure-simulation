@@ -330,9 +330,6 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         // Refresh move direction
         refreshMoveDir(groupId);
 
-        // Change endInputGroupId
-        endInputGroupId = groupId;
-
         return false;
     }
 

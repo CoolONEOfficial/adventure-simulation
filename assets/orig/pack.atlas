@@ -151,9 +151,23 @@ joystickbg
   index: -1
 joystickstick
   rotate: false
-  xy: 694, 318
+  xy: 883, 393
   size: 30, 30
   orig: 30, 30
+  offset: 0, 0
+  index: -1
+joysticktriggerdownactive
+  rotate: false
+  xy: 694, 318
+  size: 35, 30
+  orig: 35, 30
+  offset: 0, 0
+  index: -1
+joysticktriggerdownnormal
+  rotate: false
+  xy: 731, 57
+  size: 35, 30
+  orig: 35, 30
   offset: 0, 0
   index: -1
 joysticktriggerleftactive
@@ -163,11 +177,39 @@ joysticktriggerleftactive
   orig: 30, 35
   offset: 0, 0
   index: -1
+joysticktriggerleftdownactive
+  rotate: false
+  xy: 1965, 792
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+joysticktriggerleftdownnormal
+  rotate: false
+  xy: 731, 25
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
 joysticktriggerleftnormal
   rotate: false
-  xy: 846, 388
+  xy: 1810, 631
   size: 30, 35
   orig: 30, 35
+  offset: 0, 0
+  index: -1
+joysticktriggerleftupactive
+  rotate: false
+  xy: 1997, 829
+  size: 30, 30
+  orig: 30, 30
+  offset: 0, 0
+  index: -1
+joysticktriggerleftupnormal
+  rotate: false
+  xy: 846, 361
+  size: 30, 30
+  orig: 30, 30
   offset: 0, 0
   index: -1
 joysticktriggerrightactive
@@ -179,9 +221,23 @@ joysticktriggerrightactive
   index: -1
 joysticktriggerrightnormal
   rotate: false
-  xy: 731, 52
+  xy: 1922, 743
   size: 30, 35
   orig: 30, 35
+  offset: 0, 0
+  index: -1
+joysticktriggerupactive
+  rotate: false
+  xy: 129, 31
+  size: 35, 30
+  orig: 35, 30
+  offset: 0, 0
+  index: -1
+joysticktriggerupnormal
+  rotate: false
+  xy: 846, 393
+  size: 35, 30
+  orig: 35, 30
   offset: 0, 0
   index: -1
 lamp1
@@ -270,7 +326,7 @@ ninja
   index: -1
 rainDrop
   rotate: false
-  xy: 1473, 866
+  xy: 915, 395
   size: 13, 28
   orig: 13, 28
   offset: 0, 0

@@ -39,6 +39,12 @@ public class Joystick extends JoystickComposite
      */
     public JoystickTrigger triggerLeft;
     public JoystickTrigger triggerRight;
+    public JoystickTrigger triggerLeftUp;
+    public JoystickTrigger triggerLeftDown;
+    public JoystickTrigger triggerRightUp;
+    public JoystickTrigger triggerRightDown;
+    public JoystickTrigger triggerUp;
+    public JoystickTrigger triggerDown;
 
     /**
      * @see JoystickBackground
@@ -71,6 +77,24 @@ public class Joystick extends JoystickComposite
         triggerRight = new JoystickTrigger(core);
         composite.getChild("triggerRight")
                 .addScript(triggerRight);
+        triggerUp = new JoystickTrigger(core);
+        composite.getChild("triggerUp")
+                .addScript(triggerUp);
+        triggerDown = new JoystickTrigger(core);
+        composite.getChild("triggerDown")
+                .addScript(triggerDown);
+        triggerRightUp = new JoystickTrigger(core);
+        composite.getChild("triggerRightUp")
+                .addScript(triggerRightUp);
+        triggerRightDown = new JoystickTrigger(core);
+        composite.getChild("triggerRightDown")
+                .addScript(triggerRightDown);
+        triggerLeftUp = new JoystickTrigger(core);
+        composite.getChild("triggerLeftUp")
+                .addScript(triggerLeftUp);
+        triggerLeftDown = new JoystickTrigger(core);
+        composite.getChild("triggerLeftDown")
+                .addScript(triggerLeftDown);
 
         InputGroups.multiplexer.addProcessor(this);
     }
@@ -133,6 +157,7 @@ public class Joystick extends JoystickComposite
                 radius
         );
     }
+
     private boolean intercepts(float x, float y) {
         return intercepts(x, y, dimensions.width / 2f);
     }
@@ -159,6 +184,9 @@ public class Joystick extends JoystickComposite
                         )
         )) {
             touchPointer = pointer;
+
+//            // Emulate dragged
+//            touchDragged(screenX, screenY, pointer);
         }
 
         return false;
@@ -215,6 +243,12 @@ public class Joystick extends JoystickComposite
                 // Update triggers active states
                 triggerLeft.setActiveState(triggerLeft.intercepts(newStickCoord));
                 triggerRight.setActiveState(triggerRight.intercepts(newStickCoord));
+                triggerUp.setActiveState(triggerUp.intercepts(newStickCoord));
+                triggerDown.setActiveState(triggerDown.intercepts(newStickCoord));
+                triggerLeftUp.setActiveState(triggerLeftUp.intercepts(newStickCoord));
+                triggerRightUp.setActiveState(triggerRightUp.intercepts(newStickCoord));
+                triggerLeftDown.setActiveState(triggerLeftDown.intercepts(newStickCoord));
+                triggerRightDown.setActiveState(triggerRightDown.intercepts(newStickCoord));
             }
         }
 

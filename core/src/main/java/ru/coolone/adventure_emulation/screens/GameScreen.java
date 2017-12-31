@@ -122,6 +122,64 @@ public class GameScreen extends ScreenScene {
                 }
         );
 
+        joystick.triggerUp.addListener(
+                new AbsTrigger.Listener() {
+                    @Override
+                    public void onTriggerActivate() {
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
+                    }
+
+                    @Override
+                    public void onTriggerDeactivate() {
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
+                    }
+                }
+        );
+
+        joystick.triggerDown.addListener(
+                new AbsTrigger.Listener() {
+                    @Override
+                    public void onTriggerActivate() {
+                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.CROUCH);
+                    }
+
+                    @Override
+                    public void onTriggerDeactivate() {
+                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.CROUCH);
+                    }
+                }
+        );
+
+//        joystick.triggerLeftUp.addListener(
+//                new AbsTrigger.Listener() {
+//                    @Override
+//                    public void onTriggerActivate() {
+//                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
+//                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
+//                    }
+//
+//                    @Override
+//                    public void onTriggerDeactivate() {
+//                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
+//                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
+//                    }
+//                }
+//        );
+//
+//        joystick.triggerLeftDown.addListener(
+//                new AbsTrigger.Listener() {
+//                    @Override
+//                    public void onTriggerActivate() {
+//                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
+//                    }
+//
+//                    @Override
+//                    public void onTriggerDeactivate() {
+//                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
+//                    }
+//                }
+//        );
+
         // Move buttons
         downButton = new Button(
                 core,

@@ -149,9 +149,23 @@ joystickbg
   index: -1
 joystickstick
   rotate: false
-  xy: 891, 124
+  xy: 938, 359
   size: 18, 18
   orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerdownactive
+  rotate: false
+  xy: 915, 359
+  size: 21, 18
+  orig: 21, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerdownnormal
+  rotate: false
+  xy: 914, 124
+  size: 21, 18
+  orig: 21, 18
   offset: 0, 0
   index: -1
 joysticktriggerleftactive
@@ -161,11 +175,46 @@ joysticktriggerleftactive
   orig: 18, 21
   offset: 0, 0
   index: -1
-joysticktriggerleftnormal
+joysticktriggerleftactive (2)
   rotate: false
-  xy: 915, 356
+  xy: 871, 121
   size: 18, 21
   orig: 18, 21
+  offset: 0, 0
+  index: -1
+joysticktriggerleftdownactive
+  rotate: false
+  xy: 560, 257
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerleftdownnormal
+  rotate: false
+  xy: 1041, 360
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerleftnormal
+  rotate: false
+  xy: 560, 277
+  size: 18, 21
+  orig: 18, 21
+  offset: 0, 0
+  index: -1
+joysticktriggerleftupactive
+  rotate: false
+  xy: 229, 259
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerleftupnormal
+  rotate: false
+  xy: 981, 360
+  size: 18, 18
+  orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerrightactive
@@ -175,11 +224,60 @@ joysticktriggerrightactive
   orig: 18, 21
   offset: 0, 0
   index: -1
-joysticktriggerrightnormal
+joysticktriggerrightactive (2)
   rotate: false
-  xy: 560, 277
+  xy: 560, 300
   size: 18, 21
   orig: 18, 21
+  offset: 0, 0
+  index: -1
+joysticktriggerrightdownactive
+  rotate: false
+  xy: 1001, 360
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerrightdownnormal
+  rotate: false
+  xy: 907, 81
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerrightnormal
+  rotate: false
+  xy: 907, 101
+  size: 18, 21
+  orig: 18, 21
+  offset: 0, 0
+  index: -1
+joysticktriggerrightupactive
+  rotate: false
+  xy: 1021, 360
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerrightupnormal
+  rotate: false
+  xy: 907, 61
+  size: 18, 18
+  orig: 18, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerupactive
+  rotate: false
+  xy: 958, 360
+  size: 21, 18
+  orig: 21, 18
+  offset: 0, 0
+  index: -1
+joysticktriggerupnormal
+  rotate: false
+  xy: 891, 124
+  size: 21, 18
+  orig: 21, 18
   offset: 0, 0
   index: -1
 lamp1

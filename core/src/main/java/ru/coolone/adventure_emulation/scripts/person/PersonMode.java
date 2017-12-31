@@ -239,7 +239,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
         }
 
         /**
-         * Called on act @{@link ru.coolone.adventure_emulation.game.scripts.person.Composite}
+         * Called on act @{@link ru.coolone.adventure_emulation.scripts.person.PersonComposite}
          */
         protected void onAct() {
         }
