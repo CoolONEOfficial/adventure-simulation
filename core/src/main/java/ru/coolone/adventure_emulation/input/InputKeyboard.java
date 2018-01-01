@@ -13,6 +13,7 @@ public abstract class InputKeyboard implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         return false;
     }
+
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         return false;

@@ -54,16 +54,16 @@ public class Core extends Game {
 
     @Override
     public void create() {
-        // Screen manager
-        screenManager = new ScreenManager(this);
-        screenManager.openScreen(START_SCREEN);
-
         // Input groups
         inputGroups = new InputGroups();
 
         // Debug
         uiBatch = new SpriteBatch();
         font = new BitmapFont();
+
+        // Screen manager
+        screenManager = new ScreenManager(this);
+        screenManager.openScreen(START_SCREEN);
     }
 
     /**
@@ -87,14 +87,12 @@ public class Core extends Game {
         return uiBatch;
     }
 
-    public Vector2 screenToWorldCoord(final Vector2 coord) {
+    public Vector2 screenToWorldCoord(Vector2 coord) {
         Vector3 screenCoord3d = new Vector3(coord.x, coord.y, 0f);
 
         Vector3 worldCoord3d = screenManager.getCamera().unproject(screenCoord3d);
 
-        Vector2 worldCoord = new Vector2(worldCoord3d.x, worldCoord3d.y);
-
-        return worldCoord;
+        return new Vector2(worldCoord3d.x, worldCoord3d.y);
     }
 
     @Override

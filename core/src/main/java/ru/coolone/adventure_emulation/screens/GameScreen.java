@@ -94,7 +94,7 @@ public class GameScreen extends ScreenScene {
                 "joystick"
         );
 
-        joystick.triggerLeft.addListener(
+        joystick.getTrigger(Joystick.TriggerId.LEFT).addListener(
                 new AbsTrigger.Listener() {
                     @Override
                     public void onTriggerActivate() {
@@ -105,10 +105,15 @@ public class GameScreen extends ScreenScene {
                     public void onTriggerDeactivate() {
                         core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
                     }
+
+                    @Override
+                    public void onTriggerChanged(Enum nextId) {
+
+                    }
                 }
         );
 
-        joystick.triggerRight.addListener(
+        joystick.getTrigger(Joystick.TriggerId.RIGHT).addListener(
                 new AbsTrigger.Listener() {
                     @Override
                     public void onTriggerActivate() {
@@ -119,10 +124,15 @@ public class GameScreen extends ScreenScene {
                     public void onTriggerDeactivate() {
                         core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_RIGHT);
                     }
+
+                    @Override
+                    public void onTriggerChanged(Enum nextId) {
+
+                    }
                 }
         );
 
-        joystick.triggerUp.addListener(
+        joystick.getTrigger(Joystick.TriggerId.UP).addListener(
                 new AbsTrigger.Listener() {
                     @Override
                     public void onTriggerActivate() {
@@ -133,10 +143,15 @@ public class GameScreen extends ScreenScene {
                     public void onTriggerDeactivate() {
                         core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
                     }
+
+                    @Override
+                    public void onTriggerChanged(Enum nextId) {
+
+                    }
                 }
         );
 
-        joystick.triggerDown.addListener(
+        joystick.getTrigger(Joystick.TriggerId.DOWN).addListener(
                 new AbsTrigger.Listener() {
                     @Override
                     public void onTriggerActivate() {
@@ -147,38 +162,13 @@ public class GameScreen extends ScreenScene {
                     public void onTriggerDeactivate() {
                         core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.CROUCH);
                     }
+
+                    @Override
+                    public void onTriggerChanged(Enum nextId) {
+
+                    }
                 }
         );
-
-//        joystick.triggerLeftUp.addListener(
-//                new AbsTrigger.Listener() {
-//                    @Override
-//                    public void onTriggerActivate() {
-//                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
-//                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
-//                    }
-//
-//                    @Override
-//                    public void onTriggerDeactivate() {
-//                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
-//                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
-//                    }
-//                }
-//        );
-//
-//        joystick.triggerLeftDown.addListener(
-//                new AbsTrigger.Listener() {
-//                    @Override
-//                    public void onTriggerActivate() {
-//                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
-//                    }
-//
-//                    @Override
-//                    public void onTriggerDeactivate() {
-//                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
-//                    }
-//                }
-//        );
 
         // Move buttons
         downButton = new Button(
@@ -368,8 +358,12 @@ public class GameScreen extends ScreenScene {
                                     player.physic.body != null
                                             ? player.physic.body.getLinearVelocity()
                                             : "null"
-                            ) + '\n'
-                            + "FPS: " + Gdx.graphics.getFramesPerSecond(),
+                            ) + '\n' +
+                            (
+                                    (moveMode == MoveMode.JOYSTICK)
+                                            ? ("Current joystick trigger: " + joystick.getCurrentTriggerId() + '\n')
+                                            : ""
+                            ) + "FPS: " + Gdx.graphics.getFramesPerSecond(),
                     10, Gdx.graphics.getHeight() - 10);
 
             uiBatch.end();

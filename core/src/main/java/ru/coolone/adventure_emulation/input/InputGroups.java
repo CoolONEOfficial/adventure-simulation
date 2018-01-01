@@ -74,7 +74,7 @@ public class InputGroups
     /**
      * General input multiplexer
      */
-    public static final InputMultiplexer multiplexer = new InputMultiplexer();
+    public final InputMultiplexer multiplexer = new InputMultiplexer();
     /**
      * Array of active @{@link InputGroupId}
      */

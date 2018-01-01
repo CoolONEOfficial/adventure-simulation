@@ -29,6 +29,11 @@ public class Button extends ButtonComposite
     private static final String TAG = Button.class.getSimpleName();
 
     /**
+     * Link to @{@link Core}
+     */
+    private final Core core;
+
+    /**
      * Button listeners array
      *
      * @see ButtonListener
@@ -47,7 +52,9 @@ public class Button extends ButtonComposite
             Core core,
             String name
     ) {
-        super(core);
+        super();
+
+        this.core = core;
 
         // Button script
         this.core
@@ -57,7 +64,9 @@ public class Button extends ButtonComposite
                 .addScript(this);
 
         // Listen input
-        InputGroups.multiplexer.addProcessor(this);
+        this.core.getInputGroups()
+                .multiplexer
+                .addProcessor(this);
     }
 
     @Override
@@ -158,7 +167,9 @@ public class Button extends ButtonComposite
     @Override
     public void dispose() {
         // Stop listen input
-        InputGroups.multiplexer.removeProcessor(this);
+        core.getInputGroups()
+                .multiplexer
+                .removeProcessor(this);
     }
 
     /**
@@ -289,10 +300,9 @@ public class Button extends ButtonComposite
     }
 }
 
-class ButtonComposite extends AbsTrigger {
-    public ButtonComposite(Core core) {
+abstract class ButtonComposite extends AbsTrigger {
+    public ButtonComposite() {
         super(
-                core,
                 "pressed", "normal",
                 false
         );

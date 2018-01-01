@@ -9,16 +9,13 @@ import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import java.util.ArrayList;
 
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
 
 /**
  * CompositeItem trigger with layers with custom names
  */
 
-abstract public class AbsTrigger extends AbsTriggerComposite {
-    /**
-     * Link to @{@link Core}
-     */
-    protected Core core;
+abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerComposite {
 
     /**
      * Layers names
@@ -38,18 +35,15 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     private boolean active;
 
     /**
-     * @param core             Link to @{@link Core}
      * @param activeLayerName  Active layer name in CompositeItem
      * @param passiveLayerName Passive layer name in CompositeItem
      * @param active           Active or passive on init
      */
     protected AbsTrigger(
-            Core core,
             String activeLayerName,
             String passiveLayerName,
             boolean active
     ) {
-        this.core = core;
         this.activeName = activeLayerName;
         this.passiveName = passiveLayerName;
         this.active = active;
@@ -114,7 +108,7 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     /**
      * Listeners array
      */
-    private ArrayList<Listener> listeners = new ArrayList<Listener>();
+    protected ArrayList<Listener<TriggerId>> listeners = new ArrayList<Listener<TriggerId>>();
 
     /**
      * @param listener @{@link Listener}, that will be added
@@ -128,7 +122,7 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
      * @param listener @{@link Listener}, that will be removed
      * @return Remove result
      */
-    public boolean removeListener(Listener listener) {
+    public boolean removeListener(Listener<TriggerId> listener) {
         // Find listener
         int index = listeners.indexOf(listener);
         if (index != -1) {
@@ -143,7 +137,7 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     /**
      * Listener interface
      */
-    public interface Listener {
+    public interface Listener<TriggerId extends Enum> {
         /**
          * Called, on trigger has been activated
          */
@@ -152,6 +146,11 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
          * Called, on trigger has been deactivated
          */
         void onTriggerDeactivate();
+        /**
+         * Called, on trigger has been changed
+         * @param nextId New @{@link ru.coolone.adventure_emulation.scripts.joystick.Joystick.TriggerId}
+         */
+        void onTriggerChanged(TriggerId nextId);
     }
 }
 
