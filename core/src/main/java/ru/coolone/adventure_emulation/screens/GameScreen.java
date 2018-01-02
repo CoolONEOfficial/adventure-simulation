@@ -9,11 +9,11 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
-import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 import ru.coolone.adventure_emulation.scripts.Button;
 import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
 import ru.coolone.adventure_emulation.scripts.persons.Player;
@@ -33,28 +33,13 @@ public class GameScreen extends ScreenScene {
      */
     private static final int UI_INDENT = 30;
     /**
-     * Player behavior for @{@link ItemWrapper}
-     */
-    private Player player;
-
-    /**
-     * Move @{@link Player} modes
-     */
-    enum MoveMode {
-        /**
-         * With move buttons
-         */
-        BUTTONS,
-        /**
-         * With joystick
-         */
-        JOYSTICK
-    }
-
-    /**
      * Using @{@link MoveMode}
      */
     private static final MoveMode moveMode = MoveMode.JOYSTICK;
+    /**
+     * Player behavior for @{@link ItemWrapper}
+     */
+    private Player player;
     /**
      * Move buttons
      */
@@ -71,7 +56,6 @@ public class GameScreen extends ScreenScene {
      */
     private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
-
     public GameScreen(
             Core core
     ) {
@@ -91,83 +75,25 @@ public class GameScreen extends ScreenScene {
         // Joystick
         joystick = new Joystick(
                 core,
-                "joystick"
-        );
-
-        joystick.getTrigger(Joystick.TriggerId.LEFT).addListener(
-                new AbsTrigger.Listener() {
-                    @Override
-                    public void onTriggerActivate() {
-                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
-                    }
-
-                    @Override
-                    public void onTriggerDeactivate() {
-                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_LEFT);
-                    }
-
-                    @Override
-                    public void onTriggerChanged(Enum nextId) {
-
-                    }
-                }
-        );
-
-        joystick.getTrigger(Joystick.TriggerId.RIGHT).addListener(
-                new AbsTrigger.Listener() {
-                    @Override
-                    public void onTriggerActivate() {
-                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_RIGHT);
-                    }
-
-                    @Override
-                    public void onTriggerDeactivate() {
-                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.MOVE_RIGHT);
-                    }
-
-                    @Override
-                    public void onTriggerChanged(Enum nextId) {
-
-                    }
-                }
-        );
-
-        joystick.getTrigger(Joystick.TriggerId.UP).addListener(
-                new AbsTrigger.Listener() {
-                    @Override
-                    public void onTriggerActivate() {
-                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
-                    }
-
-                    @Override
-                    public void onTriggerDeactivate() {
-                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.JUMP);
-                    }
-
-                    @Override
-                    public void onTriggerChanged(Enum nextId) {
-
-                    }
-                }
-        );
-
-        joystick.getTrigger(Joystick.TriggerId.DOWN).addListener(
-                new AbsTrigger.Listener() {
-                    @Override
-                    public void onTriggerActivate() {
-                        core.getInputGroups().groupActivate(InputGroups.InputGroupId.CROUCH);
-                    }
-
-                    @Override
-                    public void onTriggerDeactivate() {
-                        core.getInputGroups().groupDeactivate(InputGroups.InputGroupId.CROUCH);
-                    }
-
-                    @Override
-                    public void onTriggerChanged(Enum nextId) {
-
-                    }
-                }
+                "joystick",
+                new EnumMap<Joystick.TriggerId, InputGroups.InputGroupId>(Joystick.TriggerId.class) {{
+                    put(
+                            Joystick.TriggerId.LEFT,
+                            InputGroups.InputGroupId.MOVE_LEFT
+                    );
+                    put(
+                            Joystick.TriggerId.RIGHT,
+                            InputGroups.InputGroupId.MOVE_RIGHT
+                    );
+                    put(
+                            Joystick.TriggerId.UP,
+                            InputGroups.InputGroupId.JUMP
+                    );
+                    put(
+                            Joystick.TriggerId.DOWN,
+                            InputGroups.InputGroupId.CROUCH
+                    );
+                }}
         );
 
         // Move buttons
@@ -397,5 +323,19 @@ public class GameScreen extends ScreenScene {
     @Override
     public void dispose() {
         font.dispose();
+    }
+
+    /**
+     * Move @{@link Player} modes
+     */
+    enum MoveMode {
+        /**
+         * With move buttons
+         */
+        BUTTONS,
+        /**
+         * With joystick
+         */
+        JOYSTICK
     }
 }

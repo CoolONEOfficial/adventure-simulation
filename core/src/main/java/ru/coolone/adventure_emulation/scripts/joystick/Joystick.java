@@ -7,15 +7,17 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
-import com.uwsoft.editor.renderer.components.MainItemComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumMap;
 
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 import ru.coolone.adventure_emulation.scripts.joystick.trigger.JoystickTrigger;
 
@@ -28,54 +30,118 @@ import ru.coolone.adventure_emulation.scripts.joystick.trigger.JoystickTrigger;
 public class Joystick extends JoystickComposite
         implements InputProcessor {
     private static final String TAG = Joystick.class.getSimpleName();
-
     /**
-     * Link to @{@link Core}
+     * Pressed touch pointer
      */
-    private Core core;
-
+    private static final int TOUCH_POINTER_EMPTY = -1;
+    /**
+     * Names of @{@link JoystickTrigger}'s
+     * Assigned to @{@link TriggerId}'s
+     */
+    public final String[] triggerNames = new String[]{
+            "triggerCenter",    // CENTER
+            "triggerLeft",      // LEFT
+            "triggerRight",     // RIGHT
+            "triggerUp",        // UP
+            "triggerDown",      // DOWN
+            "triggerRightUp",   // RIGHT_UP
+            "triggerRightDown", // RIGHT_DOWN
+            "triggerLeftUp",    // LEFT_UP
+            "triggerLeftDown",  // LEFT_DOWN
+    };
+    /**
+     * General @{@link TriggerId}'s
+     */
+    private final TriggerId[] generalTriggerIds = new TriggerId[]{
+            TriggerId.LEFT,
+            TriggerId.RIGHT,
+            TriggerId.UP,
+            TriggerId.DOWN
+    };
+    private final EnumMap<TriggerId, TriggerId[]> triggerChangeMap = new EnumMap<TriggerId, TriggerId[]>(TriggerId.class) {{
+        put(
+                TriggerId.LEFT,
+                new TriggerId[]{
+                        TriggerId.LEFT_UP,
+                        TriggerId.LEFT_DOWN
+                }
+        );
+        put(
+                TriggerId.RIGHT,
+                new TriggerId[]{
+                        TriggerId.RIGHT_UP,
+                        TriggerId.RIGHT_DOWN
+                }
+        );
+        put(
+                TriggerId.UP,
+                new TriggerId[]{
+                        TriggerId.LEFT_UP,
+                        TriggerId.RIGHT_UP
+                }
+        );
+        put(
+                TriggerId.DOWN,
+                new TriggerId[]{
+                        TriggerId.LEFT_DOWN,
+                        TriggerId.RIGHT_DOWN
+                }
+        );
+    }};
+    private final EnumMap<TriggerId, InputGroups.InputGroupId> triggerInputGroups;
+    /**
+     * Array of @{@link Listener}'s
+     */
+    private final ArrayList<Listener> listeners = new ArrayList<Listener>();
     /**
      * @see JoystickStick
      */
     public JoystickStick stick;
-
     /**
-     * Id's to {@link #triggers}
+     * @see JoystickBackground
      */
-    public enum TriggerId {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN,
-        RIGHT_UP,
-        RIGHT_DOWN,
-        LEFT_UP,
-        LEFT_DOWN,
-
-        COUNT
-    }
-
-    private final TriggerId[] visibleTriggers = new TriggerId[] {
-            TriggerId.LEFT,
-            TriggerId.RIGHT,
-            TriggerId.DOWN,
-            TriggerId.UP
-    };
-
+    public JoystickBackground bg;
+    /**
+     * Link to @{@link Core}
+     */
+    private Core core;
     /**
      * Active at this moment @{@link TriggerId}
      */
     private TriggerId currentTriggerId;
-
     /**
      * Array of @{@link JoystickTrigger}'s
      */
     private final JoystickTrigger[] triggers = new JoystickTrigger[]{
+            // CENTER
+            new JoystickTrigger<TriggerId>(
+                    new AbsTrigger.Listener() {
+                        @Override
+                        public void onTriggerActivate() {
+                            // Show generalTriggerIds
+                            for (TriggerId mVisTrigger : generalTriggerIds)
+                                triggers[mVisTrigger.ordinal()].mainItem.visible = true;
+                        }
+
+                        @Override
+                        public void onTriggerDeactivate() {
+                        }
+
+                        @Override
+                        public void onTriggerChanged(Enum nextId) {
+                            TriggerId nextTriggerId = (TriggerId) nextId;
+                            if (nextTriggerId != TriggerId.LEFT)
+                                getTrigger(TriggerId.LEFT).mainItem.visible = false;
+                        }
+                    }
+            ),
+
             // LEFT
             new JoystickTrigger<TriggerId>(
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
+                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
                             getTrigger(TriggerId.LEFT_UP).mainItem.visible = true;
                             getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = true;
                         }
@@ -103,6 +169,7 @@ public class Joystick extends JoystickComposite
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
+                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
                             getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = true;
                             getTrigger(TriggerId.RIGHT_UP).mainItem.visible = true;
                         }
@@ -126,28 +193,119 @@ public class Joystick extends JoystickComposite
             ),
 
             // UP
-            new JoystickTrigger(),
-
-            // DOWN
-            new JoystickTrigger(),
-
-            // RIGHT_UP
             new JoystickTrigger(
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
-
+                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
+                            getTrigger(TriggerId.LEFT_UP).mainItem.visible = true;
+                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = true;
                         }
 
                         @Override
                         public void onTriggerDeactivate() {
-                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
-                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+
                         }
 
                         @Override
                         public void onTriggerChanged(Enum nextId) {
+                            switch ((TriggerId) nextId) {
+                                case LEFT_UP:
+                                case RIGHT_UP:
+                                    break;
+                                default:
+                                    getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                            }
+                        }
+                    }
+            ),
 
+            // DOWN
+            new JoystickTrigger(
+                    new AbsTrigger.Listener() {
+                        @Override
+                        public void onTriggerActivate() {
+                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
+                            getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = true;
+                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = true;
+                        }
+
+                        @Override
+                        public void onTriggerDeactivate() {
+
+                        }
+
+                        @Override
+                        public void onTriggerChanged(Enum nextId) {
+                            switch ((TriggerId) nextId) {
+                                case LEFT_DOWN:
+                                case RIGHT_DOWN:
+                                    break;
+                                default:
+                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                            }
+                        }
+                    }
+            ),
+
+            // RIGHT_UP
+            new JoystickTrigger(
+                    new AbsTrigger.Listener() {
+                        TriggerId oldTrigger;
+                        InputGroups.InputGroupId activeInputGroup;
+
+                        @Override
+                        public void onTriggerActivate() {
+                            oldTrigger = currentTriggerId;
+
+                            // Activate InputGroup
+                            TriggerId activateGroupTrigger = null;
+                            switch (oldTrigger) {
+                                case UP:
+                                    activateGroupTrigger = TriggerId.RIGHT;
+                                    break;
+                                case RIGHT:
+                                    activateGroupTrigger = TriggerId.UP;
+                                    break;
+                            }
+                            if (activateGroupTrigger != null) {
+                                activeInputGroup = triggerInputGroups.get(activateGroupTrigger);
+                                core.getInputGroups()
+                                        .groupActivate(activeInputGroup);
+                            }
+                        }
+
+                        @Override
+                        public void onTriggerDeactivate() {
+                            switch (oldTrigger) {
+                                case RIGHT:
+                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.RIGHT
+                                                    )
+                                            );
+                                    break;
+                                case UP:
+                                    getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.UP
+                                                    )
+                                            );
+                                    break;
+                            }
+                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                            core.getInputGroups()
+                                    .groupDeactivate(activeInputGroup);
+                        }
+
+                        @Override
+                        public void onTriggerChanged(Enum nextId) {
                         }
                     }
             ),
@@ -155,16 +313,57 @@ public class Joystick extends JoystickComposite
             // RIGHT_DOWN
             new JoystickTrigger(
                     new AbsTrigger.Listener() {
+                        TriggerId oldTrigger;
+                        InputGroups.InputGroupId activeGroup;
+
                         @Override
                         public void onTriggerActivate() {
+                            oldTrigger = currentTriggerId;
 
+                            // Activate InputGroup
+                            TriggerId activateGroupTrigger = null;
+                            switch (oldTrigger) {
+                                case DOWN:
+                                    activateGroupTrigger = TriggerId.RIGHT;
+                                    break;
+                                case RIGHT:
+                                    activateGroupTrigger = TriggerId.DOWN;
+                                    break;
+                            }
+                            if (activateGroupTrigger != null) {
+                                activeGroup = triggerInputGroups.get(activateGroupTrigger);
+                                core.getInputGroups()
+                                        .groupActivate(activeGroup);
+                            }
                         }
 
                         @Override
                         public void onTriggerDeactivate() {
-                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
-                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                            oldTrigger = currentTriggerId;
 
+                            switch (oldTrigger) {
+                                case RIGHT:
+                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.RIGHT
+                                                    )
+                                            );
+                                    break;
+                                case DOWN:
+                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.DOWN
+                                                    )
+                                            );
+                                    break;
+                            }
+                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                            core.getInputGroups()
+                                    .groupDeactivate(activeGroup);
                         }
 
                         @Override
@@ -177,15 +376,56 @@ public class Joystick extends JoystickComposite
             // LEFT_UP
             new JoystickTrigger(
                     new AbsTrigger.Listener() {
+                        TriggerId oldTrigger;
+                        InputGroups.InputGroupId activeGroup;
+
                         @Override
                         public void onTriggerActivate() {
+                            oldTrigger = currentTriggerId;
 
+                            // Activate InputGroup
+                            TriggerId activateGroupTrigger = null;
+                            switch (oldTrigger) {
+                                case UP:
+                                    activateGroupTrigger = TriggerId.LEFT;
+                                    break;
+                                case LEFT:
+                                    activateGroupTrigger = TriggerId.UP;
+
+                                    break;
+                            }
+                            if (activateGroupTrigger != null) {
+                                activeGroup = triggerInputGroups.get(activateGroupTrigger);
+                                core.getInputGroups()
+                                        .groupActivate(activeGroup);
+                            }
                         }
 
                         @Override
                         public void onTriggerDeactivate() {
+                            switch (oldTrigger) {
+                                case LEFT:
+                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.LEFT
+                                                    )
+                                            );
+                                    break;
+                                case UP:
+                                    getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.UP
+                                                    )
+                                            );
+                                    break;
+                            }
                             getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
-                            getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                            core.getInputGroups()
+                                    .groupDeactivate(activeGroup);
                         }
 
                         @Override
@@ -198,15 +438,55 @@ public class Joystick extends JoystickComposite
             // LEFT_DOWN
             new JoystickTrigger(
                     new AbsTrigger.Listener() {
+                        TriggerId oldTrigger;
+                        InputGroups.InputGroupId activeGroup;
+
                         @Override
                         public void onTriggerActivate() {
+                            oldTrigger = currentTriggerId;
 
+                            // Activate InputGroup
+                            TriggerId activateGroupTrigger = null;
+                            switch (oldTrigger) {
+                                case DOWN:
+                                    activateGroupTrigger = TriggerId.LEFT;
+                                    break;
+                                case LEFT:
+                                    activateGroupTrigger = TriggerId.DOWN;
+                                    break;
+                            }
+                            if (activateGroupTrigger != null) {
+                                activeGroup = triggerInputGroups.get(activateGroupTrigger);
+                                core.getInputGroups()
+                                        .groupActivate(activeGroup);
+                            }
                         }
 
                         @Override
                         public void onTriggerDeactivate() {
-                            getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
+                            switch (oldTrigger) {
+                                case LEFT:
+                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.LEFT
+                                                    )
+                                            );
+                                    break;
+                                case DOWN:
+                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    core.getInputGroups()
+                                            .groupDeactivate(
+                                                    triggerInputGroups.get(
+                                                            TriggerId.DOWN
+                                                    )
+                                            );
+                                    break;
+                            }
                             getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                            core.getInputGroups()
+                                    .groupDeactivate(activeGroup);
                         }
 
                         @Override
@@ -216,32 +496,22 @@ public class Joystick extends JoystickComposite
                     }
             ),
     };
+    private int touchPointer = TOUCH_POINTER_EMPTY;
 
     /**
-     * Names of @{@link JoystickTrigger}'s
-     * Assigned to @{@link TriggerId}'s
+     * @param core               @see {@link #core}
+     * @param name               CompositeItem name
+     * @param triggerInputGroups Assigned to {@link #generalTriggerIds} @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
      */
-    public final String[] triggerNames = new String[]{
-            "triggerLeft",      // LEFT
-            "triggerRight",     // RIGHT
-            "triggerUp",        // UP
-            "triggerDown",      // DOWN
-            "triggerRightUp",   // RIGHT_UP
-            "triggerRightDown", // RIGHT_DOWN
-            "triggerLeftUp",    // LEFT_UP
-            "triggerLeftDown",  // LEFT_DOWN
-    };
-
-    /**
-     * @see JoystickBackground
-     */
-    public JoystickBackground bg;
-
     public Joystick(
             Core core,
-            String name
+            String name,
+            EnumMap<TriggerId, InputGroups.InputGroupId> triggerInputGroups
     ) {
         this.core = core;
+        if (triggerInputGroups.size() != generalTriggerIds.length)
+            throw new RuntimeException("Triggered input groups array length wrong");
+        this.triggerInputGroups = triggerInputGroups;
 
         // Create / Add scripts
         ItemWrapper root = this.core
@@ -288,12 +558,6 @@ public class Joystick extends JoystickComposite
     public boolean keyTyped(char character) {
         return false;
     }
-
-    /**
-     * Pressed touch pointer
-     */
-    private static final int TOUCH_POINTER_EMPTY = -1;
-    private int touchPointer = TOUCH_POINTER_EMPTY;
 
     /**
      * @param x      Check x
@@ -367,8 +631,8 @@ public class Joystick extends JoystickComposite
         )) {
             touchPointer = pointer;
 
-            // Show visibleTriggers
-            for(TriggerId mVisTrigger: visibleTriggers)
+            // Show generalTriggerIds
+            for (TriggerId mVisTrigger : generalTriggerIds)
                 triggers[mVisTrigger.ordinal()].mainItem.visible = true;
 
             // Emulate dragged
@@ -382,7 +646,7 @@ public class Joystick extends JoystickComposite
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (pointer == touchPointer) {
             // Hide add triggers
-            for(JoystickTrigger mTrigger: triggers)
+            for (JoystickTrigger mTrigger : triggers)
                 mTrigger.mainItem.visible = false;
 
             // Move stick to center of bg
@@ -392,6 +656,12 @@ public class Joystick extends JoystickComposite
             stick.transform.y = bg.transform.y
                     + bg.dimensions.height / 2f
                     - stick.dimensions.height / 2f;
+
+            // Deactivate activated general group
+            int generalGroupIdId = Arrays.asList(generalTriggerIds).indexOf(currentTriggerId);
+            if (generalGroupIdId != -1)
+                core.getInputGroups()
+                        .groupDeactivate(triggerInputGroups.get(generalTriggerIds[generalGroupIdId]));
 
             // Deactivate activated trigger
             if (currentTriggerId != null)
@@ -433,33 +703,58 @@ public class Joystick extends JoystickComposite
                 stick.transform.y = newStickCoord.y - stick.dimensions.height / 2f;
 
                 // Check intercepts triggers
-                for (int mTriggerIdId = 0; mTriggerIdId < TriggerId.COUNT.ordinal(); mTriggerIdId++) {
-                    TriggerId mTriggerId = TriggerId.values()[mTriggerIdId];
-                    JoystickTrigger mTrigger = triggers[mTriggerId.ordinal()];
+                for (int newTriggerIdId = 0; newTriggerIdId < TriggerId.COUNT.ordinal(); newTriggerIdId++) {
+                    TriggerId newTriggerId = TriggerId.values()[newTriggerIdId];
+                    JoystickTrigger<TriggerId> newTrigger = getTrigger(newTriggerId);
 
-                    if (mTrigger.mainItem.visible &&
-                            !mTrigger.isActive() &&
-                            mTrigger.intercepts(newStickCoord)) {
+                    if (newTrigger.mainItem.visible &&
+                            !newTrigger.isActive() &&
+                            newTrigger.intercepts(newStickCoord)) {
                         JoystickTrigger<TriggerId> oldTrigger = getCurrentTrigger();
-                        JoystickTrigger<TriggerId> newTrigger = getTrigger(mTriggerId);
+                        TriggerId oldTriggerId = getCurrentTriggerId();
 
                         // Handle currentTriggerId change
                         for (Listener mListener : listeners)
-                            mListener.onJoystickTriggerChanged(currentTriggerId, mTriggerId);
+                            mListener.onJoystickTriggerChanged(currentTriggerId, newTriggerId);
 
-                        if (currentTriggerId != null) {
+                        if (oldTrigger != null) {
                             // Handle change trigger
-                            oldTrigger.onChanged(mTriggerId);
+                            oldTrigger.onChanged(newTriggerId);
 
                             // Deactivate activated trigger
                             oldTrigger.deactivate();
+
+                            // Deactivate InputGroup
+                            int generalTriggerIdId = Arrays.asList(generalTriggerIds)
+                                    .indexOf(oldTriggerId);
+                            if (generalTriggerIdId != -1) {
+                                if (!Arrays.asList(triggerChangeMap.get(oldTriggerId))
+                                        .contains(newTriggerId))
+                                    core.getInputGroups()
+                                            .groupDeactivate(triggerInputGroups.get(generalTriggerIds[generalTriggerIdId]));
+                            }
+                        }
+
+                        // Hide all other general triggers
+                        if (Arrays.asList(generalTriggerIds).contains(newTriggerId)) {
+                            // Show generalTriggerIds
+                            for (TriggerId mVisTrigger : generalTriggerIds)
+                                triggers[mVisTrigger.ordinal()].mainItem.visible = false;
+                            getTrigger(newTriggerId).mainItem.visible = true;
                         }
 
                         // Activate intercepted trigger
                         newTrigger.activate();
 
+                        // Activate InputGroup
+                        int generalTriggerIdId = Arrays.asList(generalTriggerIds).indexOf(newTriggerId);
+                        if (generalTriggerIdId != -1) {
+                            core.getInputGroups()
+                                    .groupActivate(triggerInputGroups.get(generalTriggerIds[generalTriggerIdId]));
+                        }
+
                         // Refresh activated trigger
-                        currentTriggerId = mTriggerId;
+                        currentTriggerId = newTriggerId;
                     }
                 }
             }
@@ -487,6 +782,31 @@ public class Joystick extends JoystickComposite
         core.getInputGroups().multiplexer.removeProcessor(this);
     }
 
+    public void addListener(Listener listener) {
+        listeners.add(listener);
+    }
+
+    public boolean removeListener(Listener listener) {
+        return listeners.remove(listener);
+    }
+
+    /**
+     * Id's to {@link #triggers}
+     */
+    public enum TriggerId {
+        CENTER,
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN,
+        RIGHT_UP,
+        RIGHT_DOWN,
+        LEFT_UP,
+        LEFT_DOWN,
+
+        COUNT
+    }
+
     /**
      * Listener for @{@link Joystick}
      */
@@ -495,19 +815,6 @@ public class Joystick extends JoystickComposite
          * Called, after {@link #currentTriggerId} changed
          */
         void onJoystickTriggerChanged(TriggerId before, TriggerId after);
-    }
-
-    /**
-     * Array of @{@link Listener}'s
-     */
-    private final ArrayList<Listener> listeners = new ArrayList<Listener>();
-
-    public void addListener(Listener listener) {
-        listeners.add(listener);
-    }
-
-    public boolean removeListener(Listener listener) {
-        return listeners.remove(listener);
     }
 }
 

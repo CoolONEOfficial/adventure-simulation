@@ -8,9 +8,6 @@ import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
 import java.util.ArrayList;
 
-import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
-
 /**
  * CompositeItem trigger with layers with custom names
  */
@@ -18,17 +15,19 @@ import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
 abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerComposite {
 
     /**
+     * Listeners array
+     */
+    protected final ArrayList<Listener<TriggerId>> listeners = new ArrayList<Listener<TriggerId>>();
+    /**
      * Layers names
      */
     private String activeName;
     private String passiveName;
-
     /**
      * Layers
      */
     private LayerItemVO activeLayer;
     private LayerItemVO passiveLayer;
-
     /**
      * Active flag
      */
@@ -86,17 +85,17 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
     public void setActiveState(boolean active) {
         activeLayer.isVisible = active;
         passiveLayer.isVisible = !active;
-        if(this.active != active) {
+        if (this.active != active) {
             this.active = active;
 
             // Handle
-            if(active)
+            if (active)
                 // Activate
-                for(Listener mListener: listeners)
+                for (Listener mListener : listeners)
                     mListener.onTriggerActivate();
             else
                 // Deactivate
-                for(Listener mListener: listeners)
+                for (Listener mListener : listeners)
                     mListener.onTriggerDeactivate();
         }
     }
@@ -106,16 +105,14 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
     }
 
     /**
-     * Listeners array
-     */
-    protected ArrayList<Listener<TriggerId>> listeners = new ArrayList<Listener<TriggerId>>();
-
-    /**
      * @param listener @{@link Listener}, that will be added
+     * @return Added @{@link Listener} index
      */
-    public void addListener(Listener listener) {
+    public int addListener(Listener listener) {
         // Add listener
         listeners.add(listener);
+
+        return listeners.size() - 1;
     }
 
     /**
@@ -142,12 +139,15 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
          * Called, on trigger has been activated
          */
         void onTriggerActivate();
+
         /**
          * Called, on trigger has been deactivated
          */
         void onTriggerDeactivate();
+
         /**
          * Called, on trigger has been changed
+         *
          * @param nextId New @{@link ru.coolone.adventure_emulation.scripts.joystick.Joystick.TriggerId}
          */
         void onTriggerChanged(TriggerId nextId);

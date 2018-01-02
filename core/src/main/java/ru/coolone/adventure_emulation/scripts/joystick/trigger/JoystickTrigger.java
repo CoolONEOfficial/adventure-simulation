@@ -1,6 +1,5 @@
 package ru.coolone.adventure_emulation.scripts.joystick.trigger;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Vector2;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
@@ -8,9 +7,6 @@ import com.uwsoft.editor.renderer.components.MainItemComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
-import java.util.Collection;
-
-import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
 
@@ -26,19 +22,20 @@ public class JoystickTrigger<TriggerId extends Enum> extends AbsTrigger<TriggerI
     public DimensionsComponent dimensions;
     public MainItemComponent mainItem;
 
-    public JoystickTrigger() {
-        super(
-                "active", "passive",
-                false
-        );
-    }
-
     /**
      * @param listener @{@link ru.coolone.adventure_emulation.scripts.AbsTrigger.Listener}, that will be added
      */
     public JoystickTrigger(Listener listener) {
-        this();
+        super(
+                "active", "passive",
+                false
+        );
         addListener(listener);
+    }
+
+    @Override
+    public void activate() {
+        super.activate();
     }
 
     @Override

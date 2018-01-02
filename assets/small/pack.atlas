@@ -72,7 +72,7 @@ fire
   index: -1
 glow
   rotate: false
-  xy: 888, 352
+  xy: 560, 296
   size: 25, 25
   orig: 25, 25
   offset: 0, 0
@@ -149,133 +149,147 @@ joystickbg
   index: -1
 joystickstick
   rotate: false
-  xy: 938, 359
+  xy: 1379, 366
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
+joysticktriggercenteractive
+  rotate: false
+  xy: 183, 255
+  size: 22, 22
+  orig: 22, 22
+  offset: 0, 0
+  index: -1
+joysticktriggercenternormal
+  rotate: false
+  xy: 871, 120
+  size: 22, 22
+  orig: 22, 22
+  offset: 0, 0
+  index: -1
 joysticktriggerdownactive
   rotate: false
-  xy: 915, 359
+  xy: 227, 259
   size: 21, 18
   orig: 21, 18
   offset: 0, 0
   index: -1
 joysticktriggerdownnormal
   rotate: false
-  xy: 914, 124
+  xy: 915, 124
   size: 21, 18
   orig: 21, 18
   offset: 0, 0
   index: -1
 joysticktriggerleftactive
   rotate: false
-  xy: 871, 121
+  xy: 895, 121
   size: 18, 21
   orig: 18, 21
   offset: 0, 0
   index: -1
 joysticktriggerleftactive (2)
   rotate: false
-  xy: 871, 121
+  xy: 895, 121
   size: 18, 21
   orig: 18, 21
   offset: 0, 0
   index: -1
 joysticktriggerleftdownactive
   rotate: false
-  xy: 560, 257
+  xy: 934, 359
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerleftdownnormal
   rotate: false
-  xy: 1041, 360
+  xy: 575, 92
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerleftnormal
   rotate: false
-  xy: 560, 277
+  xy: 1339, 383
   size: 18, 21
   orig: 18, 21
   offset: 0, 0
   index: -1
 joysticktriggerleftupactive
   rotate: false
-  xy: 229, 259
+  xy: 1379, 386
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerleftupnormal
   rotate: false
-  xy: 981, 360
+  xy: 515, 92
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerrightactive
   rotate: false
-  xy: 560, 300
+  xy: 207, 256
   size: 18, 21
   orig: 18, 21
   offset: 0, 0
   index: -1
 joysticktriggerrightactive (2)
   rotate: false
-  xy: 560, 300
+  xy: 207, 256
   size: 18, 21
   orig: 18, 21
   offset: 0, 0
   index: -1
 joysticktriggerrightdownactive
   rotate: false
-  xy: 1001, 360
+  xy: 535, 92
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerrightdownnormal
   rotate: false
-  xy: 907, 81
+  xy: 1339, 363
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerrightnormal
   rotate: false
-  xy: 907, 101
+  xy: 1359, 383
   size: 18, 21
   orig: 18, 21
   offset: 0, 0
   index: -1
 joysticktriggerrightupactive
   rotate: false
-  xy: 1021, 360
+  xy: 555, 92
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerrightupnormal
   rotate: false
-  xy: 907, 61
+  xy: 1359, 363
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 joysticktriggerupactive
   rotate: false
-  xy: 958, 360
+  xy: 560, 256
   size: 21, 18
   orig: 21, 18
   offset: 0, 0
   index: -1
 joysticktriggerupnormal
   rotate: false
-  xy: 891, 124
+  xy: 560, 276
   size: 21, 18
   orig: 21, 18
   offset: 0, 0
@@ -352,7 +366,7 @@ mbuttonupnormal
   index: -1
 miniPond
   rotate: false
-  xy: 183, 260
+  xy: 888, 360
   size: 44, 17
   orig: 44, 17
   offset: 0, 0
