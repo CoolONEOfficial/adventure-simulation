@@ -1,6 +1,8 @@
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 eclipse.project.name = appName + '-core'
 
+targetCompatibility = 1.8
+sourceCompatibility = 1.8
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
@@ -8,5 +10,8 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    compile "com.github.insubstantial:trident:7.3"
     compile "com.github.CoolONEOfficial:overlap2d-runtime-libgdx:$overlap2dVersion"
+    testCompile 'org.testng:testng:6.13.1'
+    testCompile "org.mockito:mockito-core:2.13.0"
 }
