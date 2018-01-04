@@ -8,8 +8,6 @@ language: android
   jdk: oraclejdk8
 
 language: java
-  after_success:
-    - bash <(curl -s https://codecov.io/bash)
 
   os:
     - linux
@@ -24,3 +22,6 @@ language: java
   before_install:
   - yes | sdkmanager "platforms;android-27"
   - chmod +x gradlew
+
+  after_success:
+    - bash <(curl -s https://codecov.io/bash)
