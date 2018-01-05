@@ -4,7 +4,7 @@ import org.mockito.MockitoAnnotations;
 import org.testng.annotations.BeforeMethod;
 
 /**
- * Created by coolone on 04.01.18.
+ * @author coolone
  */
 
 abstract public class AbsTest {

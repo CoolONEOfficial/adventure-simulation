@@ -15,7 +15,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Created by coolone on 04.01.18.
+ * @author coolone
  */
 
 public class AbsTriggerTest extends AbsTest {

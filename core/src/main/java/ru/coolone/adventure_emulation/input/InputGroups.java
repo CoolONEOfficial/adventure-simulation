@@ -62,7 +62,7 @@ public class InputGroups
     /**
      * Array of listeners
      */
-    private final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
+    public final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
 
     public InputGroups() {
         // Set input multiplexer
@@ -101,23 +101,6 @@ public class InputGroups
 
     public InputMultiplexer getMultiplexer() {
         return multiplexer;
-    }
-
-    public void addListener(InputGroupsListener listener) {
-        // Add listener
-        listeners.add(listener);
-    }
-
-    public boolean removeListener(InputGroupsListener listener) {
-        // Find listener
-        int removeIndex = listeners.indexOf(listener);
-        if (removeIndex != -1) {
-            // Remove listener
-            listeners.remove(listener);
-
-            return true;
-        }
-        return false;
     }
 
     /**

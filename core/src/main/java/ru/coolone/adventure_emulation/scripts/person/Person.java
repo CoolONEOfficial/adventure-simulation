@@ -17,8 +17,8 @@ import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
-
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.Script;
 import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
@@ -99,7 +99,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         spriter.spriter.player.addListener(this);
 
         // Start listen input
-        this.core.getInputGroups().addListener(this);
+        this.core.getInputGroups().listeners.add(this);
 
         // Input groups
         this.inputMoveLeft = inputMoveLeft;
@@ -135,17 +135,17 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             }};
 
             // Apply acceleration
-            physic.body.applyLinearImpulse(
+            getBody().applyLinearImpulse(
                     moveAcceleration,
-                    physic.body.getPosition(),
+                    getBody().getPosition(),
                     true
             );
 
             // Limit velocity
-            final float currentVelocity = physic.body.getLinearVelocity().x;
+            final float currentVelocity = getBody().getLinearVelocity().x;
             if (Math.abs(currentVelocity) > currentMode.moveVelocity)
-                physic.body.setLinearVelocity(
-                        new Vector2(physic.body.getLinearVelocity()) {{
+                getBody().setLinearVelocity(
+                        new Vector2(getBody().getLinearVelocity()) {{
                             x = (currentVelocity > 0)
                                     ? currentMode.moveVelocity
                                     : -currentMode.moveVelocity;
@@ -291,14 +291,14 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             Contact contact = contactList.get(i);
             // Check touch to sensor fixture
             if (contact.isTouching() &&
-                    (physic.body.getFixtureList().contains(contact.getFixtureA(), false) ||
-                            physic.body.getFixtureList().contains(contact.getFixtureB(), false))) {
+                    (getBody().getFixtureList().contains(contact.getFixtureA(), false) ||
+                            getBody().getFixtureList().contains(contact.getFixtureB(), false))) {
 
                 // Check below
                 boolean below = true;
                 WorldManifold manifold = contact.getWorldManifold();
                 for (Vector2 mPoint : manifold.getPoints()) {
-                    below &= (mPoint.y < transform.y);
+                    below &= (mPoint.y < getY());
                 }
                 return below;
             }
@@ -431,7 +431,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Override
     public void dispose() {
         // Stop listen input
-        core.getInputGroups().removeListener(this);
+        core.getInputGroups().listeners.remove(this);
 
         super.dispose();
 
@@ -443,13 +443,17 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      * Spriter item in CompositeItem
      * Animation of person
      */
-    static public class Spriter implements IScript {
+    static public class Spriter extends Script {
 
-        /**
-         * Components
-         */
-        public TransformComponent transform;
-        public DimensionsComponent dimensions;
+        Spriter() {
+            super(
+                    new Class[]{
+                            TransformComponent.class,
+                            DimensionsComponent.class
+                    }
+            );
+        }
+
         /**
          * Spriter component
          */
@@ -457,9 +461,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         @Override
         public void init(Entity entity) {
+            super.init(entity);
             // Components
-            transform = ComponentRetriever.get(entity, TransformComponent.class);
-            dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
             spriter = ComponentRetriever.get(entity, SpriterComponent.class);
         }
 
@@ -497,39 +500,22 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 }
 
-abstract class PersonComposite implements IScript {
+abstract class PersonComposite extends Script {
 
-    /**
-     * Components
-     */
-    public LayerMapComponent layers;
-    public TransformComponent transform;
-    public DimensionsComponent dimensions;
-    public PhysicsBodyComponent physic;
-
-    @Override
-    public void init(Entity entity) {
-        // Components
-        layers = ComponentRetriever.get(entity, LayerMapComponent.class);
-        transform = ComponentRetriever.get(entity, TransformComponent.class);
-        dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
-        physic = ComponentRetriever.get(entity, PhysicsBodyComponent.class);
+    public PersonComposite() {
+        super(
+                new Class[]{
+                        LayerMapComponent.class,
+                        TransformComponent.class,
+                        DimensionsComponent.class,
+                        PhysicsBodyComponent.class
+                }
+        );
     }
 
     @Override
     public void act(float delta) {
-        if (!physic.body.isFixedRotation())
-            physic.body.setFixedRotation(true);
-    }
-
-    @Override
-    public void dispose() {
-    }
-
-    /**
-     * @return Physic body spawned bool
-     */
-    public boolean isSpawned() {
-        return physic.body != null;
+        if (!getBody().isFixedRotation())
+            getBody().setFixedRotation(true);
     }
 }

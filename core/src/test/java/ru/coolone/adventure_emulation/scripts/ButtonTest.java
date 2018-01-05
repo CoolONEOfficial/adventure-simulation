@@ -9,9 +9,12 @@ import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
 
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
@@ -19,14 +22,36 @@ import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 
 import static org.mockito.Mockito.mock;
+import static org.testng.Assert.assertEquals;
 
 /**
- * Created by coolone on 04.01.18.
+ * @author coolone
  */
 public class ButtonTest extends AbsTest {
 
     @InjectMocks
+    private
     Button button;
+
+    private int bClickCount = 0;
+    private int bDownCount = 0;
+    private int bUpCount = 0;
+    final Button.ButtonListener buttonListener = new Button.ButtonListener() {
+        @Override
+        public void onButtonClick() {
+            bClickCount++;
+        }
+
+        @Override
+        public void onButtonDown() {
+            bDownCount++;
+        }
+
+        @Override
+        public void onButtonUp() {
+            bUpCount++;
+        }
+    };
 
     private Core core;
 
@@ -95,13 +120,22 @@ public class ButtonTest extends AbsTest {
 
     @Test
     public void testClick() throws Exception {
+        int countOld = bClickCount;
+        button.click();
+        assertEquals(bClickCount, countOld + 1);
     }
 
     @Test
     public void testDown() throws Exception {
+        int countOld = bDownCount;
+        button.down();
+        assertEquals(bDownCount, countOld + 1);
     }
 
     @Test
     public void testUp() throws Exception {
+        int countOld = bUpCount;
+        button.up();
+        assertEquals(bUpCount, countOld + 1);
     }
 }

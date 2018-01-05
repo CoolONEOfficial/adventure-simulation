@@ -5,6 +5,7 @@ import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
+import ru.coolone.adventure_emulation.Script;
 
 import java.util.ArrayList;
 
@@ -53,8 +54,8 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
         super.init(entity);
 
         // Get layers
-        activeLayer = layers.getLayer(activeName);
-        passiveLayer = layers.getLayer(passiveName);
+        activeLayer = getLayer(activeName);
+        passiveLayer = getLayer(passiveName);
 
         // Sync state and flag
         if (activeState)
@@ -149,26 +150,13 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     }
 }
 
-abstract class AbsTriggerComposite implements IScript {
+abstract class AbsTriggerComposite extends Script {
 
-    /**
-     * Components
-     */
-    protected LayerMapComponent layers;
-
-    @Override
-    public void init(Entity entity) {
-        // Component
-        layers = ComponentRetriever.get(entity, LayerMapComponent.class);
-    }
-
-    @Override
-    public void act(float delta) {
-
-    }
-
-    @Override
-    public void dispose() {
-
+    public AbsTriggerComposite() {
+        super(
+                new Class[]{
+                        LayerMapComponent.class
+                }
+        );
     }
 }

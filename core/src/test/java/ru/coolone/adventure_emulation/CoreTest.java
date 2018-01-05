@@ -12,7 +12,7 @@ import ru.coolone.adventure_emulation.screen.ScreenManager;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Created by coolone on 04.01.18.
+ * @author coolone
  */
 public class CoreTest extends AbsTest {
     @InjectMocks

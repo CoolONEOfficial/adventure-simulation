@@ -63,7 +63,7 @@ public class GameScreen extends ScreenScene
         super(core, name);
 
         // Listen input
-        core.getInputGroups().addListener(this);
+        core.getInputGroups().listeners.add(this);
     }
 
     @Override
@@ -105,7 +105,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonDown"
         );
-        downButton.addListener(
+        downButton.listeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -126,7 +126,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonUp"
         );
-        upButton.addListener(
+        upButton.listeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -147,7 +147,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonLeft"
         );
-        leftButton.addListener(
+        leftButton.listeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -169,7 +169,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonRight"
         );
-        rightButton.addListener(
+        rightButton.listeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -198,15 +198,12 @@ public class GameScreen extends ScreenScene
         if (player.isSpawned()) {
 
             // Camera coords
-            final Vector2 playerPos = new Vector2(
-                    player.transform.x,
-                    player.transform.y
-            );
+            final Vector2 playerPos = player.getCoord();
 
             final Vector2 cameraPos = new Vector2();
 
             //final ArrayList<InputGroups.InputGroupId> activeGroups = core.getInputGroups().getActiveGroups();
-            cameraPos.x = playerPos.x + (player.dimensions.width / 2);
+            cameraPos.x = playerPos.x + (player.getWidth() / 2);
 
 //            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
 //                cameraPos.x -= Core.WIDTH / 3;
@@ -259,8 +256,12 @@ public class GameScreen extends ScreenScene
                     break;
                 case JOYSTICK:
                     // Joystick
-                    joystick.transform.x = cameraPos.x - (Core.WIDTH / 2) + UI_INDENT;
-                    joystick.transform.y = cameraPos.y - (Core.HEIGHT / 2) + UI_INDENT;
+                    joystick.setCoord(
+                            new Vector2(cameraPos) {{
+                                x -= (Core.WIDTH / 2) - UI_INDENT;
+                                y -= (Core.HEIGHT / 2) - UI_INDENT;
+                            }}
+                    );
                     break;
             }
         }
@@ -286,8 +287,8 @@ public class GameScreen extends ScreenScene
                             + '\t' + "Move acceleration: " + player.getCurrentMode().moveAcceleration + '\n'
                             + "Player velocity: " +
                             (
-                                    player.physic.body != null
-                                            ? player.physic.body.getLinearVelocity()
+                                    player.getBody() != null
+                                            ? player.getBody().getLinearVelocity()
                                             : "null"
                             ) + '\n' +
                             (
@@ -328,7 +329,7 @@ public class GameScreen extends ScreenScene
     @Override
     public void dispose() {
         // Stop listen input
-        core.getInputGroups().removeListener(this);
+        core.getInputGroups().listeners.remove(this);
 
         super.dispose();
         font.dispose();

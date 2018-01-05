@@ -14,22 +14,19 @@ import ru.coolone.adventure_emulation.AbsTest;
 import static org.testng.Assert.assertEquals;
 
 /**
- * Created by coolone on 04.01.18.
+ * @author coolone
  */
 abstract public class ButtonCompositeTest extends AbsTest {
 
     @InjectMocks
-    ButtonComposite buttonComposite = new ButtonComposite() {
+    private ButtonComposite buttonComposite = new ButtonComposite() {
     };
 
     @Mock
-    DimensionsComponent dimensions;
+    private DimensionsComponent dimensions;
 
     @Mock
-    MainItemComponent mainItem;
-
-    @Mock
-    TransformComponent transform;
+    private TransformComponent transform;
 
     @Test
     public void testGetBoundRect() throws Exception {

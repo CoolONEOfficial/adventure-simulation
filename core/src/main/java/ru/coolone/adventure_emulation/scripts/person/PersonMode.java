@@ -78,7 +78,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
      *
      * @see Listener
      */
-    private ArrayList<Listener> listeners = new ArrayList<Listener>();
+    public final ArrayList<Listener> listeners = new ArrayList<>();
 
     /**
      * @param movable          @see movable
@@ -107,7 +107,8 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
         animationStartLoopEnd = animationIds.length == 3;
         this.changeMap = changeMap;
         this.behavior = behavior;
-        addListener(listener);
+        if (listener != null)
+            listeners.add(listener);
     }
 
     public PersonMode(
@@ -173,21 +174,6 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
                 changeMap,
                 behavior,
                 listener);
-    }
-
-    void addListener(Listener listener) {
-        if (listener != null)
-            listeners.add(listener);
-    }
-
-    boolean removeListener(Listener listener) {
-        int index = listeners.indexOf(listener);
-        if (index != -1) {
-            listeners.remove(listener);
-
-            return true;
-        }
-        return false;
     }
 
     AnimationId getAnimationId(AnimationType type) {

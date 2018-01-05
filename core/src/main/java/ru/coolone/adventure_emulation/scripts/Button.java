@@ -37,7 +37,7 @@ public class Button extends ButtonComposite
      *
      * @see ButtonListener
      */
-    protected ArrayList<ButtonListener> listeners = new ArrayList<ButtonListener>();
+    public ArrayList<ButtonListener> listeners = new ArrayList<ButtonListener>();
     private int touchPointer = TOUCH_POINTER_EMPTY;
 
     public Button(
@@ -59,14 +59,6 @@ public class Button extends ButtonComposite
         this.core.getInputGroups()
                 .getMultiplexer()
                 .addProcessor(this);
-    }
-
-    public void addListener(ButtonListener listener) {
-        listeners.add(listener);
-    }
-
-    public boolean removeListener(ButtonListener listener) {
-        return listeners.remove(listener);
     }
 
     /**

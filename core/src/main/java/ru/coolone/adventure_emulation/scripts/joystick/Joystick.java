@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.Script;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
@@ -99,7 +100,7 @@ public class Joystick extends JoystickComposite
     /**
      * Array of @{@link Listener}'s
      */
-    private final ArrayList<Listener> listeners = new ArrayList<Listener>();
+    public final ArrayList<Listener> listeners = new ArrayList<>();
     /**
      * Link to @{@link Core}
      */
@@ -531,8 +532,8 @@ public class Joystick extends JoystickComposite
                 + '\t' + "radius: " + radius);
 
         Circle circle = new Circle(
-                transform.x + bg.transform.x + bg.dimensions.width / 2,
-                transform.y + bg.transform.y + bg.dimensions.height / 2,
+                getX() + bg.getX() + bg.getWidth() / 2f,
+                getY() + bg.getY() + bg.getHeight() / 2f,
                 radius
         );
 
@@ -546,7 +547,7 @@ public class Joystick extends JoystickComposite
     }
 
     private boolean intercepts(float x, float y) {
-        return intercepts(x, y, bg.dimensions.width / 2f);
+        return intercepts(x, y, bg.getWidth() / 2f);
     }
 
     private boolean intercepts(Vector3 coord) {
@@ -610,12 +611,12 @@ public class Joystick extends JoystickComposite
                 mTrigger.mainItem.visible = false;
 
             // Move stick to center of bg
-            stick.transform.x = bg.transform.x
-                    + bg.dimensions.width / 2f
-                    - stick.dimensions.width / 2f;
-            stick.transform.y = bg.transform.y
-                    + bg.dimensions.height / 2f
-                    - stick.dimensions.height / 2f;
+            stick.setCoord(
+                    new Vector2(bg.getCoord()) {{
+                        x += bg.getWidth() / 2f - stick.getWidth() / 2f;
+                        y += bg.getHeight() / 2f - stick.getHeight() / 2f;
+                    }}
+            );
 
             // Deactivate activated general group
             int generalGroupIdId = Arrays.asList(generalTriggerIds).indexOf(currentTriggerId);
@@ -661,8 +662,8 @@ public class Joystick extends JoystickComposite
             );
 
             // Untranslate from CompositeItem
-            newStickCoord.x -= transform.x;
-            newStickCoord.y -= transform.y;
+            newStickCoord.x -= getX();
+            newStickCoord.y -= getY();
 
             if (intercepts(
                     core.screenManager.screenToWorldCoord(
@@ -671,11 +672,15 @@ public class Joystick extends JoystickComposite
                                     screenY
                             )
                     ),
-                    bg.dimensions.width
+                    bg.getWidth()
             )) {
                 // Move stick
-                stick.transform.x = newStickCoord.x - stick.dimensions.width / 2f;
-                stick.transform.y = newStickCoord.y - stick.dimensions.height / 2f;
+                stick.setCoord(
+                        new Vector2(newStickCoord) {{
+                            x -= stick.getWidth() / 2f;
+                            y -= stick.getHeight() / 2f;
+                        }}
+                );
 
                 // Check intercepts triggers
                 for (int newTriggerIdId = 0; newTriggerIdId < TriggerId.COUNT.ordinal(); newTriggerIdId++) {
@@ -756,14 +761,6 @@ public class Joystick extends JoystickComposite
         core.getInputGroups().getMultiplexer().removeProcessor(this);
     }
 
-    public void addListener(Listener listener) {
-        listeners.add(listener);
-    }
-
-    public boolean removeListener(Listener listener) {
-        return listeners.remove(listener);
-    }
-
     /**
      * Id's to {@link #triggers}
      */
@@ -792,81 +789,37 @@ public class Joystick extends JoystickComposite
     }
 }
 
-class JoystickComposite implements IScript {
+class JoystickComposite extends Script {
 
-    /**
-     * Components
-     */
-    public TransformComponent transform;
-    public DimensionsComponent dimensions;
-
-    @Override
-    public void init(Entity entity) {
-        // Components
-        transform = ComponentRetriever.get(entity, TransformComponent.class);
-        dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
-    }
-
-    @Override
-    public void act(float delta) {
-
-    }
-
-    @Override
-    public void dispose() {
-
+    public JoystickComposite() {
+        super(
+                new Class[]{
+                        TransformComponent.class,
+                        DimensionsComponent.class
+                }
+        );
     }
 }
 
-class JoystickStick implements IScript {
-
-    /**
-     * Components
-     */
-    public TransformComponent transform;
-    public DimensionsComponent dimensions;
-
-    @Override
-    public void init(Entity entity) {
-        // Components
-        transform = ComponentRetriever.get(entity, TransformComponent.class);
-        dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
-    }
-
-    @Override
-    public void act(float delta) {
-
-    }
-
-    @Override
-    public void dispose() {
-
+class JoystickStick extends Script {
+    JoystickStick() {
+        super(
+                new Class[]{
+                        TransformComponent.class,
+                        DimensionsComponent.class
+                }
+        );
     }
 }
 
-class JoystickBackground implements IScript {
-
-    /**
-     * Components
-     */
-    public TransformComponent transform;
-    public DimensionsComponent dimensions;
-
-    @Override
-    public void init(Entity entity) {
-        // Components
-        transform = ComponentRetriever.get(entity, TransformComponent.class);
-        dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
-    }
-
-    @Override
-    public void act(float delta) {
-
-    }
-
-    @Override
-    public void dispose() {
-
+class JoystickBackground extends Script {
+    JoystickBackground() {
+        super(
+                new Class[]{
+                        TransformComponent.class,
+                        DimensionsComponent.class
+                }
+        );
     }
 }
 

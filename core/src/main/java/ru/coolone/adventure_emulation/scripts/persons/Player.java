@@ -121,7 +121,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                     new PersonMode.Behavior<PlayerModeId>() {
                         @Override
                         public boolean checkEnd() {
-                            return physic.body.getLinearVelocity().x == 0;
+                            return getBody().getLinearVelocity().x == 0;
                         }
 
                         @Override
@@ -286,12 +286,12 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         @Override
                         protected void onActivate() {
                             super.onActivate();
-                            physic.body.applyLinearImpulse(
+                            getBody().applyLinearImpulse(
                                     new Vector2(
                                             0f,
                                             1000f
                                     ),
-                                    physic.body.getPosition(),
+                                    getBody().getPosition(),
                                     true
                             );
                         }
@@ -312,7 +312,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         currentModeId = PlayerModeId.IDLE;
 
         // Listen input
-        core.getInputGroups().addListener(this);
+        core.getInputGroups().listeners.add(this);
     }
 
     @Override
@@ -390,7 +390,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
     @Override
     public void dispose() {
         // Stop listen input
-        core.getInputGroups().removeListener(this);
+        core.getInputGroups().listeners.remove(this);
 
         super.dispose();
     }
