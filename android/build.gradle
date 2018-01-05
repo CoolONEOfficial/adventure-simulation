@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 
 android {
+  lintOptions {
+      abortOnError false
+  }
   buildToolsVersion '27.0.2'
   compileSdkVersion 27
   sourceSets {
