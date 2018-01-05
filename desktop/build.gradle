@@ -24,3 +24,7 @@ jar {
 run {
   ignoreExitValue = true
 }
+
+apply plugin: 'jacoco'
+
+
