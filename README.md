@@ -1,6 +1,7 @@
 # Adventure Emulation
 
 [![Build Status](https://travis-ci.com/CoolONEOfficial/adventure-simulation.svg?token=wfz5f29VzkAUQiKYXcZQ&branch=master)](https://travis-ci.com/CoolONEOfficial/adventure-simulation)
+[![codecov](https://codecov.io/gh/CoolONEOfficial/adventure-simulation/branch/master/graph/badge.svg?token=W88P95Fwo1)](https://codecov.io/gh/CoolONEOfficial/adventure-simulation)
 
 A [LibGDX](http://libgdx.badlogicgames.com/) project generated with [gdx-setup](https://github.com/czyzby/gdx-setup).
 
