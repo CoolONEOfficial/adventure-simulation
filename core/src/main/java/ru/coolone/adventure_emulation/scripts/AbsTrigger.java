@@ -12,12 +12,12 @@ import java.util.ArrayList;
  * CompositeItem trigger with layers with custom names
  */
 
-abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerComposite {
+abstract public class AbsTrigger extends AbsTriggerComposite {
 
     /**
      * Listeners array
      */
-    protected final ArrayList<Listener<TriggerId>> listeners = new ArrayList<Listener<TriggerId>>();
+    protected final ArrayList<Listener> listeners = new ArrayList<>();
     /**
      * Layers names
      */
@@ -31,21 +31,21 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
     /**
      * Active flag
      */
-    private boolean active;
+    private boolean activeState;
 
     /**
      * @param activeLayerName  Active layer name in CompositeItem
      * @param passiveLayerName Passive layer name in CompositeItem
-     * @param active           Active or passive on init
+     * @param activeState      Active or passive on init
      */
-    protected AbsTrigger(
+    public AbsTrigger(
             String activeLayerName,
             String passiveLayerName,
-            boolean active
+            boolean activeState
     ) {
         this.activeName = activeLayerName;
         this.passiveName = passiveLayerName;
-        this.active = active;
+        this.activeState = activeState;
     }
 
     @Override
@@ -57,39 +57,41 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
         passiveLayer = layers.getLayer(passiveName);
 
         // Sync state and flag
-        if (active)
+        if (activeState)
             activate();
         else
             deactivate();
     }
 
     /**
-     * Show active layer and hide passive
+     * Show activeState layer and hide passive
      */
     public void activate() {
         setActiveState(true);
     }
 
     /**
-     * Show passive layer and hide active
+     * Show passive layer and hide activeState
      */
     public void deactivate() {
         setActiveState(false);
     }
 
     /**
-     * Changes active flag and show/hide layers
+     * Changes activeState flag and show/hide layers
      *
-     * @param active New active flag state
+     * @param activeState New activeState flag state
      */
-    public void setActiveState(boolean active) {
-        activeLayer.isVisible = active;
-        passiveLayer.isVisible = !active;
-        if (this.active != active) {
-            this.active = active;
+    public void setActiveState(boolean activeState) {
+        getActiveLayer().isVisible = activeState;
+        getPassiveLayer().isVisible = !activeState;
+        if (this.activeState != activeState) {
+
+            this.activeState = activeState;
 
             // Handle
-            if (active)
+
+            if (activeState)
                 // Activate
                 for (Listener mListener : listeners)
                     mListener.onTriggerActivate();
@@ -101,7 +103,15 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
     }
 
     public boolean isActive() {
-        return active;
+        return activeState;
+    }
+
+    public LayerItemVO getActiveLayer() {
+        return activeLayer;
+    }
+
+    public LayerItemVO getPassiveLayer() {
+        return passiveLayer;
     }
 
     /**
@@ -119,22 +129,14 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
      * @param listener @{@link Listener}, that will be removed
      * @return Remove result
      */
-    public boolean removeListener(Listener<TriggerId> listener) {
-        // Find listener
-        int index = listeners.indexOf(listener);
-        if (index != -1) {
-            // Remove listener
-            listeners.remove(listener);
-
-            return true;
-        }
-        return false;
+    public boolean removeListener(Listener listener) {
+        return listeners.remove(listener);
     }
 
     /**
      * Listener interface
      */
-    public interface Listener<TriggerId extends Enum> {
+    public interface Listener {
         /**
          * Called, on trigger has been activated
          */
@@ -144,13 +146,6 @@ abstract public class AbsTrigger<TriggerId extends Enum> extends AbsTriggerCompo
          * Called, on trigger has been deactivated
          */
         void onTriggerDeactivate();
-
-        /**
-         * Called, on trigger has been changed
-         *
-         * @param nextId New @{@link ru.coolone.adventure_emulation.scripts.joystick.Joystick.TriggerId}
-         */
-        void onTriggerChanged(TriggerId nextId);
     }
 }
 

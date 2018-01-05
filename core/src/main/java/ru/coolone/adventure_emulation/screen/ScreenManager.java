@@ -1,8 +1,9 @@
 package ru.coolone.adventure_emulation.screen;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.uwsoft.editor.renderer.SceneLoader;
@@ -13,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import ru.coolone.adventure_emulation.Camera;
 import ru.coolone.adventure_emulation.Core;
 
 /**
@@ -24,27 +26,26 @@ import ru.coolone.adventure_emulation.Core;
 public class ScreenManager {
 
     private static final String TAG = ScreenManager.class.getSimpleName();
-
     /**
-     * Link to @{@link Game}
+     * Camera, looks on {@link #viewport}
      */
-    private Core core;
-
+    public final Camera camera = new Camera();
     /**
      * Viewport to scene
      */
     private final FitViewport viewport = new FitViewport(Core.WIDTH, Core.HEIGHT);
-
     /**
      * Loads {@link ru.coolone.adventure_emulation.screen.ScreenScene}'s scene
      */
     private final SceneLoader loader = new SceneLoader();
-
     /**
      * Map of {@link ru.coolone.adventure_emulation.screen.ScreenScene}
      */
     private final Map<Class<? extends ScreenScene>, ScreenScene> screenMap = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
-
+    /**
+     * Link to @{@link Game}
+     */
+    private Core core;
     /**
      * Current @{@link ScreenScene} link
      */
@@ -57,6 +58,9 @@ public class ScreenManager {
 
     public ScreenManager(Core core) {
         this.core = core;
+        viewport.setCamera(
+                camera
+        );
     }
 
     /**
@@ -121,13 +125,6 @@ public class ScreenManager {
         currentScreen = screenInstance;
     }
 
-    /**
-     * @return Current loaded @{@link ScreenScene} @{@link Camera}
-     */
-    public Camera getCamera() {
-        return viewport.getCamera();
-    }
-
     public ScreenScene getCurrentScreen() {
         return currentScreen;
     }
@@ -151,5 +148,13 @@ public class ScreenManager {
      */
     public ItemWrapper getRootItem() {
         return rootItem;
+    }
+
+    public Vector2 screenToWorldCoord(Vector2 coord) {
+        Vector3 screenCoord3d = new Vector3(coord.x, coord.y, 0f);
+
+        Vector3 worldCoord3d = camera.unproject(screenCoord3d);
+
+        return new Vector2(worldCoord3d.x, worldCoord3d.y);
     }
 }

@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 
 import ru.coolone.adventure_emulation.Core;
@@ -24,7 +23,8 @@ import ru.coolone.adventure_emulation.scripts.persons.Player;
  * @author coolone
  */
 
-public class GameScreen extends ScreenScene {
+public class GameScreen extends ScreenScene
+        implements InputGroups.InputGroupsListener {
     public static final String TAG = GameScreen.class.getSimpleName();
 
     private static final String name = "GameScene";
@@ -56,10 +56,14 @@ public class GameScreen extends ScreenScene {
      */
     private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
+
     public GameScreen(
             Core core
     ) {
         super(core, name);
+
+        // Listen input
+        core.getInputGroups().addListener(this);
     }
 
     @Override
@@ -201,14 +205,14 @@ public class GameScreen extends ScreenScene {
 
             final Vector2 cameraPos = new Vector2();
 
-            final ArrayList<InputGroups.InputGroupId> activeGroups = core.getInputGroups().getActiveGroups();
+            //final ArrayList<InputGroups.InputGroupId> activeGroups = core.getInputGroups().getActiveGroups();
             cameraPos.x = playerPos.x + (player.dimensions.width / 2);
 
-            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
-                cameraPos.x -= Core.WIDTH / 3;
-            else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
-                cameraPos.x += (Core.WIDTH / 3);
-            cameraPos.y = playerPos.y;
+//            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
+//                cameraPos.x -= Core.WIDTH / 3;
+//            else if (activeGroups.contains(InputGroups.InputGroupId.MOVE_RIGHT))
+//                cameraPos.x += (Core.WIDTH / 3);
+//            cameraPos.y = playerPos.y;
 
             // Limit coords
             if (cameraPos.x < Core.WIDTH / 2)
@@ -218,11 +222,12 @@ public class GameScreen extends ScreenScene {
 
             // Set camera coords
             core.getScreenManager()
-                    .getCamera()
+                    .camera
                     .position.set(
                     new Vector3(
-                            cameraPos,
-                            0
+                            cameraPos.x,
+                            cameraPos.y,
+                            0f
                     )
             );
 
@@ -265,7 +270,7 @@ public class GameScreen extends ScreenScene {
             // Debug Box2d physics
             debugRenderer.render(
                     core.getScreenManager().getWorld(),
-                    core.getScreenManager().getCamera().combined
+                    core.getScreenManager().camera.combined
             );
 
             Batch uiBatch = core.getUiBatch();
@@ -322,7 +327,34 @@ public class GameScreen extends ScreenScene {
 
     @Override
     public void dispose() {
+        // Stop listen input
+        core.getInputGroups().removeListener(this);
+
+        super.dispose();
         font.dispose();
+    }
+
+    @Override
+    public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
+        Vector2 indentPos = new Vector2();
+        switch (groupId) {
+            case MOVE_LEFT:
+                indentPos.x -= Core.WIDTH / 3f;
+                break;
+            case MOVE_RIGHT:
+                indentPos.x += Core.WIDTH / 3f;
+                break;
+        }
+        core.getScreenManager().camera.moveIndentTo(
+                indentPos,
+                1000
+        );
+        return false;
+    }
+
+    @Override
+    public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
+        return false;
     }
 
     /**

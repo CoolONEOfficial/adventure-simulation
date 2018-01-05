@@ -17,17 +17,6 @@ import java.util.Map;
 public class InputGroups
         implements InputProcessor {
     private static final String TAG = InputGroups.class.getSimpleName();
-
-    /**
-     * Input groups ids
-     */
-    public enum InputGroupId {
-        JUMP,
-        MOVE_LEFT,
-        CROUCH,
-        MOVE_RIGHT
-    }
-
     /**
      * Keycodes groups
      */
@@ -62,19 +51,10 @@ public class InputGroups
                 }
         );
     }};
-
-    public InputGroups() {
-        // Set input multiplexer
-        Gdx.input.setInputProcessor(multiplexer);
-
-        // Listen input
-        multiplexer.addProcessor(this);
-    }
-
     /**
      * General input multiplexer
      */
-    public final InputMultiplexer multiplexer = new InputMultiplexer();
+    private final InputMultiplexer multiplexer = new InputMultiplexer();
     /**
      * Array of active @{@link InputGroupId}
      */
@@ -84,11 +64,12 @@ public class InputGroups
      */
     private final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
 
-    /**
-     * @return Active @{@link InputGroupId}'s
-     */
-    public ArrayList<InputGroupId> getActiveGroups() {
-        return activeGroups;
+    public InputGroups() {
+        // Set input multiplexer
+        Gdx.input.setInputProcessor(multiplexer);
+
+        // Listen input
+        multiplexer.addProcessor(this);
     }
 
     /**
@@ -109,6 +90,17 @@ public class InputGroups
         }
 
         return groupId;
+    }
+
+    /**
+     * @return Active @{@link InputGroupId}'s
+     */
+    public ArrayList<InputGroupId> getActiveGroups() {
+        return activeGroups;
+    }
+
+    public InputMultiplexer getMultiplexer() {
+        return multiplexer;
     }
 
     public void addListener(InputGroupsListener listener) {
@@ -218,6 +210,16 @@ public class InputGroups
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    /**
+     * Input groups ids
+     */
+    public enum InputGroupId {
+        JUMP,
+        MOVE_LEFT,
+        CROUCH,
+        MOVE_RIGHT
     }
 
     public interface InputGroupsListener {

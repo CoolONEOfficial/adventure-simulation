@@ -4,10 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.scripts.person.Person;
 import ru.coolone.adventure_emulation.scripts.person.PersonMode;
 import ru.coolone.adventure_emulation.scripts.person.PersonMode.ChangeMode;
-import ru.coolone.adventure_emulation.input.InputGroups;
 
 /**
  * Player behavior to CompositeItem and spriter animation
@@ -17,78 +17,14 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         implements InputGroups.InputGroupsListener {
 
     /**
-     * @param core Link to @{@link Core}
-     * @param name Name of CompositeItem
-     */
-    public Player(Core core, String name) {
-        super(core, name,
-                InputGroups.InputGroupId.MOVE_LEFT,
-                InputGroups.InputGroupId.MOVE_RIGHT);
-
-        // Default mode id
-        currentModeId = PlayerModeId.IDLE;
-
-        // Listen input
-        core.getInputGroups().addListener(this);
-    }
-
-    @Override
-    protected PersonMode<PlayerModeId, AnimationId>[] getModes() {
-        return playerModes;
-    }
-
-    /**
-     * Animation ids
-     */
-    public enum AnimationId {
-        IDLE,
-
-        WALK,
-
-        BREAK_START,
-        BREAK_LOOP,
-        BREAK_END,
-
-        SLIDE_START,
-        SLIDE_LOOP,
-        SLIDE_END,
-
-        CROUCH_START,
-        CROUCH_LOOP,
-        CROUCH_END,
-
-        CROUCH_WALK,
-
-        JUMP_START,
-        JUMP_LOOP,
-        JUMP_END
-    }
-
-    /**
-     * Id's of @playerModes
-     */
-    public enum PlayerModeId {
-        IDLE,
-        WALK,
-        BREAK,
-        SLIDE,
-        CROUCH,
-        CROUCH_WALK,
-        JUMP
-    }
-
-    /**
      * Move speed constants for @{@link PersonMode}'s
      */
     private static final float WALK_MOVE_ACCELERATION = 3000f;
     private static final float WALK_MOVE_VELOCITY = 15f;
-
     private static final float CROUCH_WALK_MOVE_ACCELERATION = 3000f;
     private static final float CROUCH_WALK_MOVE_VELOCITY = 4f;
-
     private static final float JUMP_MOVE_ACCELERATION = 1000f;
     private static final float JUMP_MOVE_VELOCITY = 10f;
-
     /**
      * Array of @{@link PersonMode}'s
      */
@@ -180,7 +116,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                             ChangeMode.ALLOWED_SOFT, // SLIDE
                             ChangeMode.ALLOWED_SOFT, // CROUCH
                             ChangeMode.ALLOWED_SOFT, // CROUCH_WALK
-                            ChangeMode.ALLOWED_SOFT, // JUMP
+                            ChangeMode.ALLOWED_HARD, // JUMP
                     },
                     new PersonMode.Behavior<PlayerModeId>() {
                         @Override
@@ -363,6 +299,27 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
             )
     };
 
+    /**
+     * @param core Link to @{@link Core}
+     * @param name Name of CompositeItem
+     */
+    public Player(Core core, String name) {
+        super(core, name,
+                InputGroups.InputGroupId.MOVE_LEFT,
+                InputGroups.InputGroupId.MOVE_RIGHT);
+
+        // Default mode id
+        currentModeId = PlayerModeId.IDLE;
+
+        // Listen input
+        core.getInputGroups().addListener(this);
+    }
+
+    @Override
+    protected PersonMode<PlayerModeId, AnimationId>[] getModes() {
+        return playerModes;
+    }
+
     @Override
     public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
         boolean ret = false;
@@ -436,5 +393,45 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         core.getInputGroups().removeListener(this);
 
         super.dispose();
+    }
+
+    /**
+     * Animation ids
+     */
+    public enum AnimationId {
+        IDLE,
+
+        WALK,
+
+        BREAK_START,
+        BREAK_LOOP,
+        BREAK_END,
+
+        SLIDE_START,
+        SLIDE_LOOP,
+        SLIDE_END,
+
+        CROUCH_START,
+        CROUCH_LOOP,
+        CROUCH_END,
+
+        CROUCH_WALK,
+
+        JUMP_START,
+        JUMP_LOOP,
+        JUMP_END
+    }
+
+    /**
+     * Id's of @playerModes
+     */
+    public enum PlayerModeId {
+        IDLE,
+        WALK,
+        BREAK,
+        SLIDE,
+        CROUCH,
+        CROUCH_WALK,
+        JUMP
     }
 }

@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 
 import ru.coolone.adventure_emulation.input.InputGroups;
@@ -20,8 +18,6 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
  */
 public class Core extends Game {
 
-    private static final String TAG = Core.class.getSimpleName();
-
     /**
      * Debug output flag
      */
@@ -31,10 +27,15 @@ public class Core extends Game {
      */
     public static final int WIDTH = 800;
     public static final int HEIGHT = 480;
+    private static final String TAG = Core.class.getSimpleName();
     /**
      * Screen class pointer, that will be opens on startup
      */
     private static final Class<? extends ScreenScene> START_SCREEN = MenuScreen.class;
+    /**
+     * @see ScreenManager
+     */
+    public ScreenManager screenManager;
     /**
      * Font for debug text
      */
@@ -43,10 +44,6 @@ public class Core extends Game {
      * Butch for drawing ui
      */
     private Batch uiBatch;
-    /**
-     * @see ScreenManager
-     */
-    private ScreenManager screenManager;
     /**
      * @see InputGroups
      */
@@ -87,14 +84,6 @@ public class Core extends Game {
         return uiBatch;
     }
 
-    public Vector2 screenToWorldCoord(Vector2 coord) {
-        Vector3 screenCoord3d = new Vector3(coord.x, coord.y, 0f);
-
-        Vector3 worldCoord3d = screenManager.getCamera().unproject(screenCoord3d);
-
-        return new Vector2(worldCoord3d.x, worldCoord3d.y);
-    }
-
     @Override
     public void render() {
         Gdx.gl.glClearColor(36 / 225f, 20 / 225f, 116 / 225f, 1);
@@ -114,7 +103,7 @@ public class Core extends Game {
             font.draw(uiBatch,
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
                             + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
-                            + "Camera position: " + screenManager.getCamera().position + '\n'
+                            + "Camera indent: " + screenManager.camera.indent + '\n'
                             + "World scale: " + PhysicsBodyLoader.getScale() + '\n'
                             + "Active input groups: " + inputGroups.getActiveGroups(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
