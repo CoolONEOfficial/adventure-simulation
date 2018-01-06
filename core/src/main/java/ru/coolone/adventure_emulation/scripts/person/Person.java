@@ -14,9 +14,11 @@ import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
-import com.uwsoft.editor.renderer.scripts.IScript;
 import com.uwsoft.editor.renderer.utils.ComponentRetriever;
-import com.uwsoft.editor.renderer.utils.ItemWrapper;
+
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.Script;
 import ru.coolone.adventure_emulation.input.InputGroups;
@@ -36,18 +38,15 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     /**
      * Link to @{@link Core}
      */
-    protected Core core;
-
+    protected final Core core;
     /**
      * @see Spriter
      */
     protected Spriter spriter;
-
     /**
      * Current @{@link PersonMode} id
      */
-    protected PersonModeId currentModeId;
-
+    @Getter protected PersonModeId currentModeId;
     /**
      * Move directions
      */
@@ -56,12 +55,10 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         LEFT,
         RIGHT
     }
-
     /**
      * Current @{@link MoveDir}
      */
-    private MoveDir moveDir = MoveDir.NONE;
-
+    @Getter private MoveDir moveDir = MoveDir.NONE;
     /**
      * Move handling @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
      */
@@ -82,7 +79,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         // Connect scripts
 
-        final ItemWrapper selfItem = core
+        val selfItem = core
                 .getScreenManager()
                 .getRootItem()
                 .getChild(name);
@@ -99,7 +96,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         spriter.spriter.player.addListener(this);
 
         // Start listen input
-        this.core.getInputGroups().listeners.add(this);
+        this.core.getInputGroups().getListeners().add(this);
 
         // Input groups
         this.inputMoveLeft = inputMoveLeft;
@@ -115,14 +112,14 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     public void act(float delta) {
         super.act(delta);
 
-        final PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();
+        val currentMode = getCurrentMode();
 
         // Handle act
         currentMode.onAct();
 
         if (moveDir != MoveDir.NONE) {
             // Move physic body
-            Vector2 moveAcceleration = new Vector2() {{
+            val moveAcceleration = new Vector2() {{
                 switch (moveDir) {
                     case LEFT:
                         x = -currentMode.moveAcceleration;
@@ -142,7 +139,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             );
 
             // Limit velocity
-            final float currentVelocity = getBody().getLinearVelocity().x;
+            val currentVelocity = getBody().getLinearVelocity().x;
             if (Math.abs(currentVelocity) > currentMode.moveVelocity)
                 getBody().setLinearVelocity(
                         new Vector2(getBody().getLinearVelocity()) {{
@@ -155,7 +152,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         // Check end
         if (currentMode.behavior.checkEnd()) {
-            final PersonModeId nextModeId = currentMode.behavior.getNextModeId();
+            val nextModeId = currentMode.behavior.getNextModeId();
 
             Gdx.app.log(TAG, "End of mode " + getCurrentModeId() + " detected");
 
@@ -169,14 +166,21 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      */
     private InputGroups.InputGroupId endInputGroupId = null;
 
+    /**
+     * Method, that check @{@link PersonMode.ChangeMode} and start or end animation (if she exists)
+     * and call {@link #onActivateMode(Enum)} or call {@link #onActivateMode(Enum)} directly
+     *
+     * @param newModeId Id of @{@link PersonMode}, that will be activated
+     * @param checkInputGroupId Input group, that will be checked before activate newModeId
+     */
     protected void activateMode(
             PersonModeId newModeId,
             InputGroups.InputGroupId checkInputGroupId
     ) {
-        PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();
-        PersonMode.ChangeMode changeMode = currentMode.changeMap[newModeId.ordinal()];
+        val currentMode = getCurrentMode();
+        val changeMode = currentMode.changeMap[newModeId.ordinal()];
 
-        // Check in changeMap
+        // Check change mode from changeMap
         if (changeMode != PersonMode.ChangeMode.NOT_ALLOWED) {
 
             Gdx.app.log(TAG, "Start activating mode " + newModeId);
@@ -202,10 +206,15 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 + currentModeId + " changeMap");
     }
 
+    /**
+     * Function, that activate newModeId
+     *
+     * @param newModeId Id of @{@link PersonMode}, that will be activated
+     */
     private void onActivateMode(PersonModeId newModeId) {
         Gdx.app.log(TAG, "Activating mode " + newModeId);
 
-        PersonMode<PersonModeId, AnimationId> oldMode = getCurrentMode();
+        val oldMode = getCurrentMode();
 
         // Handle deactivate
         if (oldMode != null)
@@ -251,20 +260,6 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 
     /**
-     * @return Current @{@link PersonMode} id
-     */
-    public PersonModeId getCurrentModeId() {
-        return currentModeId;
-    }
-
-    /**
-     * @return Current @{@link MoveDir}
-     */
-    public MoveDir getMoveDir() {
-        return moveDir;
-    }
-
-    /**
      * Set's move dir and handle's move end
      *
      * @param moveDir New @{@link MoveDir}
@@ -306,7 +301,10 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         return false;
     }
 
-    private void refreshMoveDir(InputGroups.InputGroupId groupId) {
+    /**
+     * @param groupId @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}, that will be set
+     */
+    private void setMoveDir(InputGroups.InputGroupId groupId) {
         if (getCurrentMode().movable) {
             // Handle move @InputGroupId's
             if (groupId == inputMoveLeft) {
@@ -328,7 +326,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Override
     public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
         // Refresh move direction
-        refreshMoveDir(groupId);
+        setMoveDir(groupId);
 
         return false;
     }
@@ -342,7 +340,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         // Stop moving
         if (groupId == inputMoveLeft ||
                 groupId == inputMoveRight) {
-            PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();
+            val currentMode = getCurrentMode();
 
             if (currentMode.movable) {
                 // Stop moving
@@ -356,15 +354,12 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
     @Override
     public void animationFinished(Animation animation) {
-
         Gdx.app.log(TAG, "Animation end detected");
 
         int animationId = animation.id;
-
-        PersonMode<PersonModeId, AnimationId> currentMode = getCurrentMode();
+        val currentMode = getCurrentMode();
 
         if (currentMode.animationStartLoopEnd) {
-
             // Check end of end
             if (animationId == currentMode.getAnimationId(
                     PersonMode.AnimationType.END
@@ -393,7 +388,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
                 // Refresh move direction
                 for (InputGroups.InputGroupId mInputGroupId : core.getInputGroups().getActiveGroups()) {
-                    refreshMoveDir(mInputGroupId);
+                    setMoveDir(mInputGroupId);
                 }
 
                 // Clear saved modeId and input group id
@@ -431,7 +426,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Override
     public void dispose() {
         // Stop listen input
-        core.getInputGroups().listeners.remove(this);
+        core.getInputGroups().getListeners().remove(this);
 
         super.dispose();
 

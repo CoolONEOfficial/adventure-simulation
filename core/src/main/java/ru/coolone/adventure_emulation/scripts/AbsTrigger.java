@@ -3,8 +3,10 @@ package ru.coolone.adventure_emulation.scripts;
 import com.badlogic.ashley.core.Entity;
 import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
-import com.uwsoft.editor.renderer.scripts.IScript;
-import com.uwsoft.editor.renderer.utils.ComponentRetriever;
+
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import ru.coolone.adventure_emulation.Script;
 
 import java.util.ArrayList;
@@ -13,17 +15,18 @@ import java.util.ArrayList;
  * CompositeItem trigger with layers with custom names
  */
 
+@RequiredArgsConstructor
 abstract public class AbsTrigger extends AbsTriggerComposite {
 
     /**
      * Listeners array
      */
-    protected final ArrayList<Listener> listeners = new ArrayList<>();
+    public final ArrayList<Listener> listeners = new ArrayList<>();
     /**
      * Layers names
      */
-    private String activeName;
-    private String passiveName;
+    private final String activeName;
+    private final String passiveName;
     /**
      * Layers
      */
@@ -32,21 +35,17 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     /**
      * Active flag
      */
-    private boolean activeState;
+    @Getter @NonNull private boolean active;
 
-    /**
-     * @param activeLayerName  Active layer name in CompositeItem
-     * @param passiveLayerName Passive layer name in CompositeItem
-     * @param activeState      Active or passive on init
-     */
-    public AbsTrigger(
+    protected AbsTrigger(
             String activeLayerName,
             String passiveLayerName,
-            boolean activeState
+            boolean active,
+            Class[] customComponents
     ) {
-        this.activeName = activeLayerName;
-        this.passiveName = passiveLayerName;
-        this.activeState = activeState;
+        this(activeLayerName, passiveLayerName,
+                active);
+        addComponents(customComponents);
     }
 
     @Override
@@ -58,41 +57,41 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
         passiveLayer = getLayer(passiveName);
 
         // Sync state and flag
-        if (activeState)
+        if (active)
             activate();
         else
             deactivate();
     }
 
     /**
-     * Show activeState layer and hide passive
+     * Show active layer and hide passive
      */
     public void activate() {
-        setActiveState(true);
+        setActive(true);
     }
 
     /**
-     * Show passive layer and hide activeState
+     * Show passive layer and hide active
      */
     public void deactivate() {
-        setActiveState(false);
+        setActive(false);
     }
 
     /**
-     * Changes activeState flag and show/hide layers
+     * Changes active flag and show/hide layers
      *
-     * @param activeState New activeState flag state
+     * @param active New active flag state
      */
-    public void setActiveState(boolean activeState) {
-        getActiveLayer().isVisible = activeState;
-        getPassiveLayer().isVisible = !activeState;
-        if (this.activeState != activeState) {
+    public void setActive(boolean active) {
+        getActiveLayer().isVisible = active;
+        getPassiveLayer().isVisible = !active;
+        if (this.active != active) {
 
-            this.activeState = activeState;
+            this.active = active;
 
             // Handle
 
-            if (activeState)
+            if (active)
                 // Activate
                 for (Listener mListener : listeners)
                     mListener.onTriggerActivate();
@@ -103,35 +102,12 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
         }
     }
 
-    public boolean isActive() {
-        return activeState;
-    }
-
     public LayerItemVO getActiveLayer() {
         return activeLayer;
     }
 
     public LayerItemVO getPassiveLayer() {
         return passiveLayer;
-    }
-
-    /**
-     * @param listener @{@link Listener}, that will be added
-     * @return Added @{@link Listener} index
-     */
-    public int addListener(Listener listener) {
-        // Add listener
-        listeners.add(listener);
-
-        return listeners.size() - 1;
-    }
-
-    /**
-     * @param listener @{@link Listener}, that will be removed
-     * @return Remove result
-     */
-    public boolean removeListener(Listener listener) {
-        return listeners.remove(listener);
     }
 
     /**
@@ -151,7 +127,6 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
 }
 
 abstract class AbsTriggerComposite extends Script {
-
     public AbsTriggerComposite() {
         super(
                 new Class[]{

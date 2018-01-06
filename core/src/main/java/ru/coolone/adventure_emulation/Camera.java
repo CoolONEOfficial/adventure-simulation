@@ -5,21 +5,22 @@ import com.badlogic.gdx.math.Vector2;
 
 import org.pushingpixels.trident.Timeline;
 
+import lombok.NoArgsConstructor;
+
 /**
  * Game @{@link com.badlogic.gdx.graphics.OrthographicCamera}
  */
 
+@NoArgsConstructor
 public class Camera extends OrthographicCamera {
     private static final String TAG = Camera.class.getSimpleName();
 
     Timeline timeline = new Timeline();
-    Vector2 indentStart;
-    Vector2 indentEnd;
-    Vector2 indent = new Vector2();
 
-    public Camera() {
-        super();
-    }
+    Vector2 indentAnimStart;
+    Vector2 indentAnimEnd;
+
+    Vector2 indent = new Vector2(0f, 0f);
 
     @Override
     public void update(boolean updateFrustum) {
@@ -34,8 +35,8 @@ public class Camera extends OrthographicCamera {
 
     public void moveIndentTo(Vector2 indentEnd, long duration) {
         timeline = new Timeline(this);
-        this.indentStart = indent;
-        this.indentEnd = indentEnd;
+        this.indentAnimStart = indent;
+        this.indentAnimEnd = indentEnd;
         timeline.addPropertyToInterpolate(
                 "indentX",
                 0f,
@@ -51,11 +52,11 @@ public class Camera extends OrthographicCamera {
     }
 
     public void setIndentX(float scaleX) {
-        indent.x = indentStart.x + ((indentEnd.y - indent.y) * scaleX);
+        indent.x = indentAnimStart.x + ((indentAnimEnd.y - indent.y) * scaleX);
     }
 
     public void setIndentY(float scaleY) {
-        indent.y = indentStart.y + ((indentEnd.y - indentStart.y) * scaleY);
+        indent.y = indentAnimStart.y + ((indentAnimEnd.y - indentAnimStart.y) * scaleY);
     }
 }
 

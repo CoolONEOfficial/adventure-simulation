@@ -12,7 +12,11 @@ import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 
+import java.lang.reflect.Array;
 import java.util.EnumMap;
+
+import lombok.NonNull;
+import lombok.val;
 
 /**
  * Facade for @{@link com.badlogic.ashley.core.Entity}
@@ -23,12 +27,12 @@ public class Script implements IScript {
     /**
      * Instance of @{@link com.badlogic.ashley.core.Entity}
      */
-    public com.badlogic.ashley.core.Entity entity;
+    @NonNull public com.badlogic.ashley.core.Entity entity;
 
     /**
      * Classes of @{@link Entity} @{@link Component}'s
      */
-    public final Class<? extends Component>[] entityComponentClasses;
+    @NonNull public Class<? extends Component>[] entityComponentClasses;
 
     /**
      * Script @{@link Component}'s ids
@@ -81,10 +85,38 @@ public class Script implements IScript {
     /**
      * @param entityComponentClasses @{@link Component}'s classes
      */
+    @SuppressWarnings("unchecked")
     public Script(
             Class[] entityComponentClasses
     ) {
         this.entityComponentClasses = entityComponentClasses;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void addComponents(Class[] entityComponentClasses) {
+        this.entityComponentClasses = concatArr(this.entityComponentClasses, entityComponentClasses);
+    }
+
+
+    /**
+     * Function, that concatenate two arrays
+     * From stackoverflow.com :J
+     *
+     * @param a First array
+     * @param b Second array
+     * @param <T> Type of arrays
+     * @return Concatenated array
+     */
+    static private <T> T[] concatArr(T[] a, T[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+
+        @SuppressWarnings("unchecked")
+        T[] c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+
+        return c;
     }
 
     @Override
@@ -92,9 +124,9 @@ public class Script implements IScript {
         this.entity = entity;
 
         // Get entity components
-        for (Class<? extends Component> mEntityComponentClass : entityComponentClasses) {
+        for (val mEntityComponentClass : entityComponentClasses) {
             for(int mComponentClassId = 0; mComponentClassId < Script.componentClasses.length; mComponentClassId++) {
-                Class<? extends Component> mComponentClass = Script.componentClasses[mComponentClassId];
+                val mComponentClass = Script.componentClasses[mComponentClassId];
                 if(mEntityComponentClass.equals(mComponentClass))
                     components.put(
                             ComponentId.values()[mComponentClassId],
@@ -151,6 +183,18 @@ public class Script implements IScript {
 
     public float getHeight() {
         return ((DimensionsComponent) components.get(ComponentId.DIMEN)).height;
+    }
+
+    /**
+     * Check point to intercept
+     *
+     * @param point @{@link Vector2}, that will be checked
+     * @return Check result
+     */
+    public boolean intercepts(Vector2 point) {
+        return point.x > getX() && point.y > getY() &&
+                point.x < getX() + getWidth() &&
+                point.y < getY() + getHeight();
     }
 
     public Body getBody() {

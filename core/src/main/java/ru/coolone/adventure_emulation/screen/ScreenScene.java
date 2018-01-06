@@ -2,6 +2,8 @@ package ru.coolone.adventure_emulation.screen;
 
 import com.badlogic.gdx.Screen;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import ru.coolone.adventure_emulation.Core;
 
 /**
@@ -9,6 +11,7 @@ import ru.coolone.adventure_emulation.Core;
  *
  * @author coolone
  */
+@AllArgsConstructor
 abstract public class ScreenScene implements Screen {
 
     /**
@@ -18,19 +21,7 @@ abstract public class ScreenScene implements Screen {
     /**
      * Scene name
      */
-    protected String name;
-
-    public ScreenScene(
-            Core core,
-            String name
-    ) {
-        this.core = core;
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
+    @Getter protected String name;
 
     @Override
     public void show() {

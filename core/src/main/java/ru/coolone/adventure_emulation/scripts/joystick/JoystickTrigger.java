@@ -15,39 +15,26 @@ import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 public class JoystickTrigger extends AbsTrigger {
 
     /**
-     * Components
-     */
-    public TransformComponent transform;
-    public DimensionsComponent dimensions;
-    public MainItemComponent mainItem;
-
-    /**
      * @param listener @{@link ru.coolone.adventure_emulation.scripts.AbsTrigger.Listener}, that will be added
      */
     public JoystickTrigger(Listener listener) {
         super(
                 "active", "passive",
-                false
+                false,
+                new Class[]{
+                        MainItemComponent.class,
+                        DimensionsComponent.class,
+                        TransformComponent.class
+                }
         );
-        addListener(listener);
+        listeners.add(listener);
     }
 
     @Override
     public void init(Entity entity) {
         super.init(entity);
 
-        // Components
-        transform = ComponentRetriever.get(entity, TransformComponent.class);
-        dimensions = ComponentRetriever.get(entity, DimensionsComponent.class);
-        mainItem = ComponentRetriever.get(entity, MainItemComponent.class);
-
         // Hide
-        mainItem.visible = false;
-    }
-
-    public boolean intercepts(Vector2 point) {
-        return point.x > transform.x && point.y > transform.y &&
-                point.x < transform.x + dimensions.width &&
-                point.y < transform.y + dimensions.height;
+        setVisible(false);
     }
 }

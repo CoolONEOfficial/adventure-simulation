@@ -1,21 +1,18 @@
 package ru.coolone.adventure_emulation.scripts.joystick;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
-import com.uwsoft.editor.renderer.scripts.IScript;
-import com.uwsoft.editor.renderer.utils.ComponentRetriever;
-import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 
+import lombok.Getter;
+import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.Script;
 import ru.coolone.adventure_emulation.input.InputGroups;
@@ -108,7 +105,7 @@ public class Joystick extends JoystickComposite
     /**
      * Active at this moment @{@link TriggerId}
      */
-    private TriggerId currentTriggerId;
+    @Getter private TriggerId currentTriggerId;
     /**
      * Array of @{@link JoystickTrigger}'s
      */
@@ -120,13 +117,13 @@ public class Joystick extends JoystickComposite
                         public void onTriggerActivate() {
                             // Show generalTriggerIds
                             for (TriggerId mVisTrigger : generalTriggerIds)
-                                triggers[mVisTrigger.ordinal()].mainItem.visible = true;
+                                triggers[mVisTrigger.ordinal()].setVisible(true);
                         }
 
                         @Override
                         public void onTriggerDeactivate() {
                             if (getCurrentTriggerId() != TriggerId.LEFT)
-                                getTrigger(TriggerId.LEFT).mainItem.visible = false;
+                                getTrigger(TriggerId.LEFT).setVisible(false);
                         }
                     }
             ),
@@ -136,9 +133,9 @@ public class Joystick extends JoystickComposite
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
-                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
-                            getTrigger(TriggerId.LEFT_UP).mainItem.visible = true;
-                            getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = true;
+                            getTrigger(TriggerId.CENTER).setVisible(true);
+                            getTrigger(TriggerId.LEFT_UP).setVisible(true);
+                            getTrigger(TriggerId.LEFT_DOWN).setVisible(true);
                         }
 
                         @Override
@@ -148,8 +145,8 @@ public class Joystick extends JoystickComposite
                                 case LEFT_UP:
                                     break;
                                 default:
-                                    getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
-                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_UP).setVisible(false);
+                                    getTrigger(TriggerId.LEFT_DOWN).setVisible(false);
                             }
                         }
                     }
@@ -160,9 +157,9 @@ public class Joystick extends JoystickComposite
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
-                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
-                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = true;
-                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = true;
+                            getTrigger(TriggerId.CENTER).setVisible(true);
+                            getTrigger(TriggerId.RIGHT_DOWN).setVisible(true);
+                            getTrigger(TriggerId.RIGHT_UP).setVisible(true);
                         }
 
                         @Override
@@ -172,8 +169,8 @@ public class Joystick extends JoystickComposite
                                 case RIGHT_UP:
                                     break;
                                 default:
-                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
-                                    getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_DOWN).setVisible(false);
+                                    getTrigger(TriggerId.RIGHT_UP).setVisible(false);
                             }
                         }
                     }
@@ -184,9 +181,9 @@ public class Joystick extends JoystickComposite
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
-                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
-                            getTrigger(TriggerId.LEFT_UP).mainItem.visible = true;
-                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = true;
+                            getTrigger(TriggerId.CENTER).setVisible(true);
+                            getTrigger(TriggerId.LEFT_UP).setVisible(true);
+                            getTrigger(TriggerId.RIGHT_UP).setVisible(true);
                         }
 
                         @Override
@@ -196,8 +193,8 @@ public class Joystick extends JoystickComposite
                                 case RIGHT_UP:
                                     break;
                                 default:
-                                    getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
-                                    getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_UP).setVisible(false);
+                                    getTrigger(TriggerId.RIGHT_UP).setVisible(false);
                             }
                         }
                     }
@@ -208,9 +205,9 @@ public class Joystick extends JoystickComposite
                     new AbsTrigger.Listener() {
                         @Override
                         public void onTriggerActivate() {
-                            getTrigger(TriggerId.CENTER).mainItem.visible = true;
-                            getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = true;
-                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = true;
+                            getTrigger(TriggerId.CENTER).setVisible(true);
+                            getTrigger(TriggerId.LEFT_DOWN).setVisible(true);
+                            getTrigger(TriggerId.RIGHT_DOWN).setVisible(true);
                         }
 
                         @Override
@@ -220,8 +217,8 @@ public class Joystick extends JoystickComposite
                                 case RIGHT_DOWN:
                                     break;
                                 default:
-                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
-                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_DOWN).setVisible(false);
+                                    getTrigger(TriggerId.RIGHT_DOWN).setVisible(false);
                             }
                         }
                     }
@@ -258,7 +255,7 @@ public class Joystick extends JoystickComposite
                         public void onTriggerDeactivate() {
                             switch (oldTrigger) {
                                 case RIGHT:
-                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_DOWN).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -267,7 +264,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                                 case UP:
-                                    getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_UP).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -276,7 +273,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                             }
-                            getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                            getTrigger(TriggerId.RIGHT_UP).setVisible(false);
                             core.getInputGroups()
                                     .groupDeactivate(activeInputGroup);
                         }
@@ -316,7 +313,7 @@ public class Joystick extends JoystickComposite
 
                             switch (oldTrigger) {
                                 case RIGHT:
-                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_DOWN).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -325,7 +322,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                                 case DOWN:
-                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_DOWN).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -334,7 +331,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                             }
-                            getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                            getTrigger(TriggerId.RIGHT_DOWN).setVisible(false);
                             core.getInputGroups()
                                     .groupDeactivate(activeGroup);
                         }
@@ -373,7 +370,7 @@ public class Joystick extends JoystickComposite
                         public void onTriggerDeactivate() {
                             switch (oldTrigger) {
                                 case LEFT:
-                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_DOWN).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -382,7 +379,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                                 case UP:
-                                    getTrigger(TriggerId.RIGHT_UP).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_UP).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -391,7 +388,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                             }
-                            getTrigger(TriggerId.LEFT_UP).mainItem.visible = false;
+                            getTrigger(TriggerId.LEFT_UP).setVisible(false);
                             core.getInputGroups()
                                     .groupDeactivate(activeGroup);
                         }
@@ -429,7 +426,7 @@ public class Joystick extends JoystickComposite
                         public void onTriggerDeactivate() {
                             switch (oldTrigger) {
                                 case LEFT:
-                                    getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.LEFT_DOWN).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -438,7 +435,7 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                                 case DOWN:
-                                    getTrigger(TriggerId.RIGHT_DOWN).mainItem.visible = false;
+                                    getTrigger(TriggerId.RIGHT_DOWN).setVisible(false);
                                     core.getInputGroups()
                                             .groupDeactivate(
                                                     triggerInputGroups.get(
@@ -447,12 +444,12 @@ public class Joystick extends JoystickComposite
                                             );
                                     break;
                             }
-                            getTrigger(TriggerId.LEFT_DOWN).mainItem.visible = false;
+                            getTrigger(TriggerId.LEFT_DOWN).setVisible(false);
                             core.getInputGroups()
                                     .groupDeactivate(activeGroup);
                         }
                     }
-            ),
+            )
     };
     /**
      * Pressed touch pointer
@@ -475,11 +472,11 @@ public class Joystick extends JoystickComposite
         this.triggerInputGroups = triggerInputGroups;
 
         // Create / Add scripts
-        ItemWrapper root = this.core
+        val root = this.core
                 .getScreenManager()
                 .getRootItem();
 
-        ItemWrapper composite = root.getChild(name);
+        val composite = root.getChild(name);
         composite.addScript(this);
 
         stick = new JoystickStick();
@@ -492,8 +489,8 @@ public class Joystick extends JoystickComposite
 
         for (int mTriggerId = 0; mTriggerId < TriggerId.COUNT.ordinal(); mTriggerId++) {
             // Add script
-            String mTriggerName = triggerNames[mTriggerId];
-            JoystickTrigger mTriggerScript = triggers[mTriggerId];
+            val mTriggerName = triggerNames[mTriggerId];
+            val mTriggerScript = triggers[mTriggerId];
 
             composite.getChild(mTriggerName)
                     .addScript(mTriggerScript);
@@ -503,21 +500,10 @@ public class Joystick extends JoystickComposite
         core.getInputGroups()
                 .getMultiplexer()
                 .addProcessor(this);
-    }
 
-    @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
+        // Show all general triggers
+        for (TriggerId mVisTrigger : generalTriggerIds)
+            triggers[mVisTrigger.ordinal()].setVisible(true);
     }
 
     /**
@@ -550,15 +536,7 @@ public class Joystick extends JoystickComposite
         return intercepts(x, y, bg.getWidth() / 2f);
     }
 
-    private boolean intercepts(Vector3 coord) {
-        return intercepts(coord.x, coord.y);
-    }
-
-    private boolean intercepts(Vector3 coord, float radius) {
-        return intercepts(coord.x, coord.y, radius);
-    }
-
-    private boolean intercepts(Vector2 coord) {
+    public boolean intercepts(Vector2 coord) {
         return intercepts(coord.x, coord.y);
     }
 
@@ -567,17 +545,13 @@ public class Joystick extends JoystickComposite
     }
 
     public JoystickTrigger getTrigger(TriggerId triggerId) {
-        return triggers[triggerId.ordinal()];
-    }
-
-    public TriggerId getCurrentTriggerId() {
-        return currentTriggerId;
+            return (triggerId != null)
+                    ? triggers[triggerId.ordinal()]
+                    : null;
     }
 
     public JoystickTrigger getCurrentTrigger() {
-        return (currentTriggerId != null)
-                ? triggers[currentTriggerId.ordinal()]
-                : null;
+        return getTrigger(getCurrentTriggerId());
     }
 
     @Override
@@ -594,7 +568,7 @@ public class Joystick extends JoystickComposite
 
             // Show generalTriggerIds
             for (TriggerId mVisTrigger : generalTriggerIds)
-                triggers[mVisTrigger.ordinal()].mainItem.visible = true;
+                triggers[mVisTrigger.ordinal()].setVisible(true);
 
             // Emulate dragged
             touchDragged(screenX, screenY, pointer);
@@ -606,10 +580,6 @@ public class Joystick extends JoystickComposite
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (pointer == touchPointer) {
-            // Hide add triggers
-            for (JoystickTrigger mTrigger : triggers)
-                mTrigger.mainItem.visible = false;
-
             // Move stick to center of bg
             stick.setCoord(
                     new Vector2(bg.getCoord()) {{
@@ -628,6 +598,9 @@ public class Joystick extends JoystickComposite
             if (currentTriggerId != null)
                 getCurrentTrigger().deactivate();
             currentTriggerId = null;
+
+            // Hide center trigger
+            getTrigger(TriggerId.CENTER).setVisible(false);
 
             // Clear touchPointer
             touchPointer = TOUCH_POINTER_EMPTY;
@@ -684,14 +657,14 @@ public class Joystick extends JoystickComposite
 
                 // Check intercepts triggers
                 for (int newTriggerIdId = 0; newTriggerIdId < TriggerId.COUNT.ordinal(); newTriggerIdId++) {
-                    TriggerId newTriggerId = TriggerId.values()[newTriggerIdId];
-                    JoystickTrigger newTrigger = getTrigger(newTriggerId);
+                    val newTriggerId = TriggerId.values()[newTriggerIdId];
+                    val newTrigger = getTrigger(newTriggerId);
 
-                    if (newTrigger.mainItem.visible &&
+                    if (newTrigger.getVisible() &&
                             !newTrigger.isActive() &&
                             newTrigger.intercepts(newStickCoord)) {
-                        JoystickTrigger oldTrigger = getCurrentTrigger();
-                        TriggerId oldTriggerId = getCurrentTriggerId();
+                        val oldTrigger = getCurrentTrigger();
+                        val oldTriggerId = getCurrentTriggerId();
 
                         // Handle currentTriggerId change
                         for (Listener mListener : listeners)
@@ -716,9 +689,7 @@ public class Joystick extends JoystickComposite
                         // Hide all other general triggers
                         if (Arrays.asList(generalTriggerIds).contains(newTriggerId)) {
                             // Show generalTriggerIds
-                            for (TriggerId mVisTrigger : generalTriggerIds)
-                                triggers[mVisTrigger.ordinal()].mainItem.visible = false;
-                            getTrigger(newTriggerId).mainItem.visible = true;
+                            getTrigger(newTriggerId).setVisible(true);
                         }
 
                         // Activate InputGroup
@@ -744,7 +715,6 @@ public class Joystick extends JoystickComposite
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        touchDragged(screenX, screenY, 0);
         return false;
     }
 
@@ -754,11 +724,26 @@ public class Joystick extends JoystickComposite
     }
 
     @Override
-    public void dispose() {
-        super.dispose();
+    public boolean keyDown(int keycode) {
+        return false;
+    }
 
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public void dispose() {
         // Stop listen input
         core.getInputGroups().getMultiplexer().removeProcessor(this);
+
+        super.dispose();
     }
 
     /**
@@ -790,7 +775,6 @@ public class Joystick extends JoystickComposite
 }
 
 class JoystickComposite extends Script {
-
     public JoystickComposite() {
         super(
                 new Class[]{

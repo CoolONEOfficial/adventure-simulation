@@ -33,11 +33,8 @@ public class Button extends ButtonComposite
      */
     private final Core core;
     /**
-     * Button listeners array
-     *
-     * @see ButtonListener
+     * Touch id
      */
-    public ArrayList<ButtonListener> listeners = new ArrayList<>();
     private int touchPointer = TOUCH_POINTER_EMPTY;
 
     public Button(
@@ -59,33 +56,6 @@ public class Button extends ButtonComposite
         this.core.getInputGroups()
                 .getMultiplexer()
                 .addProcessor(this);
-    }
-
-    /**
-     * Button click event
-     */
-    protected void click() {
-        for (ButtonListener mListener : listeners) {
-            mListener.onButtonClick();
-        }
-    }
-
-    /**
-     * Button press down event
-     */
-    protected void down() {
-        for (ButtonListener mListener : listeners) {
-            mListener.onButtonDown();
-        }
-    }
-
-    /**
-     * Button press up event
-     */
-    protected void up() {
-        for (ButtonListener mListener : listeners) {
-            mListener.onButtonUp();
-        }
     }
 
     @Override
@@ -118,12 +88,11 @@ public class Button extends ButtonComposite
     /**
      * Checks coordinates to intercept button
      *
-     * @param x Check x
-     * @param y REVERTED Check y
+     * @param coord Coord with REVERTED y axis, that will be checked
      * @return Intercept bool
      */
-    private boolean intercept(float x, float y) {
-        y = Gdx.graphics.getHeight() - y; // y is down!
+    private boolean intercept(Vector2 coord) {
+        coord.y = Gdx.graphics.getHeight() - coord.y; // y is down!
 
         // Get camera center coord
         Vector2 cameraCenterCoord = new Vector2(
@@ -141,8 +110,8 @@ public class Button extends ButtonComposite
         final Rectangle buttonRect = new Rectangle(
                 getCoord().x - cameraCoord.x,
                 getCoord().y - cameraCoord.y,
-                getBoundRect().width,
-                getBoundRect().height
+                getWidth(),
+                getHeight()
         );
 
         // Scale
@@ -155,15 +124,15 @@ public class Button extends ButtonComposite
         buttonRect.width *= scale.x;
         buttonRect.height *= scale.y;
 
-        boolean ret = buttonRect.contains(x, y);
+        boolean ret = buttonRect.contains(coord);
 
         Gdx.app.log(TAG, "Intercept ret: " + ret);
 
         return ret;
     }
 
-    private boolean intercept(Vector2 coord) {
-        return intercept(coord.x, coord.y);
+    private boolean intercept(float x, float y) {
+        return intercept(new Vector2(x, y));
     }
 
     @Override
@@ -213,89 +182,62 @@ public class Button extends ButtonComposite
         return false;
     }
 
+    public void click() {
+        for (ButtonListener mListener : listeners) {
+            mListener.onButtonClick();
+        }
+    }
+
+    public void down() {
+        for (ButtonListener mListener : listeners) {
+            mListener.onButtonDown();
+        }
+    }
+
+    public void up() {
+        for (ButtonListener mListener : listeners) {
+            mListener.onButtonUp();
+        }
+    }
+
+    /**
+     * Button listeners array
+     *
+     * @see ButtonListener
+     */
+    public ArrayList<ButtonListener> listeners = new ArrayList<>();
+
     /**
      * Button listener
      */
     public interface ButtonListener {
+        /**
+         * Will be called after button click
+         */
         void onButtonClick();
-
+        /**
+         * Will be called after button press down
+         */
         void onButtonDown();
-
+        /**
+         * Will be called after button press up
+         */
         void onButtonUp();
     }
 }
 
 abstract class ButtonComposite extends AbsTrigger {
 
-    /**
-     * Transform component
-     */
-    private TransformComponent transform;
-    /**
-     * Dimensions component
-     */
-    private DimensionsComponent dimension;
-
     public ButtonComposite() {
         super(
                 "pressed", "normal",
                 false
         );
-    }
-
-    @Override
-    public void init(Entity entity) {
-        super.init(entity);
-
-        // Transform component
-        transform = ComponentRetriever.get(entity, TransformComponent.class);
-
-        // Dimension component
-        dimension = ComponentRetriever.get(entity, DimensionsComponent.class);
-    }
-
-    @Override
-    public void act(float delta) {
-
-    }
-
-    @Override
-    public void dispose() {
-
-    }
-
-    public Rectangle getBoundRect() {
-        return dimension.boundBox;
-    }
-
-    public Vector2 getCoord() {
-        return new Vector2(
-                transform.x,
-                transform.y
+        addComponents(
+                new Class[]{
+                        TransformComponent.class,
+                        DimensionsComponent.class
+                }
         );
     }
-
-    public void setCoord(Vector2 coord) {
-        setCoord(
-                coord.x,
-                coord.y
-        );
-    }
-
-    public void setCoord(
-            float x,
-            float y
-    ) {
-        setX(x);
-        setY(y);
-    }
-
-    public void setX(float x) {
-        transform.x = x;
-    }
-
-    public void setY(float y) {
-        transform.y = y;
-    }
-
 }

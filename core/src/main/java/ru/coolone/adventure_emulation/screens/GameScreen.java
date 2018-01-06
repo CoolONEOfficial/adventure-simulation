@@ -10,6 +10,7 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.EnumMap;
 
+import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
@@ -63,7 +64,7 @@ public class GameScreen extends ScreenScene
         super(core, name);
 
         // Listen input
-        core.getInputGroups().listeners.add(this);
+        core.getInputGroups().getListeners().add(this);
     }
 
     @Override
@@ -198,9 +199,9 @@ public class GameScreen extends ScreenScene
         if (player.isSpawned()) {
 
             // Camera coords
-            final Vector2 playerPos = player.getCoord();
+            final val playerPos = player.getCoord();
 
-            final Vector2 cameraPos = new Vector2();
+            final val cameraPos = new Vector2();
 
             //final ArrayList<InputGroups.InputGroupId> activeGroups = core.getInputGroups().getActiveGroups();
             cameraPos.x = playerPos.x + (player.getWidth() / 2);
@@ -232,26 +233,32 @@ public class GameScreen extends ScreenScene
                 case BUTTONS:
                     // Left
                     leftButton.setCoord(
-                            cameraPos.x - (Core.WIDTH / 2) + UI_INDENT,
-                            cameraPos.y - (Core.HEIGHT / 2) + UI_INDENT
+                            new Vector2(cameraPos) {{
+                                x -= (Core.WIDTH / 2) - UI_INDENT;
+                                y -= (Core.HEIGHT / 2) + UI_INDENT;
+                            }}
                     );
 
                     // Right
                     rightButton.setCoord(
-                            leftButton.getCoord().x + leftButton.getBoundRect().width + UI_INDENT,
-                            leftButton.getCoord().y
+                            new Vector2(leftButton.getCoord()) {{
+                                x += leftButton.getWidth() + UI_INDENT;
+                            }}
                     );
 
                     // Up
                     upButton.setCoord(
-                            cameraPos.x + (Core.WIDTH / 2) - upButton.getBoundRect().width - UI_INDENT,
-                            cameraPos.y - (Core.HEIGHT / 2) + UI_INDENT
+                            new Vector2(cameraPos) {{
+                                x -= upButton.getWidth() + UI_INDENT - (Core.WIDTH / 2);
+                                y -= (Core.HEIGHT / 2) - UI_INDENT;
+                            }}
                     );
 
                     // Down
                     downButton.setCoord(
-                            upButton.getCoord().x - downButton.getBoundRect().width - UI_INDENT,
-                            upButton.getCoord().y
+                            new Vector2(upButton.getCoord()) {{
+                                x -= downButton.getWidth() + UI_INDENT;
+                            }}
                     );
                     break;
                 case JOYSTICK:
@@ -274,7 +281,7 @@ public class GameScreen extends ScreenScene
                     core.getScreenManager().camera.combined
             );
 
-            Batch uiBatch = core.getUiBatch();
+            val uiBatch = core.getUiBatch();
             uiBatch.begin();
 
             // Debug player text
@@ -303,22 +310,9 @@ public class GameScreen extends ScreenScene
     }
 
     @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-
-    }
-
-    @Override
-    public void resume() {
-
-    }
-
-    @Override
     public void hide() {
+        super.hide();
+
         leftButton.dispose();
         rightButton.dispose();
         upButton.dispose();
@@ -329,9 +323,10 @@ public class GameScreen extends ScreenScene
     @Override
     public void dispose() {
         // Stop listen input
-        core.getInputGroups().listeners.remove(this);
+        core.getInputGroups().getListeners().remove(this);
 
         super.dispose();
+
         font.dispose();
     }
 

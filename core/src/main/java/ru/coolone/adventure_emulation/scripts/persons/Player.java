@@ -3,6 +3,8 @@ package ru.coolone.adventure_emulation.scripts.persons;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
+import lombok.Getter;
+import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.scripts.person.Person;
@@ -28,10 +30,10 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
     /**
      * Array of @{@link PersonMode}'s
      */
-    private PersonMode[] playerModes = new PersonMode[]{
-
+    @SuppressWarnings("unchecked")
+    @Getter private PersonMode[] modes = new PersonMode[]{
             // IDLE
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     new AnimationId[]{
                             AnimationId.IDLE
                     },
@@ -63,7 +65,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
             ),
 
             // WALK
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     WALK_MOVE_ACCELERATION, WALK_MOVE_VELOCITY,
                     new AnimationId[]{
                             AnimationId.WALK
@@ -92,18 +94,21 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         public PlayerModeId getDefaultNextModeId() {
                             return PlayerModeId.IDLE;
                         }
-                    },
-                    new PersonMode.Listener() {
-                        @Override
-                        protected void onMoveEnded() {
-                            super.onMoveEnded();
-                            toNextMode(null);
-                        }
                     }
-            ),
+            ) {{
+                listeners.add(
+                        new PersonMode.Listener() {
+                            @Override
+                            protected void onMoveEnded() {
+                                super.onMoveEnded();
+                                toNextMode(null);
+                            }
+                        });
+            }},
+
 
             // BREAK
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     new AnimationId[]{
                             AnimationId.BREAK_LOOP,
                             AnimationId.BREAK_START,
@@ -137,7 +142,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
             ),
 
             // SLIDE
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     new AnimationId[]{
                             AnimationId.SLIDE_LOOP,
                             AnimationId.SLIDE_START,
@@ -171,7 +176,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
             ),
 
             // CROUCH
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     new AnimationId[]{
                             AnimationId.CROUCH_LOOP,
                             AnimationId.CROUCH_START,
@@ -205,17 +210,20 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         public PlayerModeId getDefaultNextModeId() {
                             return getNextModeId();
                         }
-                    },
-                    new PersonMode.Listener() {
-                        @Override
-                        protected void onDeactivate() {
-                            super.onDeactivate();
-                        }
                     }
-            ),
+            ) {{
+                listeners.add(
+                        new PersonMode.Listener() {
+                            @Override
+                            protected void onDeactivate() {
+                                super.onDeactivate();
+                            }
+                        }
+                );
+            }},
 
             // CROUCH_WALK
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     CROUCH_WALK_MOVE_ACCELERATION, CROUCH_WALK_MOVE_VELOCITY,
                     new AnimationId[]{
                             AnimationId.CROUCH_WALK
@@ -248,7 +256,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
             ),
 
             // JUMP
-            new PersonMode<PlayerModeId, AnimationId>(
+            new PersonMode(
                     JUMP_MOVE_ACCELERATION, JUMP_MOVE_VELOCITY,
                     new AnimationId[]{
                             AnimationId.JUMP_LOOP,
@@ -281,22 +289,25 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         public PlayerModeId getDefaultNextModeId() {
                             return PlayerModeId.IDLE;
                         }
-                    },
-                    new PersonMode.Listener() {
-                        @Override
-                        protected void onActivate() {
-                            super.onActivate();
-                            getBody().applyLinearImpulse(
-                                    new Vector2(
-                                            0f,
-                                            1000f
-                                    ),
-                                    getBody().getPosition(),
-                                    true
-                            );
-                        }
                     }
-            )
+            ) {{
+                listeners.add(
+                        new PersonMode.Listener() {
+                            @Override
+                            protected void onActivate() {
+                                super.onActivate();
+                                getBody().applyLinearImpulse(
+                                        new Vector2(
+                                                0f,
+                                                1000f
+                                        ),
+                                        getBody().getPosition(),
+                                        true
+                                );
+                            }
+                        }
+                );
+            }}
     };
 
     /**
@@ -312,12 +323,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         currentModeId = PlayerModeId.IDLE;
 
         // Listen input
-        core.getInputGroups().listeners.add(this);
-    }
-
-    @Override
-    protected PersonMode<PlayerModeId, AnimationId>[] getModes() {
-        return playerModes;
+        core.getInputGroups().getListeners().add(this);
     }
 
     @Override
@@ -359,7 +365,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
     public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
         boolean ret = false;
 
-        PlayerModeId currentModeId = getCurrentModeId();
+        val currentModeId = getCurrentModeId();
 
         switch (groupId) {
             case CROUCH:
@@ -390,7 +396,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
     @Override
     public void dispose() {
         // Stop listen input
-        core.getInputGroups().listeners.remove(this);
+        core.getInputGroups().getListeners().remove(this);
 
         super.dispose();
     }
@@ -423,7 +429,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
     }
 
     /**
-     * Id's of @playerModes
+     * Id's of @modes
      */
     public enum PlayerModeId {
         IDLE,

@@ -14,6 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.val;
 import ru.coolone.adventure_emulation.Camera;
 import ru.coolone.adventure_emulation.Core;
 
@@ -49,12 +52,11 @@ public class ScreenManager {
     /**
      * Current @{@link ScreenScene} link
      */
-    private ScreenScene currentScreen;
-
+    @Getter private ScreenScene currentScreen;
     /**
      * Scene root @{@link ItemWrapper}
      */
-    private ItemWrapper rootItem;
+    @Getter  private ItemWrapper rootItem;
 
     public ScreenManager(Core core) {
         this.core = core;
@@ -77,8 +79,9 @@ public class ScreenManager {
      *
      * @param screenClass @{@link ScreenScene} class, for example @{@link ru.coolone.adventure_emulation.screens.GameScreen}
      */
+    @SneakyThrows
     public void openScreen(Class<? extends ScreenScene> screenClass) {
-        ScreenScene screenInstance = null;
+        ScreenScene screenInstance;
 
         // Hide old screen
         if (currentScreen != null)
@@ -87,23 +90,10 @@ public class ScreenManager {
         // Add screen to map if no exists
         if (!screenMap.containsKey(screenClass)) {
             // Get constructor
-            Constructor<? extends ScreenScene> screenConstr = null;
-            try {
-                screenConstr = screenClass.getConstructor(Core.class);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            val screenConstr = screenClass.getConstructor(Core.class);
             if (screenConstr != null) {
                 // Create screen
-                try {
-                    screenInstance = screenConstr.newInstance(core);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
+                screenInstance = screenConstr.newInstance(core);
 
                 if (screenInstance != null) {
                     // Add screen to map
@@ -125,10 +115,6 @@ public class ScreenManager {
         currentScreen = screenInstance;
     }
 
-    public ScreenScene getCurrentScreen() {
-        return currentScreen;
-    }
-
     /**
      * @return Current loaded scene @{@link Batch} for drawing in scene
      */
@@ -141,13 +127,6 @@ public class ScreenManager {
      */
     public World getWorld() {
         return loader.world;
-    }
-
-    /**
-     * @return Root world @{@link ItemWrapper}
-     */
-    public ItemWrapper getRootItem() {
-        return rootItem;
     }
 
     public Vector2 screenToWorldCoord(Vector2 coord) {

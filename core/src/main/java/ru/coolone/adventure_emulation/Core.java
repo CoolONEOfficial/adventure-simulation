@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 
+import lombok.Getter;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
@@ -18,6 +19,7 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
  */
 public class Core extends Game {
 
+    private static final String TAG = Core.class.getSimpleName();
     /**
      * Debug output flag
      */
@@ -27,7 +29,6 @@ public class Core extends Game {
      */
     public static final int WIDTH = 800;
     public static final int HEIGHT = 480;
-    private static final String TAG = Core.class.getSimpleName();
     /**
      * Screen class pointer, that will be opens on startup
      */
@@ -35,7 +36,7 @@ public class Core extends Game {
     /**
      * @see ScreenManager
      */
-    public ScreenManager screenManager;
+    @Getter public ScreenManager screenManager;
     /**
      * Font for debug text
      */
@@ -43,11 +44,11 @@ public class Core extends Game {
     /**
      * Butch for drawing ui
      */
-    private Batch uiBatch;
+    @Getter private Batch uiBatch;
     /**
      * @see InputGroups
      */
-    private InputGroups inputGroups;
+    @Getter private InputGroups inputGroups;
 
     @Override
     public void create() {
@@ -61,27 +62,6 @@ public class Core extends Game {
         // Screen manager
         screenManager = new ScreenManager(this);
         screenManager.openScreen(START_SCREEN);
-    }
-
-    /**
-     * @return @{@link ScreenManager}
-     */
-    public ScreenManager getScreenManager() {
-        return screenManager;
-    }
-
-    /**
-     * @return @{@link InputGroups}
-     */
-    public InputGroups getInputGroups() {
-        return inputGroups;
-    }
-
-    /**
-     * @return Ui @{@link Batch} for drawing some top of all
-     */
-    public Batch getUiBatch() {
-        return uiBatch;
     }
 
     @Override

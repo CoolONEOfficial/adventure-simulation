@@ -20,31 +20,27 @@ import static org.testng.Assert.assertTrue;
 
 public class AbsTriggerTest extends AbsTest {
 
-    @InjectMocks
-    private AbsTrigger absTrigger = new AbsTrigger(
+    @InjectMocks private AbsTrigger absTrigger = new AbsTrigger(
             "active",
             "passive",
             false
     ) {
     };
 
-    @Mock
-    private LayerItemVO activeLayer;
+    @Mock private LayerItemVO activeLayer;
 
-    @Mock
-    private LayerItemVO passiveLayer;
+    @Mock private LayerItemVO passiveLayer;
 
-    @Mock
-    private ArrayList<AbsTrigger.Listener> listeners;
+    @Mock private ArrayList<AbsTrigger.Listener> listeners;
 
     @Test
     public void testSetActiveState() throws Exception {
-        absTrigger.setActiveState(true);
+        absTrigger.setActive(true);
         assertTrue(absTrigger.isActive());
         assertTrue(activeLayer.isVisible);
         assertFalse(passiveLayer.isVisible);
 
-        absTrigger.setActiveState(false);
+        absTrigger.setActive(false);
         assertFalse(absTrigger.isActive());
         assertFalse(activeLayer.isVisible);
         assertTrue(passiveLayer.isVisible);

@@ -2,6 +2,10 @@ package ru.coolone.adventure_emulation.scripts.person;
 
 import java.util.ArrayList;
 
+import lombok.AccessLevel;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
 /**
  * {@link Person} mode
  *
@@ -10,29 +14,9 @@ import java.util.ArrayList;
  * @author coolone
  * @see Person
  */
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     private static final String TAG = PersonMode.class.getSimpleName();
-
-    /**
-     * Person behavior
-     *
-     * @see Behavior
-     */
-    final Behavior<PersonModeId> behavior;
-
-    /**
-     * Animation ids
-     * Keys is @{@link AnimationType}
-     *
-     * @see AnimationType
-     */
-    private final AnimationId[] animationIds;
-    final boolean animationStartLoopEnd;
-
-    /**
-     * Map of @{@link ChangeMode}'s of @{@link PersonMode}'s
-     */
-    final ChangeMode[] changeMap;
 
     /**
      * Change modes
@@ -65,6 +49,30 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     public final float moveVelocity;
 
     /**
+     * Animation ids
+     * Keys is @{@link AnimationType}
+     *
+     * @see AnimationType
+     */
+    @NonNull
+    private final AnimationId[] animationIds;
+    final boolean animationStartLoopEnd;
+
+    /**
+     * Map of @{@link ChangeMode}'s of @{@link PersonMode}'s
+     */
+    @NonNull
+    final ChangeMode[] changeMap;
+
+    /**
+     * Person behavior
+     *
+     * @see Behavior
+     */
+    @NonNull
+    final Behavior<PersonModeId> behavior;
+
+    /**
      * Animation id types
      */
     enum AnimationType {
@@ -80,35 +88,18 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
      */
     public final ArrayList<Listener> listeners = new ArrayList<>();
 
-    /**
-     * @param movable          @see movable
-     * @param moveAcceleration @see moveAcceleration
-     * @param animationIds     @see animationIds
-     * @param changeMap        @see changeMap
-     * @param behavior         @see {@link Behavior}
-     * @param listener         @see @{@link Listener}
-     */
-    private PersonMode(
-            boolean movable,
-            float moveAcceleration,
-            float moveVelocity,
+    public PersonMode(
+            float moveAcceleration, float moveVelocity,
             AnimationId[] animationIds,
             ChangeMode[] changeMap,
-            Behavior<PersonModeId> behavior,
-            Listener listener
+            Behavior<PersonModeId> behavior
     ) {
-        this.movable = movable;
-        this.moveAcceleration = moveAcceleration;
-        this.moveVelocity = moveVelocity;
-        this.animationIds = animationIds;
-        if (animationIds.length != 1 &&
-                animationIds.length != 3)
-            throw new RuntimeException("Animation ids count " + animationIds.length + " is wrong");
-        animationStartLoopEnd = animationIds.length == 3;
-        this.changeMap = changeMap;
-        this.behavior = behavior;
-        if (listener != null)
-            listeners.add(listener);
+        this(
+                moveVelocity > 0f, moveAcceleration, moveVelocity,
+                animationIds, animationIds.length == 3,
+                changeMap,
+                behavior
+        );
     }
 
     public PersonMode(
@@ -116,64 +107,12 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
             ChangeMode[] changeMap,
             Behavior<PersonModeId> behavior
     ) {
-        this(false, 0.0f, 0.0f,
+        this(
+                0.0f, 0.0f,
                 animationIds,
                 changeMap,
-                behavior,
-                null);
-    }
-
-    /**
-     * With @{@link Listener}
-     *
-     * @see Listener
-     */
-    public PersonMode(
-            AnimationId[] animationIds,
-            ChangeMode[] changeMap,
-            Behavior<PersonModeId> behavior,
-            Listener listener
-    ) {
-        this(false, 0.0f, 0.0f,
-                animationIds,
-                changeMap,
-                behavior,
-                listener);
-    }
-
-    /**
-     * With @moveAcceleration
-     */
-    public PersonMode(
-            float moveAcceleration, float moveVelocity,
-            AnimationId[] animationIds,
-            ChangeMode[] changeMap,
-            Behavior<PersonModeId> behavior
-    ) {
-        this(true, moveAcceleration, moveVelocity,
-                animationIds,
-                changeMap,
-                behavior,
-                null);
-    }
-
-    /**
-     * With @moveAcceleration and @{@link Listener}
-     *
-     * @see Listener
-     */
-    public PersonMode(
-            float moveAcceleration, float moveVelocity,
-            AnimationId[] animationIds,
-            ChangeMode[] changeMap,
-            Behavior<PersonModeId> behavior,
-            Listener listener
-    ) {
-        this(true, moveAcceleration, moveVelocity,
-                animationIds,
-                changeMap,
-                behavior,
-                listener);
+                behavior
+        );
     }
 
     AnimationId getAnimationId(AnimationType type) {

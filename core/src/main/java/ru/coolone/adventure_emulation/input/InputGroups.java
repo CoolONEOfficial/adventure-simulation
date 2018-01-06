@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.val;
+
 /**
  * Class, handle's group of keycode's to {@link InputGroupId}
  *
  * @author coolone
  */
-public class InputGroups
-        implements InputProcessor {
+public class InputGroups {
     private static final String TAG = InputGroups.class.getSimpleName();
     /**
      * Keycodes groups
@@ -54,22 +56,74 @@ public class InputGroups
     /**
      * General input multiplexer
      */
-    private final InputMultiplexer multiplexer = new InputMultiplexer();
+    @Getter private final InputMultiplexer multiplexer = new InputMultiplexer();
     /**
      * Array of active @{@link InputGroupId}
      */
-    private final ArrayList<InputGroupId> activeGroups = new ArrayList<InputGroupId>();
+    @Getter private final ArrayList<InputGroupId> activeGroups = new ArrayList<InputGroupId>();
     /**
      * Array of listeners
      */
-    public final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
+    @Getter private final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
 
     public InputGroups() {
         // Set input multiplexer
-        Gdx.input.setInputProcessor(multiplexer);
+        Gdx.input.setInputProcessor(getMultiplexer());
 
         // Listen input
-        multiplexer.addProcessor(this);
+        getMultiplexer().addProcessor(new InputProcessor() {
+            @Override
+            public boolean keyDown(int keycode) {
+                // Find input group by keycode
+                val groupId = keyToInputGroup(keycode);
+                if (groupId != null)
+                    // Activate input group
+                    groupActivate(groupId);
+
+                return false;
+            }
+
+            @Override
+            public boolean keyUp(int keycode) {
+                // Find input group by keycode
+                val groupId = keyToInputGroup(keycode);
+                if (groupId != null)
+                    // Deactivate input group
+                    groupDeactivate(groupId);
+
+                return false;
+            }
+
+            @Override
+            public boolean keyTyped(char character) {
+                return false;
+            }
+
+            @Override
+            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+                return false;
+            }
+
+            @Override
+            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+                return false;
+            }
+
+            @Override
+            public boolean touchDragged(int screenX, int screenY, int pointer) {
+                return false;
+            }
+
+            @Override
+            public boolean mouseMoved(int screenX, int screenY) {
+                return false;
+            }
+
+            @Override
+            public boolean scrolled(int amount) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -90,17 +144,6 @@ public class InputGroups
         }
 
         return groupId;
-    }
-
-    /**
-     * @return Active @{@link InputGroupId}'s
-     */
-    public ArrayList<InputGroupId> getActiveGroups() {
-        return activeGroups;
-    }
-
-    public InputMultiplexer getMultiplexer() {
-        return multiplexer;
     }
 
     /**
@@ -141,58 +184,6 @@ public class InputGroups
         }
 
         return true;
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        // Find input group by keycode
-        InputGroupId groupId = keyToInputGroup(keycode);
-        if (groupId != null)
-            // Activate input group
-            groupActivate(groupId);
-
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        // Find input group by keycode
-        InputGroupId groupId = keyToInputGroup(keycode);
-        if (groupId != null)
-            // Deactivate input group
-            groupDeactivate(groupId);
-
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
     }
 
     /**
