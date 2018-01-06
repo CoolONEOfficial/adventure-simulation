@@ -30,9 +30,8 @@ www-test/
 .gwt-tmp/
 
 ## IntelliJ, Android Studio:
-.idea/
+.idea/*
 !.idea/runConfigurations
-!.idea/runConfigurations.xml
 *.ipr
 *.iws
 *.iml
