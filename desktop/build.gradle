@@ -26,5 +26,3 @@ run {
 }
 
 apply plugin: 'jacoco'
-
-

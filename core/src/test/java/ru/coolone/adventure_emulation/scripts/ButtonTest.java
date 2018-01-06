@@ -29,9 +29,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class ButtonTest extends AbsTest {
 
-    @InjectMocks
-    private
-    Button button;
+    @InjectMocks private Button button;
 
     private int bClickCount = 0;
     private int bDownCount = 0;
@@ -114,6 +112,7 @@ public class ButtonTest extends AbsTest {
 
         // --- Create button with mocked core ---
         button = new Button(core, "button");
+        button.listeners.add(buttonListener);
 
         super.init();
     }

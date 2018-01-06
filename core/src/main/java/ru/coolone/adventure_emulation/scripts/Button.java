@@ -37,7 +37,7 @@ public class Button extends ButtonComposite
      *
      * @see ButtonListener
      */
-    public ArrayList<ButtonListener> listeners = new ArrayList<ButtonListener>();
+    public ArrayList<ButtonListener> listeners = new ArrayList<>();
     private int touchPointer = TOUCH_POINTER_EMPTY;
 
     public Button(

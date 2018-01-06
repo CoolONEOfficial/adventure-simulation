@@ -15,8 +15,6 @@ buildscript {
 
 apply plugin: 'com.palantir.jacoco-full-report'
 
-//tasks.jacocoFullReport.dependsOn subprojects.collect { it.tasks.test }
-
 allprojects {
     apply plugin: 'eclipse'
     apply plugin: 'idea'

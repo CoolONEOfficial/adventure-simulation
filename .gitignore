@@ -31,6 +31,8 @@ www-test/
 
 ## IntelliJ, Android Studio:
 .idea/
+!.idea/runConfigurations
+!.idea/runConfigurations.xml
 *.ipr
 *.iws
 *.iml

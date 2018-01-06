@@ -10,6 +10,7 @@ dependencies {
     compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    compileOnly "org.projectlombok:lombok:1.16.18"
     compile "com.github.insubstantial:trident:7.3"
     compile "com.github.CoolONEOfficial:overlap2d-runtime-libgdx:$overlap2dVersion"
     testCompile 'org.testng:testng:6.13.1'
