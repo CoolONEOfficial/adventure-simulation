@@ -19,7 +19,9 @@ import ru.coolone.adventure_emulation.screens.MenuScreen;
  */
 public class Core extends Game {
 
+    @SuppressWarnings("unused")
     private static final String TAG = Core.class.getSimpleName();
+
     /**
      * Debug output flag
      */

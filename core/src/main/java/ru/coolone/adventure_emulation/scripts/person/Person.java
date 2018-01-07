@@ -1,6 +1,5 @@
 package ru.coolone.adventure_emulation.scripts.person;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -14,10 +13,8 @@ import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
-import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.Script;
@@ -33,7 +30,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         implements Player.PlayerListener,
         InputGroups.InputGroupsListener {
 
-    protected static final String TAG = Person.class.getSimpleName();
+    @SuppressWarnings("unused")
+    private static final String TAG = Person.class.getSimpleName();
 
     /**
      * Link to @{@link Core}
@@ -62,8 +60,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     /**
      * Move handling @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
      */
-    final public InputGroups.InputGroupId inputMoveLeft;
-    final public InputGroups.InputGroupId inputMoveRight;
+    private final InputGroups.InputGroupId inputMoveLeft;
+    private final InputGroups.InputGroupId inputMoveRight;
 
     /**
      * @param core Link to @{@link Core}
@@ -89,11 +87,16 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         // Spriter
         spriter = new Spriter();
+
+        spriter.listeners.add(
+                () -> {
+                    // Start listen spriter
+                    spriter.getAnimationPlayer().addListener(Person.this);
+                }
+        );
+
         selfItem.getChild("spriter")
                 .addScript(spriter);
-
-        // Start listen spriter
-        spriter.spriter.player.addListener(this);
 
         // Start listen input
         this.core.getInputGroups().getListeners().add(this);
@@ -309,13 +312,13 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             // Handle move @InputGroupId's
             if (groupId == inputMoveLeft) {
                 // Start moving at left
-                moveDir = MoveDir.LEFT;
+                setMoveDir(MoveDir.LEFT);
 
                 // Flip animation
                 spriter.setFlipped(true);
             } else if (groupId == inputMoveRight) {
                 // Start moving at right
-                moveDir = MoveDir.RIGHT;
+                setMoveDir(MoveDir.RIGHT);
 
                 // Not flip animation
                 spriter.setFlipped(false);
@@ -431,7 +434,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         super.dispose();
 
         // Stop listen spriter
-        spriter.spriter.player.removeListener(this);
+        spriter.getAnimationPlayer().removeListener(this);
     }
 
     /**
@@ -444,60 +447,17 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             super(
                     new Class[]{
                             TransformComponent.class,
-                            DimensionsComponent.class
+                            DimensionsComponent.class,
+                            SpriterComponent.class
                     }
             );
-        }
-
-        /**
-         * Spriter component
-         */
-        public SpriterComponent spriter;
-
-        @Override
-        public void init(Entity entity) {
-            super.init(entity);
-            // Components
-            spriter = ComponentRetriever.get(entity, SpriterComponent.class);
-        }
-
-        @Override
-        public void act(float delta) {
-        }
-
-        @Override
-        public void dispose() {
-        }
-
-        public void setAnimation(int animationId) {
-            spriter.player.setAnimation(animationId);
-        }
-
-        /**
-         * Flipped flag
-         */
-        private boolean flipped = false;
-
-        /**
-         * Flip's spriter animation at X
-         *
-         * @param flipped New flipped boolean
-         */
-        void setFlipped(boolean flipped) {
-            if (this.flipped != flipped) {
-                // Flip
-                spriter.player.flipX();
-
-                // Update flag
-                this.flipped = flipped;
-            }
         }
     }
 }
 
 abstract class PersonComposite extends Script {
 
-    public PersonComposite() {
+    PersonComposite() {
         super(
                 new Class[]{
                         LayerMapComponent.class,

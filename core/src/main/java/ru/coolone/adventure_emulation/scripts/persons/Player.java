@@ -18,6 +18,9 @@ import ru.coolone.adventure_emulation.scripts.person.PersonMode.ChangeMode;
 public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
         implements InputGroups.InputGroupsListener {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = Player.class.getSimpleName();
+
     /**
      * Move speed constants for @{@link PersonMode}'s
      */
@@ -275,7 +278,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                     new PersonMode.Behavior<PlayerModeId>() {
                         @Override
                         public boolean checkEnd() {
-                            return spriter.spriter.player.getAnimation().id ==
+                            return spriter.getAnimation().id ==
                                     AnimationId.JUMP_LOOP.ordinal() &&
                                     isGrounded();
                         }

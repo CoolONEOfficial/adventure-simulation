@@ -28,7 +28,9 @@ import ru.coolone.adventure_emulation.Core;
 
 public class ScreenManager {
 
+    @SuppressWarnings("unused")
     private static final String TAG = ScreenManager.class.getSimpleName();
+
     /**
      * Camera, looks on {@link #viewport}
      */
@@ -95,10 +97,8 @@ public class ScreenManager {
                 // Create screen
                 screenInstance = screenConstr.newInstance(core);
 
-                if (screenInstance != null) {
-                    // Add screen to map
-                    screenMap.put(screenClass, screenInstance);
-                } else throw new RuntimeException("Screen constructor create error!");
+                // Add screen to map
+                screenMap.put(screenClass, screenInstance);
             } else throw new RuntimeException("Screen constructor find error!");
         } else screenInstance = screenMap.get(screenClass);
 

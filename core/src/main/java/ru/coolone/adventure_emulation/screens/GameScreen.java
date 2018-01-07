@@ -1,7 +1,6 @@
 package ru.coolone.adventure_emulation.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -26,7 +25,8 @@ import ru.coolone.adventure_emulation.scripts.persons.Player;
 
 public class GameScreen extends ScreenScene
         implements InputGroups.InputGroupsListener {
-    public static final String TAG = GameScreen.class.getSimpleName();
+    @SuppressWarnings("unused")
+    private static final String TAG = GameScreen.class.getSimpleName();
 
     private static final String name = "GameScene";
     /**

@@ -13,6 +13,7 @@ import ru.coolone.adventure_emulation.scripts.Button;
  */
 
 public class MenuScreen extends ScreenScene {
+    @SuppressWarnings("unused")
     private static final String TAG = MenuScreen.class.getSimpleName();
 
     private static final String name = "MenuScene";

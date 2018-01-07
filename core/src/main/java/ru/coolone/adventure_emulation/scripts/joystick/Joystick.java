@@ -26,7 +26,10 @@ import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
 public class Joystick extends JoystickComposite
         implements InputProcessor {
+
+    @SuppressWarnings("unused")
     private static final String TAG = Joystick.class.getSimpleName();
+
     /**
      * {@link #touchPointer} empty holder
      */

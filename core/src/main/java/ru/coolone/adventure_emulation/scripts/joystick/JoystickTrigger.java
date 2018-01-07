@@ -14,6 +14,9 @@ import ru.coolone.adventure_emulation.scripts.AbsTrigger;
  */
 public class JoystickTrigger extends AbsTrigger {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = JoystickTrigger.class.getSimpleName();
+
     /**
      * @param listener @{@link ru.coolone.adventure_emulation.scripts.AbsTrigger.Listener}, that will be added
      */

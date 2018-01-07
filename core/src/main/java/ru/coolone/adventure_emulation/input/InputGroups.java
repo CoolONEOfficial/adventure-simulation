@@ -18,7 +18,10 @@ import lombok.val;
  * @author coolone
  */
 public class InputGroups {
+
+    @SuppressWarnings("unused")
     private static final String TAG = InputGroups.class.getSimpleName();
+
     /**
      * Keycodes groups
      */
@@ -60,11 +63,11 @@ public class InputGroups {
     /**
      * Array of active @{@link InputGroupId}
      */
-    @Getter private final ArrayList<InputGroupId> activeGroups = new ArrayList<InputGroupId>();
+    @Getter private final ArrayList<InputGroupId> activeGroups = new ArrayList<>();
     /**
      * Array of listeners
      */
-    @Getter private final ArrayList<InputGroupsListener> listeners = new ArrayList<InputGroupsListener>();
+    @Getter private final ArrayList<InputGroupsListener> listeners = new ArrayList<>();
 
     public InputGroups() {
         // Set input multiplexer
@@ -172,10 +175,7 @@ public class InputGroups {
         Gdx.app.log(TAG, "Input group " + groupId + " DEactivating...");
 
         // Deactivate group
-        int deactivateIndex = activeGroups.indexOf(groupId);
-        if (deactivateIndex != -1)
-            activeGroups.remove(deactivateIndex);
-        else
+        if (!activeGroups.remove(groupId))
             return false;
 
         // Handle input group deactivate

@@ -14,6 +14,9 @@ import ru.coolone.adventure_emulation.Core;
 @AllArgsConstructor
 abstract public class ScreenScene implements Screen {
 
+    @SuppressWarnings("unused")
+    private static final String TAG = ScreenScene.class.getSimpleName();
+
     /**
      * Link for @{@link Core}
      */
