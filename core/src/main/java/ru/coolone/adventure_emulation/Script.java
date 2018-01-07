@@ -19,6 +19,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -32,10 +33,11 @@ import lombok.val;
 public class Script implements IScript {
 
     /**
-     * Classes of @{@link Entity} @{@link Component}'s
+     * Classes of @{@link Entity} @{@link Component}'s,
+     * that instances will be initialized in {@link #init(Entity)}
      */
     @NonNull
-    private Class[] entityComponentClasses;
+    protected ArrayList<Class> componentClassesForInit;
 
     /**
      * Script @{@link Component}'s ids
@@ -88,39 +90,13 @@ public class Script implements IScript {
      * @see ComponentId
      * @see Component
      */
-    private final EnumMap<ComponentId, Component> components = new EnumMap<>(ComponentId.class);
-
-    @SuppressWarnings("unchecked")
-    protected void addComponents(Class[] entityComponentClasses) {
-        this.entityComponentClasses = concatArr(this.entityComponentClasses, entityComponentClasses);
-    }
-
-    /**
-     * Function, that concatenate two arrays
-     * From stackoverflow.com :J
-     *
-     * @param a   First array
-     * @param b   Second array
-     * @param <T> Type of arrays
-     * @return Concatenated array
-     */
-    static private <T> T[] concatArr(T[] a, T[] b) {
-        val aLen = a.length;
-        val bLen = b.length;
-
-        @SuppressWarnings("unchecked")
-        val c = (T[]) Array.newInstance(a.getClass().getComponentType(), aLen + bLen);
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-
-        return c;
-    }
+    @Getter private final EnumMap<ComponentId, Component> components = new EnumMap<>(ComponentId.class);
 
     @Override
     @SuppressWarnings("unchecked")
     public void init(Entity entity) {
         // Get entity components
-        for (val mEntityComponentClass : entityComponentClasses) {
+        for (val mEntityComponentClass : componentClassesForInit) {
             for (int mComponentClassId = 0; mComponentClassId < Script.componentClasses.length; mComponentClassId++) {
                 val mComponentClass = Script.componentClasses[mComponentClassId];
                 if (mEntityComponentClass.equals(mComponentClass))
@@ -146,31 +122,32 @@ public class Script implements IScript {
     }
 
     public boolean getVisible() {
-        return ((MainItemComponent) components.get(ComponentId.MAIN_ITEM))
+        return ((MainItemComponent) getComponents().get(ComponentId.MAIN_ITEM))
                 .visible;
     }
 
     public void setVisible(boolean visible) {
-        ((MainItemComponent) components.get(ComponentId.MAIN_ITEM))
+        ((MainItemComponent) getComponents().get(ComponentId.MAIN_ITEM))
                 .visible = visible;
     }
 
     public float getX() {
-        return ((TransformComponent) components.get(ComponentId.TRANSFORM))
+        return ((TransformComponent) getComponents().get(ComponentId.TRANSFORM))
                 .x;
     }
 
     public void setX(float x) {
-        ((TransformComponent) components.get(ComponentId.TRANSFORM)).x = x;
+        ((TransformComponent) getComponents().get(ComponentId.TRANSFORM))
+                .x = x;
     }
 
     public float getY() {
-        return ((TransformComponent) components.get(ComponentId.TRANSFORM))
+        return ((TransformComponent) getComponents().get(ComponentId.TRANSFORM))
                 .y;
     }
 
     public void setY(float y) {
-        ((TransformComponent) components.get(ComponentId.TRANSFORM))
+        ((TransformComponent) getComponents().get(ComponentId.TRANSFORM))
                 .y = y;
     }
 
@@ -184,12 +161,12 @@ public class Script implements IScript {
     }
 
     public float getWidth() {
-        return ((DimensionsComponent) components.get(ComponentId.DIMEN))
+        return ((DimensionsComponent) getComponents().get(ComponentId.DIMEN))
                 .width;
     }
 
     public float getHeight() {
-        return ((DimensionsComponent) components.get(ComponentId.DIMEN))
+        return ((DimensionsComponent) getComponents().get(ComponentId.DIMEN))
                 .height;
     }
 
@@ -206,7 +183,7 @@ public class Script implements IScript {
     }
 
     public Body getBody() {
-        return ((PhysicsBodyComponent) components.get(ComponentId.PHYSIC))
+        return ((PhysicsBodyComponent) getComponents().get(ComponentId.PHYSIC))
                 .body;
     }
 
@@ -218,22 +195,22 @@ public class Script implements IScript {
     }
 
     public LayerItemVO getLayer(String name) {
-        return ((LayerMapComponent) components.get(ComponentId.LAYER_MAP))
+        return ((LayerMapComponent) getComponents().get(ComponentId.LAYER_MAP))
                 .getLayer(name);
     }
 
     public void setAnimation(int index) {
-        ((SpriterComponent) components.get(ComponentId.SPRITER))
+        ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
                 .player.setAnimation(index);
     }
 
     public Animation getAnimation() {
-        return ((SpriterComponent) components.get(ComponentId.SPRITER))
+        return ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
                 .player.getAnimation();
     }
 
     public Player getAnimationPlayer() {
-        return ((SpriterComponent) components.get(ComponentId.SPRITER))
+        return ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
                 .player;
     }
 
@@ -250,7 +227,7 @@ public class Script implements IScript {
     public void setFlipped(boolean flipped) {
         if (this.flipped != flipped) {
             // Flip
-            ((SpriterComponent) components.get(ComponentId.SPRITER))
+            ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
                     .player.flipX();
 
             // Update flag

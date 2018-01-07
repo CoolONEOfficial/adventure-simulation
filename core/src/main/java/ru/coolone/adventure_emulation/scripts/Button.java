@@ -1,15 +1,14 @@
 package ru.coolone.adventure_emulation.scripts;
 
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
-import com.uwsoft.editor.renderer.utils.ComponentRetriever;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import ru.coolone.adventure_emulation.Core;
 
@@ -215,10 +214,12 @@ public class Button extends ButtonComposite
          * Will be called after button click
          */
         void onButtonClick();
+
         /**
          * Will be called after button press down
          */
         void onButtonDown();
+
         /**
          * Will be called after button press up
          */
@@ -233,11 +234,11 @@ abstract class ButtonComposite extends AbsTrigger {
                 "pressed", "normal",
                 false
         );
-        addComponents(
-                new Class[]{
+        componentClassesForInit.addAll(
+                Arrays.asList(
                         TransformComponent.class,
                         DimensionsComponent.class
-                }
+                )
         );
     }
 }

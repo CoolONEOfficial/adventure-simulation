@@ -14,6 +14,9 @@ import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import lombok.Getter;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
@@ -44,7 +47,9 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     /**
      * Current @{@link PersonMode} id
      */
-    @Getter protected PersonModeId currentModeId;
+    @Getter
+    protected PersonModeId currentModeId;
+
     /**
      * Move directions
      */
@@ -53,10 +58,12 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         LEFT,
         RIGHT
     }
+
     /**
      * Current @{@link MoveDir}
      */
-    @Getter private MoveDir moveDir = MoveDir.NONE;
+    @Getter
+    private MoveDir moveDir = MoveDir.NONE;
     /**
      * Move handling @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
      */
@@ -173,7 +180,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      * Method, that check @{@link PersonMode.ChangeMode} and start or end animation (if she exists)
      * and call {@link #onActivateMode(Enum)} or call {@link #onActivateMode(Enum)} directly
      *
-     * @param newModeId Id of @{@link PersonMode}, that will be activated
+     * @param newModeId         Id of @{@link PersonMode}, that will be activated
      * @param checkInputGroupId Input group, that will be checked before activate newModeId
      */
     protected void activateMode(
@@ -337,7 +344,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Override
     public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
         // Deactivate endInputGroupId
-        if(groupId == endInputGroupId)
+        if (groupId == endInputGroupId)
             endInputGroupId = null;
 
         // Stop moving
@@ -445,11 +452,13 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         Spriter() {
             super(
-                    new Class[]{
-                            TransformComponent.class,
-                            DimensionsComponent.class,
-                            SpriterComponent.class
-                    }
+                    new ArrayList<>(
+                            Arrays.asList(
+                                    TransformComponent.class,
+                                    DimensionsComponent.class,
+                                    SpriterComponent.class
+                            )
+                    )
             );
         }
     }
@@ -459,12 +468,14 @@ abstract class PersonComposite extends Script {
 
     PersonComposite() {
         super(
-                new Class[]{
-                        LayerMapComponent.class,
-                        TransformComponent.class,
-                        DimensionsComponent.class,
-                        PhysicsBodyComponent.class
-                }
+                new ArrayList<>(
+                        Arrays.asList(
+                                LayerMapComponent.class,
+                                TransformComponent.class,
+                                DimensionsComponent.class,
+                                PhysicsBodyComponent.class
+                        )
+                )
         );
     }
 

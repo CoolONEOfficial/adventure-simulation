@@ -161,7 +161,7 @@ public class InputGroups {
         activeGroups.add(groupId);
 
         // Handle input group activate
-        for (InputGroupsListener mListener : listeners) {
+        for (InputGroupsListener mListener : getListeners()) {
             mListener.onInputGroupActivate(groupId);
         }
     }
@@ -179,7 +179,7 @@ public class InputGroups {
             return false;
 
         // Handle input group deactivate
-        for (InputGroupsListener mListener : listeners) {
+        for (InputGroupsListener mListener : getListeners()) {
             mListener.onInputGroupDeactivate(groupId);
         }
 

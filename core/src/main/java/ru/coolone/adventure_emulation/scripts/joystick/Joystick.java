@@ -108,7 +108,8 @@ public class Joystick extends JoystickComposite
     /**
      * Active at this moment @{@link TriggerId}
      */
-    @Getter private TriggerId currentTriggerId;
+    @Getter
+    private TriggerId currentTriggerId;
     /**
      * Array of @{@link JoystickTrigger}'s
      */
@@ -548,9 +549,9 @@ public class Joystick extends JoystickComposite
     }
 
     public JoystickTrigger getTrigger(TriggerId triggerId) {
-            return (triggerId != null)
-                    ? triggers[triggerId.ordinal()]
-                    : null;
+        return (triggerId != null)
+                ? triggers[triggerId.ordinal()]
+                : null;
     }
 
     public JoystickTrigger getCurrentTrigger() {
@@ -780,10 +781,12 @@ public class Joystick extends JoystickComposite
 class JoystickComposite extends Script {
     public JoystickComposite() {
         super(
-                new Class[]{
-                        TransformComponent.class,
-                        DimensionsComponent.class
-                }
+                new ArrayList<>(
+                        Arrays.asList(
+                                TransformComponent.class,
+                                DimensionsComponent.class
+                        )
+                )
         );
     }
 }
@@ -791,10 +794,12 @@ class JoystickComposite extends Script {
 class JoystickStick extends Script {
     JoystickStick() {
         super(
-                new Class[]{
-                        TransformComponent.class,
-                        DimensionsComponent.class
-                }
+                new ArrayList<>(
+                        Arrays.asList(
+                                TransformComponent.class,
+                                DimensionsComponent.class
+                        )
+                )
         );
     }
 }
@@ -802,10 +807,12 @@ class JoystickStick extends Script {
 class JoystickBackground extends Script {
     JoystickBackground() {
         super(
-                new Class[]{
-                        TransformComponent.class,
-                        DimensionsComponent.class
-                }
+                new ArrayList<>(
+                        Arrays.asList(
+                                TransformComponent.class,
+                                DimensionsComponent.class
+                        )
+                )
         );
     }
 }

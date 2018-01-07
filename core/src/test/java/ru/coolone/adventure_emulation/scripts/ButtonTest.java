@@ -9,12 +9,9 @@ import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-
-import java.util.ArrayList;
 
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
@@ -58,7 +55,7 @@ public class ButtonTest extends AbsTest {
 
     @BeforeMethod
     @Override
-    public void init() throws Exception {
+    public void initMethod() throws Exception {
         // --- Core mocking ---
         core = mock(Core.class);
 
@@ -114,7 +111,7 @@ public class ButtonTest extends AbsTest {
         button = new Button(core, "button");
         button.listeners.add(buttonListener);
 
-        super.init();
+        super.initMethod();
     }
 
     @Test
