@@ -99,8 +99,8 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         }
                     }
             ) {{
-                listeners.add(
-                        new PersonMode.Listener() {
+                personModeListeners.add(
+                        new PersonModeListener() {
                             @Override
                             protected void onMoveEnded() {
                                 super.onMoveEnded();
@@ -215,8 +215,8 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         }
                     }
             ) {{
-                listeners.add(
-                        new PersonMode.Listener() {
+                personModeListeners.add(
+                        new PersonModeListener() {
                             @Override
                             protected void onDeactivate() {
                                 super.onDeactivate();
@@ -294,8 +294,8 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                         }
                     }
             ) {{
-                listeners.add(
-                        new PersonMode.Listener() {
+                personModeListeners.add(
+                        new PersonModeListener() {
                             @Override
                             protected void onActivate() {
                                 super.onActivate();

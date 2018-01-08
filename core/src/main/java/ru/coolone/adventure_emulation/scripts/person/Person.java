@@ -89,7 +89,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         // Spriter
         spriter = new Spriter();
 
-        spriter.listeners.add(
+        spriter.scriptListeners.add(
                 () -> {
                     // Start listen spriter
                     spriter.getAnimationPlayer().addListener(Person.this);

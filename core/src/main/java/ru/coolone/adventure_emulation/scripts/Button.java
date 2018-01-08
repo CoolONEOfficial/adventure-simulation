@@ -182,29 +182,29 @@ public class Button extends ButtonComposite
     }
 
     public void click() {
-        for (ButtonListener mListener : listeners) {
+        for (ButtonListener mListener : buttonListeners) {
             mListener.onButtonClick();
         }
     }
 
     public void down() {
-        for (ButtonListener mListener : listeners) {
+        for (ButtonListener mListener : buttonListeners) {
             mListener.onButtonDown();
         }
     }
 
     public void up() {
-        for (ButtonListener mListener : listeners) {
+        for (ButtonListener mListener : buttonListeners) {
             mListener.onButtonUp();
         }
     }
 
     /**
-     * Button listeners array
+     * Button scriptListeners array
      *
      * @see ButtonListener
      */
-    public ArrayList<ButtonListener> listeners = new ArrayList<>();
+    public ArrayList<ButtonListener> buttonListeners = new ArrayList<>();
 
     /**
      * Button listener

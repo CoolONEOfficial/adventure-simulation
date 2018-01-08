@@ -11,6 +11,8 @@ import ru.coolone.adventure_emulation.screen.ScreenManager;
 
 import static org.testng.Assert.assertEquals;
 
+// TODO: autoclean with lombok
+
 /**
  * @author coolone
  */

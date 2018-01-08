@@ -109,7 +109,7 @@ public class ButtonTest extends AbsTest {
 
         // --- Create button with mocked core ---
         button = new Button(core, "button");
-        button.listeners.add(buttonListener);
+        button.buttonListeners.add(buttonListener);
 
         super.initMethod();
     }

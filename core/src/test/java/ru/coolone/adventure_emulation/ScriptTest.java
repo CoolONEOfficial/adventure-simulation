@@ -215,8 +215,8 @@ public class ScriptTest extends AbsTest {
         val checkRect = new Rectangle(
                 (float) (Math.random() * 100.),
                 (float) (Math.random() * 50.),
-                (float) (Math.random() * 50.),
-                (float) (Math.random() * 65.)
+                (float) (Math.random() * 50.) + 2f,
+                (float) (Math.random() * 65.) + 2f
         );
         script.setRect(checkRect);
         assertFalse(script.intercepts(

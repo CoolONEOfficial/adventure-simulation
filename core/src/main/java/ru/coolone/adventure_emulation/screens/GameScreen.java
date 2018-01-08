@@ -106,7 +106,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonDown"
         );
-        downButton.listeners.add(
+        downButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -127,7 +127,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonUp"
         );
-        upButton.listeners.add(
+        upButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -148,7 +148,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonLeft"
         );
-        leftButton.listeners.add(
+        leftButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -170,7 +170,7 @@ public class GameScreen extends ScreenScene
                 core,
                 "buttonRight"
         );
-        rightButton.listeners.add(
+        rightButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {

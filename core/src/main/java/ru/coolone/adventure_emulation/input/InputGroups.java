@@ -65,7 +65,7 @@ public class InputGroups {
      */
     @Getter private final ArrayList<InputGroupId> activeGroups = new ArrayList<>();
     /**
-     * Array of listeners
+     * Array of scriptListeners
      */
     @Getter private final ArrayList<InputGroupsListener> listeners = new ArrayList<>();
 

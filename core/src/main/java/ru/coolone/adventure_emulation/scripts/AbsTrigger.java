@@ -22,7 +22,7 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     /**
      * Listeners array
      */
-    public final ArrayList<Listener> listeners = new ArrayList<>();
+    public final ArrayList<AbsTriggerListener> absTriggerListeners = new ArrayList<>();
     /**
      * Layers names
      */
@@ -94,11 +94,11 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
 
             if (active)
                 // Activate
-                for (Listener mListener : listeners)
+                for (AbsTriggerListener mListener : absTriggerListeners)
                     mListener.onTriggerActivate();
             else
                 // Deactivate
-                for (Listener mListener : listeners)
+                for (AbsTriggerListener mListener : absTriggerListeners)
                     mListener.onTriggerDeactivate();
         }
     }
@@ -112,9 +112,9 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
     }
 
     /**
-     * Listener interface
+     * ScriptListener interface
      */
-    public interface Listener {
+    public interface AbsTriggerListener {
         /**
          * Called, on trigger has been activated
          */

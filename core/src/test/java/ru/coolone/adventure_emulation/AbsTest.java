@@ -9,6 +9,8 @@ import org.testng.annotations.BeforeMethod;
 import static org.mockito.Mockito.mock;
 
 /**
+ * Abstract test class with initialize gdx static vars and mockito annotations
+ *
  * @author coolone
  */
 

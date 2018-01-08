@@ -45,9 +45,9 @@ public class Script implements IScript {
             SpriterComponent.class
     };
     /**
-     * Array of @{@link Listener}'s
+     * Array of @{@link ScriptListener}'s
      */
-    public final ArrayList<Listener> listeners = new ArrayList<>();
+    public final ArrayList<ScriptListener> scriptListeners = new ArrayList<>();
     /**
      * Classes of @{@link Entity} @{@link Component}'s,
      * that instances will be initialized in {@link #init(Entity)}
@@ -68,7 +68,9 @@ public class Script implements IScript {
      */
     @Getter
     private boolean init = false;
-
+    /**
+     * Instance of @{@link Entity}
+     */
     @Getter
     private Entity entity;
     /**
@@ -95,7 +97,7 @@ public class Script implements IScript {
         }
 
         // Handle init
-        for (Listener mListener : listeners) {
+        for (ScriptListener mListener : scriptListeners) {
             mListener.onInit();
         }
 
@@ -277,9 +279,9 @@ public class Script implements IScript {
     }
 
     /**
-     * Listener for @{@link Script}
+     * ScriptListener for @{@link Script}
      */
-    public interface Listener {
+    public interface ScriptListener {
         /**
          * Will be called after {@link #init(Entity)}
          */

@@ -19,9 +19,9 @@ public class JoystickTrigger extends AbsTrigger {
     private static final String TAG = JoystickTrigger.class.getSimpleName();
 
     /**
-     * @param listener @{@link ru.coolone.adventure_emulation.scripts.AbsTrigger.Listener}, that will be added
+     * @param listener @{@link AbsTriggerListener}, that will be added
      */
-    public JoystickTrigger(Listener listener) {
+    public JoystickTrigger(AbsTriggerListener listener) {
         super(
                 "active", "passive",
                 false,
@@ -33,7 +33,7 @@ public class JoystickTrigger extends AbsTrigger {
                         )
                 )
         );
-        listeners.add(listener);
+        absTriggerListeners.add(listener);
     }
 
     @Override

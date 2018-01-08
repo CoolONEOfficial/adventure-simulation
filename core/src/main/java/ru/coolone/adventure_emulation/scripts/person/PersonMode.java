@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
+
+    @SuppressWarnings("unused")
     private static final String TAG = PersonMode.class.getSimpleName();
 
     /**
@@ -84,9 +86,9 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     /**
      * Listeners dynamic array
      *
-     * @see Listener
+     * @see PersonModeListener
      */
-    public final ArrayList<Listener> listeners = new ArrayList<>();
+    public final ArrayList<PersonModeListener> personModeListeners = new ArrayList<>();
 
     public PersonMode(
             float moveAcceleration, float moveVelocity,
@@ -150,7 +152,7 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     /**
      * {@link PersonMode} events listener
      */
-    static abstract public class Listener {
+    static abstract public class PersonModeListener {
         /**
          * Called on activate this @{@link PersonMode}
          */
@@ -179,22 +181,22 @@ public class PersonMode<PersonModeId extends Enum, AnimationId extends Enum> {
     }
 
     void onActivate() {
-        for (Listener mListener : listeners)
+        for (PersonModeListener mListener : personModeListeners)
             mListener.onActivate();
     }
 
     void onDeactivate() {
-        for (Listener mListener : listeners)
+        for (PersonModeListener mListener : personModeListeners)
             mListener.onDeactivate();
     }
 
     void onAct() {
-        for (Listener mListener : listeners)
+        for (PersonModeListener mListener : personModeListeners)
             mListener.onAct();
     }
 
     void onMoveEnded() {
-        for (Listener mListener : listeners)
+        for (PersonModeListener mListener : personModeListeners)
             mListener.onMoveEnded();
     }
 }

@@ -36,9 +36,9 @@ public class Joystick extends JoystickComposite
     private static final int TOUCH_POINTER_EMPTY = -1;
     /**
      * Names of @{@link JoystickTrigger}'s
-     * Assigned to @{@link TriggerId}'s
+     * Assigned to {@link #triggers}
      */
-    public final String[] triggerNames = new String[]{
+    public static final String[] triggerNames = new String[]{
             "triggerCenter",    // CENTER
             "triggerLeft",      // LEFT
             "triggerRight",     // RIGHT
@@ -58,9 +58,9 @@ public class Joystick extends JoystickComposite
      */
     public final JoystickBackground bg;
     /**
-     * Array of @{@link Listener}'s
+     * Array of @{@link JoystickListener}'s
      */
-    public final ArrayList<Listener> listeners = new ArrayList<>();
+    public final ArrayList<JoystickListener> joystickListeners = new ArrayList<>();
     /**
      * General @{@link TriggerId}'s
      */
@@ -70,6 +70,9 @@ public class Joystick extends JoystickComposite
             TriggerId.UP,
             TriggerId.DOWN
     };
+    /**
+     * Change map for triggers
+     */
     private final EnumMap<TriggerId, TriggerId[]> triggerChangeMap = new EnumMap<TriggerId, TriggerId[]>(TriggerId.class) {{
         put(
                 TriggerId.LEFT,
@@ -113,10 +116,10 @@ public class Joystick extends JoystickComposite
     /**
      * Array of @{@link JoystickTrigger}'s
      */
-    private final JoystickTrigger[] triggers = new JoystickTrigger[]{
+    public final JoystickTrigger[] triggers = new JoystickTrigger[]{
             // CENTER
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         @Override
                         public void onTriggerActivate() {
                             // Show generalTriggerIds
@@ -134,7 +137,7 @@ public class Joystick extends JoystickComposite
 
             // LEFT
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         @Override
                         public void onTriggerActivate() {
                             getTrigger(TriggerId.CENTER).setVisible(true);
@@ -158,7 +161,7 @@ public class Joystick extends JoystickComposite
 
             // RIGHT
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         @Override
                         public void onTriggerActivate() {
                             getTrigger(TriggerId.CENTER).setVisible(true);
@@ -182,7 +185,7 @@ public class Joystick extends JoystickComposite
 
             // UP
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         @Override
                         public void onTriggerActivate() {
                             getTrigger(TriggerId.CENTER).setVisible(true);
@@ -206,7 +209,7 @@ public class Joystick extends JoystickComposite
 
             // DOWN
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         @Override
                         public void onTriggerActivate() {
                             getTrigger(TriggerId.CENTER).setVisible(true);
@@ -230,7 +233,7 @@ public class Joystick extends JoystickComposite
 
             // RIGHT_UP
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         TriggerId oldTrigger;
                         InputGroups.InputGroupId activeInputGroup;
 
@@ -286,7 +289,7 @@ public class Joystick extends JoystickComposite
 
             // RIGHT_DOWN
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         TriggerId oldTrigger;
                         InputGroups.InputGroupId activeGroup;
 
@@ -344,7 +347,7 @@ public class Joystick extends JoystickComposite
 
             // LEFT_UP
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         TriggerId oldTrigger;
                         InputGroups.InputGroupId activeGroup;
 
@@ -401,7 +404,7 @@ public class Joystick extends JoystickComposite
 
             // LEFT_DOWN
             new JoystickTrigger(
-                    new AbsTrigger.Listener() {
+                    new AbsTrigger.AbsTriggerListener() {
                         TriggerId oldTrigger;
                         InputGroups.InputGroupId activeGroup;
 
@@ -471,8 +474,6 @@ public class Joystick extends JoystickComposite
             EnumMap<TriggerId, InputGroups.InputGroupId> triggerInputGroups
     ) {
         this.core = core;
-        if (triggerInputGroups.size() != generalTriggerIds.length)
-            throw new RuntimeException("Triggered input groups array length wrong");
         this.triggerInputGroups = triggerInputGroups;
 
         // Create / Add scripts
@@ -506,8 +507,15 @@ public class Joystick extends JoystickComposite
                 .addProcessor(this);
 
         // Show all general triggers
-        for (TriggerId mVisTrigger : generalTriggerIds)
-            triggers[mVisTrigger.ordinal()].setVisible(true);
+        for (TriggerId mVisTrigger : generalTriggerIds) {
+            val mTrigger = triggers[mVisTrigger.ordinal()];
+            if (mTrigger.isInit())
+                mTrigger.setVisible(true);
+            else
+                mTrigger.scriptListeners.add(
+                        () -> setVisible(true)
+                );
+        }
     }
 
     /**
@@ -671,7 +679,7 @@ public class Joystick extends JoystickComposite
                         val oldTriggerId = getCurrentTriggerId();
 
                         // Handle currentTriggerId change
-                        for (Listener mListener : listeners)
+                        for (JoystickListener mListener : joystickListeners)
                             mListener.onJoystickTriggerChanged(currentTriggerId, newTriggerId);
 
                         if (oldTrigger != null) {
@@ -768,9 +776,9 @@ public class Joystick extends JoystickComposite
     }
 
     /**
-     * Listener for @{@link Joystick}
+     * ScriptListener for @{@link Joystick}
      */
-    public interface Listener {
+    public interface JoystickListener {
         /**
          * Called, after {@link #currentTriggerId} changed
          */

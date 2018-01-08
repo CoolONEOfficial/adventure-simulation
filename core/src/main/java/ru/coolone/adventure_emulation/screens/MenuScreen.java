@@ -41,7 +41,7 @@ public class MenuScreen extends ScreenScene {
                 core,
                 "buttonPlay"
         );
-        buttonPlay.listeners.add(
+        buttonPlay.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
@@ -64,7 +64,7 @@ public class MenuScreen extends ScreenScene {
                 core,
                 "buttonExit"
         );
-        buttonExit.listeners.add(
+        buttonExit.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
                     public void onButtonClick() {
