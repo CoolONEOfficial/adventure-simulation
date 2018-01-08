@@ -41,6 +41,11 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      */
     protected final Core core;
     /**
+     * Move handling @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
+     */
+    private final InputGroups.InputGroupId inputMoveLeft;
+    private final InputGroups.InputGroupId inputMoveRight;
+    /**
      * @see Spriter
      */
     protected Spriter spriter;
@@ -49,26 +54,15 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      */
     @Getter
     protected PersonModeId currentModeId;
-
-    /**
-     * Move directions
-     */
-    public enum MoveDir {
-        NONE,
-        LEFT,
-        RIGHT
-    }
-
     /**
      * Current @{@link MoveDir}
      */
     @Getter
     private MoveDir moveDir = MoveDir.NONE;
     /**
-     * Move handling @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
+     * That @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId} will be handled after end of end animation
      */
-    private final InputGroups.InputGroupId inputMoveLeft;
-    private final InputGroups.InputGroupId inputMoveRight;
+    private InputGroups.InputGroupId endInputGroupId = null;
 
     /**
      * @param core Link to @{@link Core}
@@ -170,11 +164,6 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
             activateMode(nextModeId, null);
         }
     }
-
-    /**
-     * That @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId} will be handled after end of end animation
-     */
-    private InputGroups.InputGroupId endInputGroupId = null;
 
     /**
      * Method, that check @{@link PersonMode.ChangeMode} and start or end animation (if she exists)
@@ -445,13 +434,23 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 
     /**
+     * Move directions
+     */
+    public enum MoveDir {
+        NONE,
+        LEFT,
+        RIGHT
+    }
+
+    /**
      * Spriter item in CompositeItem
      * Animation of person
      */
     static public class Spriter extends Script {
 
         Spriter() {
-            super(
+            super();
+            componentClassesForInit.addAll(
                     new ArrayList<>(
                             Arrays.asList(
                                     TransformComponent.class,
@@ -467,7 +466,8 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 abstract class PersonComposite extends Script {
 
     PersonComposite() {
-        super(
+        super();
+        componentClassesForInit.addAll(
                 new ArrayList<>(
                         Arrays.asList(
                                 LayerMapComponent.class,

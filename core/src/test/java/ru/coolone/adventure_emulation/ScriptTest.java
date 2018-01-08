@@ -1,106 +1,334 @@
 package ru.coolone.adventure_emulation;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.brashmonkey.spriter.Animation;
+import com.brashmonkey.spriter.Mainline;
+import com.brashmonkey.spriter.Player;
+import com.uwsoft.editor.renderer.components.DimensionsComponent;
+import com.uwsoft.editor.renderer.components.LayerMapComponent;
+import com.uwsoft.editor.renderer.components.MainItemComponent;
+import com.uwsoft.editor.renderer.components.TransformComponent;
+import com.uwsoft.editor.renderer.components.physics.PhysicsBodyComponent;
+import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
+import com.uwsoft.editor.renderer.data.LayerItemVO;
 
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.EnumMap;
+import java.util.Arrays;
+
+import lombok.val;
+
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Created by coolone on 08.01.18.
  */
 public class ScriptTest extends AbsTest {
+    SpriterComponent spriter;
+    PhysicsBodyComponent physic;
+    LayerMapComponent layers;
+    LayerItemVO layerOne = new LayerItemVO("one");
+    LayerItemVO layerTwo = new LayerItemVO("two");
     @InjectMocks
-    Script script;
+    private Script script;
+    private int spriterAnimationId;
 
-    private final EnumMap<Script.ComponentId, Component> components = new EnumMap<>(Script.ComponentId.class);
-
+    @SuppressWarnings("unchecked")
     @BeforeMethod
     @Override
     public void initMethod() throws Exception {
         super.initMethod();
+        script.componentClassesForInit.addAll(
+                Arrays.asList(Script.componentClasses)
+        );
 
-        Mockito.when(script.getComponents()).thenReturn(components);
+        val player = mock(Player.class);
+        doAnswer(
+                invocation -> {
+                    spriterAnimationId = invocation.getArgument(0);
+                    return null;
+                }
+        ).when(player)
+                .setAnimation(anyInt());
+
+        // Animation class with public constructor
+        class MyAnimation extends Animation {
+            public MyAnimation(Mainline mainline, int id, String name, int length,
+                               boolean looping, int timelines) {
+                super(mainline, id, name, length, looping, timelines);
+            }
+        }
+
+        when(player.getAnimation()).thenAnswer(
+                invocation -> {
+                    // Return current animation
+                    int index = spriterAnimationId;
+
+                    return new MyAnimation(
+                            mock(Mainline.class),
+                            index,
+                            String.valueOf(index),
+                            2,
+                            false,
+                            1
+                    );
+                }
+        );
+
+        script.init(
+                new Entity() {{
+                    for (Class<? extends Component> mComponentClass : Script.componentClasses)
+                        add(mComponentClass.newInstance());
+
+                    // Get entity components
+                    spriter = getComponent(SpriterComponent.class);
+                    spriter.player = player;
+                    physic = getComponent(PhysicsBodyComponent.class);
+                    layers = getComponent(LayerMapComponent.class);
+                    layers.addLayer(layerOne);
+                    layers.addLayer(layerTwo);
+                }}
+        );
     }
 
     @Test
-    public void testAddComponents() throws Exception {
-    }
-
-    @Test
-    public void testGetVisible() throws Exception {
+    public void testIsVisible() throws Exception {
+        assertEquals(
+                script.isVisible(),
+                ((MainItemComponent) script.getComponents().get(Script.ComponentId.MAIN_ITEM))
+                        .visible
+        );
     }
 
     @Test
     public void testSetVisible() throws Exception {
+        script.setVisible(true);
+        assertTrue(script.isVisible());
+        script.setVisible(false);
+        assertFalse(script.isVisible());
     }
 
     @Test
     public void testGetX() throws Exception {
+        assertEquals(
+                script.getX(),
+                ((TransformComponent) script.getComponents().get(Script.ComponentId.TRANSFORM))
+                        .x
+        );
     }
 
     @Test
     public void testSetX() throws Exception {
+        val checkX = (float) (Math.random() * 100.);
+        script.setX(checkX);
+        assertEquals(script.getX(), checkX);
     }
 
     @Test
     public void testGetY() throws Exception {
+        assertEquals(
+                script.getY(),
+                ((TransformComponent) script.getComponents().get(Script.ComponentId.TRANSFORM))
+                        .y
+        );
     }
 
     @Test
     public void testSetY() throws Exception {
+        val checkY = (float) (Math.random() * 100.);
+        script.setY(checkY);
+        assertEquals(script.getY(), checkY);
     }
 
     @Test
     public void testGetCoord() throws Exception {
+        val transform = (TransformComponent) script.getComponents().get(Script.ComponentId.TRANSFORM);
+        assertEquals(
+                script.getCoord(),
+                new Vector2(
+                        transform.x,
+                        transform.y
+                )
+        );
     }
 
     @Test
     public void testSetCoord() throws Exception {
+        val checkCoord = new Vector2(
+                (float) (Math.random() * 100.),
+                (float) (Math.random() * 30.)
+        );
+        script.setCoord(checkCoord);
+        assertEquals(
+                script.getCoord(),
+                checkCoord
+        );
     }
 
     @Test
     public void testGetWidth() throws Exception {
+        assertEquals(
+                script.getWidth(),
+                ((DimensionsComponent) script.getComponents().get(Script.ComponentId.DIMEN))
+                        .width
+        );
+    }
+
+    @Test
+    public void testSetWidth() throws Exception {
+        val checkWidth = (float) (Math.random() * 100.);
+        script.setWidth(checkWidth);
+        assertEquals(script.getWidth(), checkWidth);
     }
 
     @Test
     public void testGetHeight() throws Exception {
+        assertEquals(
+                script.getHeight(),
+                ((DimensionsComponent) script.getComponents().get(Script.ComponentId.DIMEN))
+                        .height
+        );
+    }
+
+    @Test
+    public void testSetHeight() throws Exception {
+        val checkHeight = (float) (Math.random() * 130.);
+        script.setHeight(checkHeight);
+        assertEquals(script.getHeight(), checkHeight);
     }
 
     @Test
     public void testIntercepts() throws Exception {
+        val checkRect = new Rectangle(
+                (float) (Math.random() * 100.),
+                (float) (Math.random() * 50.),
+                (float) (Math.random() * 50.),
+                (float) (Math.random() * 65.)
+        );
+        script.setRect(checkRect);
+        assertFalse(script.intercepts(
+                new Vector2(checkRect.x, checkRect.y) {{
+                    x -= 1f;
+                    y -= 1f;
+                }}
+        ));
+        assertTrue(script.intercepts(
+                new Vector2(checkRect.x, checkRect.y) {{
+                    x += 1f;
+                    y += 1f;
+                }}
+        ));
+        assertTrue(script.intercepts(
+                new Vector2(checkRect.x, checkRect.y) {{
+                    x += checkRect.width - 1f;
+                    y += checkRect.height - 1f;
+                }}
+        ));
+        assertFalse(script.intercepts(
+                new Vector2(checkRect.x, checkRect.y) {{
+                    x += checkRect.width + 1f;
+                    y += checkRect.height + 1f;
+                }}
+        ));
     }
 
     @Test
     public void testGetBody() throws Exception {
+        Body body = mock(Body.class);
+        physic.body = body;
+        assertEquals(script.getBody(), body);
     }
 
     @Test
     public void testIsSpawned() throws Exception {
+        physic.body = null;
+        assertFalse(script.isSpawned());
+
+        physic.body = mock(Body.class);
+        assertTrue(script.isSpawned());
     }
 
     @Test
     public void testGetLayer() throws Exception {
+        assertEquals(script.getLayer("one"), layerOne);
+        assertEquals(script.getLayer("two"), layerTwo);
+        assertNull(script.getLayer("some other"));
     }
 
     @Test
     public void testSetAnimation() throws Exception {
+        script.setAnimation(1);
+        assertEquals(script.getAnimation().id, 1);
     }
 
     @Test
     public void testGetAnimation() throws Exception {
+        assertEquals(
+                script.getAnimation().id,
+                script.getAnimationPlayer().getAnimation().id
+        );
     }
 
     @Test
     public void testGetAnimationPlayer() throws Exception {
+        assertEquals(
+                script.getAnimationPlayer(),
+                ((SpriterComponent) script.getComponents().get(Script.ComponentId.SPRITER))
+                        .player
+        );
     }
 
     @Test
     public void testSetFlipped() throws Exception {
+        script.setFlipped(true);
+        assertTrue(script.isFlipped());
+
+        script.setFlipped(false);
+        assertFalse(script.isFlipped());
     }
 
+    @Test
+    public void testGetRect() throws Exception {
+        assertEquals(
+                script.getRect().x,
+                script.getX()
+        );
+        assertEquals(
+                script.getRect().y,
+                script.getY()
+        );
+        assertEquals(
+                script.getRect().width,
+                script.getWidth()
+        );
+        assertEquals(
+                script.getRect().height,
+                script.getHeight()
+        );
+    }
+
+    @Test
+    public void testSetRect() throws Exception {
+        val checkRect = new Rectangle(
+                (float) (Math.random() * 30.),
+                (float) (Math.random() * 50.),
+                (float) (Math.random() * 20.),
+                (float) (Math.random() * 100.)
+        );
+        script.setRect(checkRect);
+        assertEquals(script.getRect(), checkRect);
+    }
 }

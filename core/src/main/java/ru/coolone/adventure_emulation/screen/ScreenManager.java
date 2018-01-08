@@ -9,8 +9,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,19 +44,21 @@ public class ScreenManager {
     /**
      * Map of {@link ru.coolone.adventure_emulation.screen.ScreenScene}
      */
-    private final Map<Class<? extends ScreenScene>, ScreenScene> screenMap = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
+    private final Map<Class<? extends ScreenScene>, ScreenScene> screenMap = new HashMap<>();
     /**
      * Link to @{@link Game}
      */
-    private Core core;
+    private final Core core;
     /**
      * Current @{@link ScreenScene} link
      */
-    @Getter private ScreenScene currentScreen;
+    @Getter
+    private ScreenScene currentScreen;
     /**
      * Scene root @{@link ItemWrapper}
      */
-    @Getter  private ItemWrapper rootItem;
+    @Getter
+    private ItemWrapper rootItem;
 
     public ScreenManager(Core core) {
         this.core = core;

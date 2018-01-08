@@ -12,11 +12,11 @@ public class DesktopLauncher {
         createApplication();
     }
 
-    private static LwjglApplication createApplication() {
+    public static LwjglApplication createApplication() {
         return new LwjglApplication(new Core(), getDefaultConfiguration());
     }
 
-    private static LwjglApplicationConfiguration getDefaultConfiguration() {
+    public static LwjglApplicationConfiguration getDefaultConfiguration() {
         LwjglApplicationConfiguration configuration = new LwjglApplicationConfiguration();
         configuration.title = "Adventure Emulation";
         configuration.width = 800;

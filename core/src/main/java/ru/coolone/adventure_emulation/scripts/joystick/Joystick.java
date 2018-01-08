@@ -58,6 +58,10 @@ public class Joystick extends JoystickComposite
      */
     public final JoystickBackground bg;
     /**
+     * Array of @{@link Listener}'s
+     */
+    public final ArrayList<Listener> listeners = new ArrayList<>();
+    /**
      * General @{@link TriggerId}'s
      */
     private final TriggerId[] generalTriggerIds = new TriggerId[]{
@@ -97,10 +101,6 @@ public class Joystick extends JoystickComposite
         );
     }};
     private final EnumMap<TriggerId, InputGroups.InputGroupId> triggerInputGroups;
-    /**
-     * Array of @{@link Listener}'s
-     */
-    public final ArrayList<Listener> listeners = new ArrayList<>();
     /**
      * Link to @{@link Core}
      */
@@ -664,7 +664,7 @@ public class Joystick extends JoystickComposite
                     val newTriggerId = TriggerId.values()[newTriggerIdId];
                     val newTrigger = getTrigger(newTriggerId);
 
-                    if (newTrigger.getVisible() &&
+                    if (newTrigger.isVisible() &&
                             !newTrigger.isActive() &&
                             newTrigger.intercepts(newStickCoord)) {
                         val oldTrigger = getCurrentTrigger();
@@ -780,7 +780,8 @@ public class Joystick extends JoystickComposite
 
 class JoystickComposite extends Script {
     public JoystickComposite() {
-        super(
+        super();
+        componentClassesForInit.addAll(
                 new ArrayList<>(
                         Arrays.asList(
                                 TransformComponent.class,
@@ -793,7 +794,8 @@ class JoystickComposite extends Script {
 
 class JoystickStick extends Script {
     JoystickStick() {
-        super(
+        super();
+        componentClassesForInit.addAll(
                 new ArrayList<>(
                         Arrays.asList(
                                 TransformComponent.class,
@@ -806,7 +808,8 @@ class JoystickStick extends Script {
 
 class JoystickBackground extends Script {
     JoystickBackground() {
-        super(
+        super();
+        componentClassesForInit.addAll(
                 new ArrayList<>(
                         Arrays.asList(
                                 TransformComponent.class,

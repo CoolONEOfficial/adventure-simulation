@@ -3,7 +3,6 @@ package ru.coolone.adventure_emulation.input;
 import com.badlogic.gdx.Gdx;
 
 import org.mockito.InjectMocks;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -23,7 +22,8 @@ public class InputGroupsTest extends AbsTest {
 
     @InjectMocks
     private InputGroups inputGroups;
-
+    private int activateCount;
+    private int deactivateCount;
     private InputGroups.InputGroupsListener listener = new InputGroups.InputGroupsListener() {
         @Override
         public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
@@ -43,9 +43,6 @@ public class InputGroupsTest extends AbsTest {
             return false;
         }
     };
-
-    private int activateCount;
-    private int deactivateCount;
 
     @BeforeMethod
     @Override

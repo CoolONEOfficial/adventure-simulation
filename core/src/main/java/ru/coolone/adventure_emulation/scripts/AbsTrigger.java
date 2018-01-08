@@ -1,20 +1,16 @@
 package ru.coolone.adventure_emulation.scripts;
 
 import com.badlogic.ashley.core.Entity;
-import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.LayerMapComponent;
-import com.uwsoft.editor.renderer.components.TransformComponent;
-import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ru.coolone.adventure_emulation.Script;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * CompositeItem trigger with layers with custom names
@@ -133,12 +129,11 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
 
 abstract class AbsTriggerComposite extends Script {
     public AbsTriggerComposite() {
-        super(
-                new ArrayList<>(
-                        Collections.singletonList(
-                                LayerMapComponent.class
-                        )
+        super();
+        componentClassesForInit.addAll(new ArrayList<>(
+                Collections.singletonList(
+                        LayerMapComponent.class
                 )
-        );
+        ));
     }
 }

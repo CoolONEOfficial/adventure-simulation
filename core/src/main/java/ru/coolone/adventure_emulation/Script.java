@@ -2,6 +2,7 @@ package ru.coolone.adventure_emulation;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.brashmonkey.spriter.Animation;
@@ -15,13 +16,11 @@ import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.EnumMap;
 
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.val;
 
 /**
@@ -29,53 +28,15 @@ import lombok.val;
  *
  * @author coolone
  */
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class Script implements IScript {
-
-    /**
-     * Classes of @{@link Entity} @{@link Component}'s,
-     * that instances will be initialized in {@link #init(Entity)}
-     */
-    @NonNull
-    protected ArrayList<Class> componentClassesForInit;
-
-    /**
-     * Script @{@link Component}'s ids
-     */
-    enum ComponentId {
-        /**
-         * Visibility and id
-         */
-        MAIN_ITEM,
-        /**
-         * Sizes
-         */
-        DIMEN,
-        /**
-         * Coords
-         */
-        TRANSFORM,
-        /**
-         * Layers
-         */
-        LAYER_MAP,
-        /**
-         * Physic @{@link Body}
-         */
-        PHYSIC,
-        /**
-         * Spriter animations
-         */
-        SPRITER
-    }
-
     /**
      * Script @{@link Component}'s classes
      * Assigned to @{@link ComponentId}
      *
      * @see ComponentId
      */
-    private static final Class[] componentClasses = new Class[]{
+    public static final Class[] componentClasses = new Class[]{
             MainItemComponent.class,
             DimensionsComponent.class,
             TransformComponent.class,
@@ -83,18 +44,44 @@ public class Script implements IScript {
             PhysicsBodyComponent.class,
             SpriterComponent.class
     };
-
+    /**
+     * Array of @{@link Listener}'s
+     */
+    public final ArrayList<Listener> listeners = new ArrayList<>();
+    /**
+     * Classes of @{@link Entity} @{@link Component}'s,
+     * that instances will be initialized in {@link #init(Entity)}
+     */
+    protected final ArrayList<Class> componentClassesForInit = new ArrayList<>();
     /**
      * Map of entity's @{@link Component}'s
      *
      * @see ComponentId
      * @see Component
      */
-    @Getter private final EnumMap<ComponentId, Component> components = new EnumMap<>(ComponentId.class);
+    @Getter
+    private final EnumMap<ComponentId, Component> components = new EnumMap<>(ComponentId.class);
+
+    /**
+     * Init flag
+     * Will be activated after {@link #init(Entity)}
+     */
+    @Getter
+    private boolean init = false;
+
+    @Getter
+    private Entity entity;
+    /**
+     * Flipped flag
+     */
+    @Getter
+    private boolean flipped = false;
 
     @Override
     @SuppressWarnings("unchecked")
     public void init(Entity entity) {
+        this.entity = entity;
+
         // Get entity components
         for (val mEntityComponentClass : componentClassesForInit) {
             for (int mComponentClassId = 0; mComponentClassId < Script.componentClasses.length; mComponentClassId++) {
@@ -111,6 +98,9 @@ public class Script implements IScript {
         for (Listener mListener : listeners) {
             mListener.onInit();
         }
+
+        // Activate init flag
+        init = true;
     }
 
     @Override
@@ -121,7 +111,7 @@ public class Script implements IScript {
     public void dispose() {
     }
 
-    public boolean getVisible() {
+    public boolean isVisible() {
         return ((MainItemComponent) getComponents().get(ComponentId.MAIN_ITEM))
                 .visible;
     }
@@ -165,9 +155,35 @@ public class Script implements IScript {
                 .width;
     }
 
+    public void setWidth(float width) {
+        ((DimensionsComponent) getComponents().get(ComponentId.DIMEN))
+                .width = width;
+    }
+
     public float getHeight() {
         return ((DimensionsComponent) getComponents().get(ComponentId.DIMEN))
                 .height;
+    }
+
+    public void setHeight(float height) {
+        ((DimensionsComponent) getComponents().get(ComponentId.DIMEN))
+                .height = height;
+    }
+
+    public Rectangle getRect() {
+        return new Rectangle(
+                getX(),
+                getY(),
+                getWidth(),
+                getHeight()
+        );
+    }
+
+    public void setRect(Rectangle rect) {
+        setX(rect.x);
+        setY(rect.y);
+        setWidth(rect.width);
+        setHeight(rect.height);
     }
 
     /**
@@ -177,7 +193,8 @@ public class Script implements IScript {
      * @return Check result
      */
     public boolean intercepts(Vector2 point) {
-        return point.x > getX() && point.y > getY() &&
+        return point.x > getX() &&
+                point.y > getY() &&
                 point.x < getX() + getWidth() &&
                 point.y < getY() + getHeight();
     }
@@ -199,25 +216,19 @@ public class Script implements IScript {
                 .getLayer(name);
     }
 
+    public Animation getAnimation() {
+        return getAnimationPlayer().getAnimation();
+    }
+
     public void setAnimation(int index) {
         ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
                 .player.setAnimation(index);
-    }
-
-    public Animation getAnimation() {
-        return ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
-                .player.getAnimation();
     }
 
     public Player getAnimationPlayer() {
         return ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
                 .player;
     }
-
-    /**
-     * Flipped flag
-     */
-    private boolean flipped = false;
 
     /**
      * Flip's spriter animation at X
@@ -236,9 +247,34 @@ public class Script implements IScript {
     }
 
     /**
-     * Array of @{@link Listener}'s
+     * Script @{@link Component}'s ids
      */
-    public final ArrayList<Listener> listeners = new ArrayList<>();
+    enum ComponentId {
+        /**
+         * Visibility and id
+         */
+        MAIN_ITEM,
+        /**
+         * Sizes
+         */
+        DIMEN,
+        /**
+         * Coords
+         */
+        TRANSFORM,
+        /**
+         * Layers
+         */
+        LAYER_MAP,
+        /**
+         * Physic @{@link Body}
+         */
+        PHYSIC,
+        /**
+         * Spriter animations
+         */
+        SPRITER
+    }
 
     /**
      * Listener for @{@link Script}

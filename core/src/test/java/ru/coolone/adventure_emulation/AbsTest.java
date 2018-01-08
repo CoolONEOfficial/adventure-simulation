@@ -14,11 +14,13 @@ import static org.mockito.Mockito.mock;
 
 abstract public class AbsTest {
 
+    protected static HeadlessApplication headlessApplication;
+
     static {
         // Initialize libgdx headless for use static vars (e.g. Gdx.input.setInputProcessor)
         final HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
         config.renderInterval = 1f / 60; // Likely want 1f/60 for 60 fps
-        new HeadlessApplication(mock(Core.class), config);
+        headlessApplication = new HeadlessApplication(mock(Core.class), config);
     }
 
     @BeforeMethod(alwaysRun = true)
