@@ -34,7 +34,8 @@ import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Created by coolone on 08.01.18.
+ * @author coolone
+ * @since 08.01.18
  */
 public class ScriptTest extends AbsTest {
     SpriterComponent spriter;

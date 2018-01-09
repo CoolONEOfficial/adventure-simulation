@@ -104,7 +104,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                             @Override
                             protected void onMoveEnded() {
                                 super.onMoveEnded();
-                                toNextMode(null);
+                                toNextMode();
                             }
                         });
             }},

@@ -223,8 +223,7 @@ public class Script implements IScript {
     }
 
     public void setAnimation(int index) {
-        ((SpriterComponent) getComponents().get(ComponentId.SPRITER))
-                .player.setAnimation(index);
+        getAnimationPlayer().setAnimation(index);
     }
 
     public Player getAnimationPlayer() {

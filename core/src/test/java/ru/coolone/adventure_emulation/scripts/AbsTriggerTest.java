@@ -6,8 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-
 import ru.coolone.adventure_emulation.AbsTest;
 
 import static org.testng.Assert.assertEquals;
@@ -30,9 +28,6 @@ public class AbsTriggerTest extends AbsTest {
     @Mock private LayerItemVO activeLayer;
 
     @Mock private LayerItemVO passiveLayer;
-
-    @Mock
-    private ArrayList<AbsTrigger.AbsTriggerListener> absTriggerListeners;
 
     @Test
     public void testSetActiveState() throws Exception {

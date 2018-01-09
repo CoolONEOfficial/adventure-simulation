@@ -205,6 +205,12 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                 + currentModeId + " changeMap");
     }
 
+    protected void activateMode(
+            PersonModeId newModeId
+    ) {
+        activateMode(newModeId, null);
+    }
+
     /**
      * Function, that activate newModeId
      *
@@ -214,13 +220,6 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         Gdx.app.log(TAG, "Activating mode " + newModeId);
 
         val oldMode = getCurrentMode();
-
-        // Handle deactivate
-        if (oldMode != null)
-            oldMode.onDeactivate();
-
-        // Activate mode
-        currentModeId = newModeId;
 
         PersonMode<PersonModeId, AnimationId> newMode = getCurrentMode();
 
@@ -239,6 +238,13 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         // Handle activate
         newMode.onActivate();
+
+        // Activate mode
+        currentModeId = newModeId;
+
+        // Handle deactivate
+        if (oldMode != null)
+            oldMode.onDeactivate();
     }
 
     /**
@@ -249,6 +255,10 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
         PersonModeId nextMode = getCurrentMode().behavior.getNextModeId();
         if (nextMode != null)
             activateMode(nextMode, checkInputGroupId);
+    }
+
+    protected void toNextMode() {
+        toNextMode(null);
     }
 
     /**
@@ -303,7 +313,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     /**
      * @param groupId @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}, that will be set
      */
-    private void setMoveDir(InputGroups.InputGroupId groupId) {
+    private void refreshMoveDir(InputGroups.InputGroupId groupId) {
         if (getCurrentMode().movable) {
             // Handle move @InputGroupId's
             if (groupId == inputMoveLeft) {
@@ -325,7 +335,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Override
     public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
         // Refresh move direction
-        setMoveDir(groupId);
+        refreshMoveDir(groupId);
 
         return false;
     }
@@ -387,7 +397,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
                 // Refresh move direction
                 for (InputGroups.InputGroupId mInputGroupId : core.getInputGroups().getActiveGroups()) {
-                    setMoveDir(mInputGroupId);
+                    refreshMoveDir(mInputGroupId);
                 }
 
                 // Clear saved modeId and input group id

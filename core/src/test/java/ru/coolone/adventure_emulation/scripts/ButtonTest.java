@@ -1,24 +1,26 @@
 package ru.coolone.adventure_emulation.scripts;
 
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.utils.Array;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import org.mockito.InjectMocks;
-import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -26,7 +28,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class ButtonTest extends AbsTest {
 
-    @InjectMocks private Button button;
+    private Button button;
 
     private int bClickCount = 0;
     private int bDownCount = 0;
@@ -53,6 +55,7 @@ public class ButtonTest extends AbsTest {
     private ScreenManager coreScreenManager;
     private InputGroups coreInputGroups;
 
+    @SuppressWarnings("unchecked")
     @BeforeMethod
     @Override
     public void initMethod() throws Exception {
@@ -60,52 +63,66 @@ public class ButtonTest extends AbsTest {
         core = mock(Core.class);
 
         coreScreenManager = mock(ScreenManager.class);
-        Mockito.when(core.getScreenManager()).thenReturn(coreScreenManager);
+        when(core.getScreenManager()).thenReturn(coreScreenManager);
 
         // -- Screen manager --
-        ItemWrapper screenManagerRoot = mock(ItemWrapper.class);
-        Mockito.when(coreScreenManager.getRootItem()).thenReturn(screenManagerRoot);
+        val screenManagerRoot = mock(ItemWrapper.class);
+        when(coreScreenManager.getRootItem()).thenReturn(screenManagerRoot);
 
         // - Root entity -
-        Entity rootEntity = mock(Entity.class);
-        Mockito.when(rootEntity.getComponent(TransformComponent.class)).thenReturn(
-                new TransformComponent() {{
-                    x = 100;
-                    y = 200;
-                }}
-        );
-        Mockito.when(rootEntity.getComponent(DimensionsComponent.class)).thenReturn(
-                new DimensionsComponent() {{
-                    width = 500;
-                    height = 80;
-                }}
-        );
-        Mockito.when(rootEntity.getComponent(LayerMapComponent.class)).thenReturn(
-                new LayerMapComponent() {{
-                    addLayer(
-                            new LayerItemVO("normal")
-                    );
-                    addLayer(
-                            new LayerItemVO("pressed")
-                    );
-                }}
+        val rootEntity = mock(Entity.class);
+        when(rootEntity.getComponents()).thenReturn(
+                new ImmutableArray<>(
+                        new Array() {{
+                            add(
+                                    new TransformComponent() {{
+                                        x = 100;
+                                        y = 200;
+                                    }}
+                            );
+                            add(
+                                    new TransformComponent() {{
+                                        x = 100;
+                                        y = 200;
+                                    }}
+                            );
+                            add(
+                                    new DimensionsComponent() {{
+                                        width = 500;
+                                        height = 80;
+                                    }}
+                            );
+                            { // because nested double brackets
+                                add(
+                                        new LayerMapComponent() {{
+                                            addLayer(
+                                                    new LayerItemVO("normal")
+                                            );
+                                            addLayer(
+                                                    new LayerItemVO("pressed")
+                                            );
+                                        }}
+                                );
+                            }
+                        }}
+                )
         );
 
         // - Root ItemWrapper -
-        ItemWrapper itemWrapper = mock(ItemWrapper.class);
-        Mockito.when(itemWrapper.getEntity()).thenReturn(rootEntity);
+        val itemWrapper = mock(ItemWrapper.class);
+        when(itemWrapper.getEntity()).thenReturn(rootEntity);
 
-        Mockito.when(screenManagerRoot.getChild("button")).thenReturn(
+        when(screenManagerRoot.getChild("button")).thenReturn(
                 itemWrapper
         );
 
         // -- Input groups --
         coreInputGroups = mock(InputGroups.class);
-        Mockito.when(core.getInputGroups()).thenReturn(coreInputGroups);
+        when(core.getInputGroups()).thenReturn(coreInputGroups);
 
         // - Multiplexer -
-        InputMultiplexer multiplexer = mock(InputMultiplexer.class);
-        Mockito.when(coreInputGroups.getMultiplexer()).thenReturn(multiplexer);
+        val multiplexer = mock(InputMultiplexer.class);
+        when(coreInputGroups.getMultiplexer()).thenReturn(multiplexer);
 
         // --- Create button with mocked core ---
         button = new Button(core, "button");
