@@ -18,7 +18,7 @@ public class InputGroupsTest extends AbsTest {
     @SuppressWarnings("unused")
     private static final String TAG = InputGroupsTest.class.getSimpleName();
 
-    private final int checkIndex = (int) (Math.random() * InputGroups.InputGroupId.values().length);
+    private final int checkIndex = (int) (Math.random() * (InputGroups.InputGroupId.values().length - 1));
 
     @InjectMocks
     private InputGroups inputGroups;

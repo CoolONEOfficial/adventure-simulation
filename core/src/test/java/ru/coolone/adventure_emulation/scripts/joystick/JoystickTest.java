@@ -28,11 +28,11 @@ import static ru.coolone.adventure_emulation.scripts.joystick.Joystick.triggerNa
  */
 public class JoystickTest extends AbsTest {
     private Joystick.TriggerId checkTriggerId = Joystick.TriggerId.values()[
-            Joystick.TriggerId.values().length / 2 +
-                    (int) (Math.random() * Joystick.TriggerId.values().length / 2)];
+            ((Joystick.TriggerId.values().length / 2) - 1) +
+                    (int) (Math.random() * ((Joystick.TriggerId.values().length / 2) - 1))];
 
     private InputGroups.InputGroupId checkInputGroupId = InputGroups.InputGroupId.values()[
-            (int) (Math.random() * InputGroups.InputGroupId.values().length / 2)];
+            (int) (Math.random() * ((InputGroups.InputGroupId.values().length / 2) - 1))];
 
     private Joystick joystick;
 
@@ -117,7 +117,7 @@ public class JoystickTest extends AbsTest {
 
     @Test
     public void testGetTrigger() throws Exception {
-        int checkIndex = (int) (Math.random() * Joystick.TriggerId.values().length);
+        int checkIndex = (int) (Math.random() * (Joystick.TriggerId.values().length - 1));
         assertEquals(
                 joystick.getTrigger(Joystick.TriggerId.values()[checkIndex]),
                 joystick.triggers[checkIndex]
