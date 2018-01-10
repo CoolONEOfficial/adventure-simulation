@@ -18,15 +18,15 @@ public class InputGroupsTest extends AbsTest {
     @SuppressWarnings("unused")
     private static final String TAG = InputGroupsTest.class.getSimpleName();
 
-    private final int checkIndex = (int) (Math.random() * (InputGroups.InputGroupId.values().length - 1));
+    private final int checkIndex = (int) (Math.random() * (ru.coolone.adventure_emulation.InputGroups.InputGroupId.values().length - 1));
 
     @InjectMocks
-    private InputGroups inputGroups;
+    private ru.coolone.adventure_emulation.InputGroups inputGroups;
     private int activateCount;
     private int deactivateCount;
-    private InputGroups.InputGroupsListener listener = new InputGroups.InputGroupsListener() {
+    private ru.coolone.adventure_emulation.InputGroups.InputGroupsListener listener = new ru.coolone.adventure_emulation.InputGroups.InputGroupsListener() {
         @Override
-        public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
+        public boolean onInputGroupActivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId groupId) {
             Gdx.app.log(TAG, "Activate group index: " + groupId);
             if (groupId.ordinal() == checkIndex)
                 Gdx.app.log(TAG, "Activate success");
@@ -35,7 +35,7 @@ public class InputGroupsTest extends AbsTest {
         }
 
         @Override
-        public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
+        public boolean onInputGroupDeactivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId groupId) {
             Gdx.app.log(TAG, "DEActivate group index: " + groupId);
             if (groupId.ordinal() == checkIndex)
                 Gdx.app.log(TAG, "DEActivate success");
@@ -57,7 +57,7 @@ public class InputGroupsTest extends AbsTest {
     public void testGroupActivate() throws Exception {
         int oldActivateCount = activateCount;
         Gdx.app.log(TAG, "Starting DEActivate group index: " + checkIndex);
-        inputGroups.groupActivate(InputGroups.InputGroupId.values()[checkIndex]);
+        inputGroups.groupActivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId.values()[checkIndex]);
         assertEquals(activateCount, oldActivateCount + 1);
     }
 
@@ -65,7 +65,7 @@ public class InputGroupsTest extends AbsTest {
     public void testGroupDeactivate() throws Exception {
         int oldDeactivateCount = deactivateCount;
         Gdx.app.log(TAG, "Starting DEActivate group index: " + checkIndex);
-        inputGroups.groupDeactivate(InputGroups.InputGroupId.values()[checkIndex]);
+        inputGroups.groupDeactivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId.values()[checkIndex]);
         assertEquals(deactivateCount, oldDeactivateCount + 1);
     }
 

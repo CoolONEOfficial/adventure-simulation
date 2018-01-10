@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 
 import lombok.Getter;
-import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
 import ru.coolone.adventure_emulation.screens.MenuScreen;

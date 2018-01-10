@@ -20,8 +20,8 @@ import java.util.Arrays;
 import lombok.Getter;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.Script;
-import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.script.Script;
 
 /**
  * CompositeItem with spriter animation
@@ -41,7 +41,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      */
     protected final Core core;
     /**
-     * Move handling @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
+     * Move handling @{@link InputGroups.InputGroupId}'s
      */
     private final InputGroups.InputGroupId inputMoveLeft;
     private final InputGroups.InputGroupId inputMoveRight;
@@ -60,7 +60,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Getter
     private MoveDir moveDir = MoveDir.NONE;
     /**
-     * That @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId} will be handled after end of end animation
+     * That @{@link InputGroups.InputGroupId} will be handled after end of end animation
      */
     private InputGroups.InputGroupId endInputGroupId = null;
 
@@ -111,6 +111,14 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
      * @return @{@link PersonMode}'s array
      */
     protected abstract PersonMode<PersonModeId, AnimationId>[] getModes();
+
+    /**
+     * @param modeId @{@link PersonMode} id
+     * @return Find @{@link PersonMode}
+     */
+    protected PersonMode<PersonModeId, AnimationId> getMode(PersonModeId modeId) {
+        return getModes()[modeId.ordinal()];
+    }
 
     @Override
     public void act(float delta) {
@@ -219,9 +227,10 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     private void onActivateMode(PersonModeId newModeId) {
         Gdx.app.log(TAG, "Activating mode " + newModeId);
 
-        val oldMode = getCurrentMode();
+        val newMode = getMode(newModeId);
 
-        PersonMode<PersonModeId, AnimationId> newMode = getCurrentMode();
+        // Change current mode id
+        setCurrentModeId(newModeId);
 
         // Stop moving
         if (!newMode.movable)
@@ -235,16 +244,25 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
                                 : PersonMode.AnimationType.LOOP
                 ).ordinal()
         );
+    }
+
+    private void setCurrentModeId(PersonModeId newModeId) {
+        val oldModeId = getCurrentModeId();
+        val oldMode = getCurrentMode();
+        val newMode = getMode(newModeId);
+
+        // Handle deactivate
+        if (oldMode != null) {
+            currentModeId = newModeId;
+            oldMode.onDeactivate();
+        }
 
         // Handle activate
+        currentModeId = oldModeId;
         newMode.onActivate();
 
         // Activate mode
         currentModeId = newModeId;
-
-        // Handle deactivate
-        if (oldMode != null)
-            oldMode.onDeactivate();
     }
 
     /**
@@ -311,7 +329,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     }
 
     /**
-     * @param groupId @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}, that will be set
+     * @param groupId @{@link InputGroups.InputGroupId}, that will be set
      */
     private void refreshMoveDir(InputGroups.InputGroupId groupId) {
         if (getCurrentMode().movable) {

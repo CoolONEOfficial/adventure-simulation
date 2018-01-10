@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.script;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
@@ -52,7 +52,7 @@ public class Script implements IScript {
      * Classes of @{@link Entity} @{@link Component}'s,
      * that instances will be initialized in {@link #init(Entity)}
      */
-    protected final ArrayList<Class> componentClassesForInit = new ArrayList<>();
+    public final ArrayList<Class> componentClassesForInit = new ArrayList<>();
     /**
      * Map of entity's @{@link Component}'s
      *
@@ -250,7 +250,7 @@ public class Script implements IScript {
     /**
      * Script @{@link Component}'s ids
      */
-    enum ComponentId {
+    public enum ComponentId {
         /**
          * Visibility and id
          */

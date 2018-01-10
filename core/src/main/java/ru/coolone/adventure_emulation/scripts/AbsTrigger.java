@@ -10,7 +10,7 @@ import java.util.Collections;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import ru.coolone.adventure_emulation.Script;
+import ru.coolone.adventure_emulation.script.Script;
 
 /**
  * CompositeItem trigger with layers with custom names

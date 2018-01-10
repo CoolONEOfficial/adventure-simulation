@@ -14,9 +14,9 @@ import org.testng.annotations.Test;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.Script;
-import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
+import ru.coolone.adventure_emulation.script.Script;
 import ru.coolone.adventure_emulation.scripts.persons.Player;
 
 import static org.mockito.ArgumentMatchers.any;

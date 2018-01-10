@@ -16,7 +16,7 @@ import org.testng.annotations.Test;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 
 import static org.mockito.Mockito.mock;

@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import lombok.Getter;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.scripts.person.Person;
 import ru.coolone.adventure_emulation.scripts.person.PersonMode;
 import ru.coolone.adventure_emulation.scripts.person.PersonMode.ChangeMode;

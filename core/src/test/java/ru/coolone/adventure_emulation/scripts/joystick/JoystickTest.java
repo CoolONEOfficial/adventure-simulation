@@ -14,7 +14,7 @@ import java.util.EnumMap;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 
 import static org.mockito.ArgumentMatchers.any;

@@ -44,7 +44,7 @@ public class ScriptTest extends AbsTest {
     LayerItemVO layerOne = new LayerItemVO("one");
     LayerItemVO layerTwo = new LayerItemVO("two");
     @InjectMocks
-    private Script script;
+    private ru.coolone.adventure_emulation.script.Script script;
     private int spriterAnimationId;
 
     @SuppressWarnings("unchecked")
@@ -53,7 +53,7 @@ public class ScriptTest extends AbsTest {
     public void initMethod() throws Exception {
         super.initMethod();
         script.componentClassesForInit.addAll(
-                Arrays.asList(Script.componentClasses)
+                Arrays.asList(ru.coolone.adventure_emulation.script.Script.componentClasses)
         );
 
         val player = mock(Player.class);
@@ -91,7 +91,7 @@ public class ScriptTest extends AbsTest {
 
         script.init(
                 new Entity() {{
-                    for (Class<? extends Component> mComponentClass : Script.componentClasses)
+                    for (Class<? extends Component> mComponentClass : ru.coolone.adventure_emulation.script.Script.componentClasses)
                         add(mComponentClass.newInstance());
 
                     // Get entity components
@@ -109,7 +109,7 @@ public class ScriptTest extends AbsTest {
     public void testIsVisible() throws Exception {
         assertEquals(
                 script.isVisible(),
-                ((MainItemComponent) script.getComponents().get(Script.ComponentId.MAIN_ITEM))
+                ((MainItemComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.MAIN_ITEM))
                         .visible
         );
     }
@@ -126,7 +126,7 @@ public class ScriptTest extends AbsTest {
     public void testGetX() throws Exception {
         assertEquals(
                 script.getX(),
-                ((TransformComponent) script.getComponents().get(Script.ComponentId.TRANSFORM))
+                ((TransformComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.TRANSFORM))
                         .x
         );
     }
@@ -142,7 +142,7 @@ public class ScriptTest extends AbsTest {
     public void testGetY() throws Exception {
         assertEquals(
                 script.getY(),
-                ((TransformComponent) script.getComponents().get(Script.ComponentId.TRANSFORM))
+                ((TransformComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.TRANSFORM))
                         .y
         );
     }
@@ -156,7 +156,7 @@ public class ScriptTest extends AbsTest {
 
     @Test
     public void testGetCoord() throws Exception {
-        val transform = (TransformComponent) script.getComponents().get(Script.ComponentId.TRANSFORM);
+        val transform = (TransformComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.TRANSFORM);
         assertEquals(
                 script.getCoord(),
                 new Vector2(
@@ -183,7 +183,7 @@ public class ScriptTest extends AbsTest {
     public void testGetWidth() throws Exception {
         assertEquals(
                 script.getWidth(),
-                ((DimensionsComponent) script.getComponents().get(Script.ComponentId.DIMEN))
+                ((DimensionsComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.DIMEN))
                         .width
         );
     }
@@ -199,7 +199,7 @@ public class ScriptTest extends AbsTest {
     public void testGetHeight() throws Exception {
         assertEquals(
                 script.getHeight(),
-                ((DimensionsComponent) script.getComponents().get(Script.ComponentId.DIMEN))
+                ((DimensionsComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.DIMEN))
                         .height
         );
     }
@@ -287,7 +287,7 @@ public class ScriptTest extends AbsTest {
     public void testGetAnimationPlayer() throws Exception {
         assertEquals(
                 script.getAnimationPlayer(),
-                ((SpriterComponent) script.getComponents().get(Script.ComponentId.SPRITER))
+                ((SpriterComponent) script.getComponents().get(ru.coolone.adventure_emulation.script.Script.ComponentId.SPRITER))
                         .player
         );
     }

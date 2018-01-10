@@ -14,8 +14,8 @@ import java.util.EnumMap;
 import lombok.Getter;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.Script;
-import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.script.Script;
 import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
 /**
@@ -466,7 +466,7 @@ public class Joystick extends JoystickComposite
     /**
      * @param core               @see {@link #core}
      * @param name               CompositeItem name
-     * @param triggerInputGroups Assigned to {@link #generalTriggerIds} @{@link ru.coolone.adventure_emulation.input.InputGroups.InputGroupId}'s
+     * @param triggerInputGroups Assigned to {@link #generalTriggerIds} @{@link InputGroups.InputGroupId}'s
      */
     public Joystick(
             Core core,

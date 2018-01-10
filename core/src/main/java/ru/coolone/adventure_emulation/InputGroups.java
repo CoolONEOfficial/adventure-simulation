@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation.input;
+package ru.coolone.adventure_emulation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
