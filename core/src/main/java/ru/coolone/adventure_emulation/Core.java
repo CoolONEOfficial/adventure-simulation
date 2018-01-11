@@ -47,14 +47,15 @@ public class Core extends Game {
      */
     @Getter private Batch uiBatch;
     /**
-     * @see InputGroups
+     * @see ru.coolone.adventure_emulation.input.InputGroups
      */
-    @Getter private InputGroups inputGroups;
+    @Getter
+    private ru.coolone.adventure_emulation.input.InputGroups inputGroups;
 
     @Override
     public void create() {
         // Input groups
-        inputGroups = new InputGroups();
+        inputGroups = new ru.coolone.adventure_emulation.input.InputGroups();
 
         // Debug
         uiBatch = new SpriteBatch();

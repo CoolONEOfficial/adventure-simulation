@@ -23,7 +23,7 @@ public class CoreTest extends AbsTest {
     ScreenManager screenManager;
 
     @Mock
-    private InputGroups inputGroups;
+    private ru.coolone.adventure_emulation.input.InputGroups inputGroups;
 
     @Mock
     private Batch uiBatch;

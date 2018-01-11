@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -6,8 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
 import lombok.Getter;
 import lombok.val;
@@ -17,7 +16,7 @@ import lombok.val;
  *
  * @author coolone
  */
-public class InputGroups {
+public class InputGroups implements InputProcessor {
 
     @SuppressWarnings("unused")
     private static final String TAG = InputGroups.class.getSimpleName();
@@ -25,7 +24,7 @@ public class InputGroups {
     /**
      * Keycodes groups
      */
-    private static final Map<InputGroupId, Integer[]> keyGroups = new HashMap<InputGroupId, Integer[]>() {{
+    public static final EnumMap<InputGroupId, Integer[]> keyGroups = new EnumMap<InputGroupId, Integer[]>(InputGroupId.class) {{
         put(
                 InputGroupId.JUMP,
                 new Integer[]{
@@ -74,59 +73,7 @@ public class InputGroups {
         Gdx.input.setInputProcessor(getMultiplexer());
 
         // Listen input
-        getMultiplexer().addProcessor(new InputProcessor() {
-            @Override
-            public boolean keyDown(int keycode) {
-                // Find input group by keycode
-                val groupId = keyToInputGroup(keycode);
-                if (groupId != null)
-                    // Activate input group
-                    groupActivate(groupId);
-
-                return false;
-            }
-
-            @Override
-            public boolean keyUp(int keycode) {
-                // Find input group by keycode
-                val groupId = keyToInputGroup(keycode);
-                if (groupId != null)
-                    // Deactivate input group
-                    groupDeactivate(groupId);
-
-                return false;
-            }
-
-            @Override
-            public boolean keyTyped(char character) {
-                return false;
-            }
-
-            @Override
-            public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-                return false;
-            }
-
-            @Override
-            public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-                return false;
-            }
-
-            @Override
-            public boolean touchDragged(int screenX, int screenY, int pointer) {
-                return false;
-            }
-
-            @Override
-            public boolean mouseMoved(int screenX, int screenY) {
-                return false;
-            }
-
-            @Override
-            public boolean scrolled(int amount) {
-                return false;
-            }
-        });
+        getMultiplexer().addProcessor(this);
     }
 
     /**
@@ -135,7 +82,7 @@ public class InputGroups {
      * @param keycode Keycode, that has been pressed
      * @return Converted @{@link InputGroupId}
      */
-    private static InputGroupId keyToInputGroup(int keycode) {
+    public static InputGroupId keyToInputGroup(int keycode) {
         InputGroupId groupId = null;
 
         // Find keycode in groups
@@ -210,5 +157,57 @@ public class InputGroups {
          * @param groupId Id of deactivated group
          */
         boolean onInputGroupDeactivate(InputGroupId groupId);
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        // Find input group by keycode
+        val groupId = keyToInputGroup(keycode);
+        if (groupId != null)
+            // Activate input group
+            groupActivate(groupId);
+
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        // Find input group by keycode
+        val groupId = keyToInputGroup(keycode);
+        if (groupId != null)
+            // Deactivate input group
+            groupDeactivate(groupId);
+
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }

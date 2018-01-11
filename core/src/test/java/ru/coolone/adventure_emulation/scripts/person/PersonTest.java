@@ -11,10 +11,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.script.Script;
 import ru.coolone.adventure_emulation.scripts.persons.Player;
@@ -29,6 +30,7 @@ import static org.testng.Assert.assertEquals;
  * @author coolone
  * @since 08.01.18
  */
+@NoArgsConstructor
 public class PersonTest extends AbsTest {
     private Person<ModeId, AnimationId> person;
 

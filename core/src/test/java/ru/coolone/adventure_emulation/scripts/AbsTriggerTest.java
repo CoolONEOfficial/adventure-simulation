@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.testng.annotations.Test;
 
+import lombok.NoArgsConstructor;
 import ru.coolone.adventure_emulation.AbsTest;
 
 import static org.testng.Assert.assertEquals;
@@ -14,8 +15,9 @@ import static org.testng.Assert.assertTrue;
 
 /**
  * @author coolone
+ * @since 08.01.18
  */
-
+@NoArgsConstructor
 public class AbsTriggerTest extends AbsTest {
 
     @InjectMocks private AbsTrigger absTrigger = new AbsTrigger(

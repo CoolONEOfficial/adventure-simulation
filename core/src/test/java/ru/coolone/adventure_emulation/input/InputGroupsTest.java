@@ -2,31 +2,37 @@ package ru.coolone.adventure_emulation.input;
 
 import com.badlogic.gdx.Gdx;
 
-import org.mockito.InjectMocks;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import lombok.NoArgsConstructor;
 import ru.coolone.adventure_emulation.AbsTest;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static ru.coolone.adventure_emulation.input.InputGroups.keyGroups;
 
 /**
- * Created by coolone on 07.01.18.
+ * @author coolone
+ * @since 07.01.18
  */
+@NoArgsConstructor
 public class InputGroupsTest extends AbsTest {
 
     @SuppressWarnings("unused")
     private static final String TAG = InputGroupsTest.class.getSimpleName();
 
-    private final int checkIndex = (int) (Math.random() * (ru.coolone.adventure_emulation.InputGroups.InputGroupId.values().length - 1));
+    private InputGroups inputGroups = new InputGroups();
 
-    @InjectMocks
-    private ru.coolone.adventure_emulation.InputGroups inputGroups;
+    private final int checkIndex = (int) (Math.random() * (InputGroups.InputGroupId.values().length - 1));
+
     private int activateCount;
     private int deactivateCount;
-    private ru.coolone.adventure_emulation.InputGroups.InputGroupsListener listener = new ru.coolone.adventure_emulation.InputGroups.InputGroupsListener() {
+    private InputGroups.InputGroupsListener listener = new InputGroups.InputGroupsListener() {
         @Override
-        public boolean onInputGroupActivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId groupId) {
+        public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
             Gdx.app.log(TAG, "Activate group index: " + groupId);
             if (groupId.ordinal() == checkIndex)
                 Gdx.app.log(TAG, "Activate success");
@@ -35,7 +41,7 @@ public class InputGroupsTest extends AbsTest {
         }
 
         @Override
-        public boolean onInputGroupDeactivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId groupId) {
+        public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
             Gdx.app.log(TAG, "DEActivate group index: " + groupId);
             if (groupId.ordinal() == checkIndex)
                 Gdx.app.log(TAG, "DEActivate success");
@@ -57,7 +63,7 @@ public class InputGroupsTest extends AbsTest {
     public void testGroupActivate() throws Exception {
         int oldActivateCount = activateCount;
         Gdx.app.log(TAG, "Starting DEActivate group index: " + checkIndex);
-        inputGroups.groupActivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId.values()[checkIndex]);
+        inputGroups.groupActivate(InputGroups.InputGroupId.values()[checkIndex]);
         assertEquals(activateCount, oldActivateCount + 1);
     }
 
@@ -65,8 +71,29 @@ public class InputGroupsTest extends AbsTest {
     public void testGroupDeactivate() throws Exception {
         int oldDeactivateCount = deactivateCount;
         Gdx.app.log(TAG, "Starting DEActivate group index: " + checkIndex);
-        inputGroups.groupDeactivate(ru.coolone.adventure_emulation.InputGroups.InputGroupId.values()[checkIndex]);
+        assertTrue(inputGroups.groupDeactivate(InputGroups.InputGroupId.values()[checkIndex]));
         assertEquals(deactivateCount, oldDeactivateCount + 1);
+        assertFalse(inputGroups.groupDeactivate(null));
     }
 
+    @Test
+    public void testKeyToInputGroup() throws Exception {
+        for (InputGroups.InputGroupId mGroup : keyGroups.keySet()) {
+            for (Integer mKeycode : keyGroups.get(mGroup)) {
+                assertEquals(InputGroups.keyToInputGroup(mKeycode), mGroup);
+            }
+        }
+        assertNull(InputGroups.keyToInputGroup(-1));
+    }
+
+    @Test
+    public void testKeyDown() throws Exception {
+        assertFalse(keyGroups.isEmpty());
+        //noinspection SuspiciousMethodCalls
+        inputGroups.keyDown(keyGroups.entrySet().iterator().next().getValue()[0]);
+    }
+
+    @Test
+    public void testKeyUp() throws Exception {
+    }
 }

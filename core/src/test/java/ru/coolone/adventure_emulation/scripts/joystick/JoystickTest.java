@@ -11,10 +11,11 @@ import org.testng.annotations.Test;
 
 import java.util.EnumMap;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -24,8 +25,10 @@ import static org.testng.Assert.assertEquals;
 import static ru.coolone.adventure_emulation.scripts.joystick.Joystick.triggerNames;
 
 /**
- * Created by coolone on 08.01.18.
+ * @author coolone
+ * @since 08.01.18
  */
+@NoArgsConstructor
 public class JoystickTest extends AbsTest {
     private Joystick.TriggerId checkTriggerId = Joystick.TriggerId.values()[
             ((Joystick.TriggerId.values().length / 2) - 1) +

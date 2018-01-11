@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.camera;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -20,7 +20,7 @@ public class Camera extends OrthographicCamera {
     Vector2 indentAnimStart;
     Vector2 indentAnimEnd;
 
-    Vector2 indent = new Vector2(0f, 0f);
+    public Vector2 indent = new Vector2(0f, 0f);
 
     @Override
     public void update(boolean updateFrustum) {

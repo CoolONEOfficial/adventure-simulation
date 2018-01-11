@@ -1,4 +1,4 @@
-package ru.coolone.adventure_emulation;
+package ru.coolone.adventure_emulation.script;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
@@ -22,7 +22,9 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
+import lombok.NoArgsConstructor;
 import lombok.val;
+import ru.coolone.adventure_emulation.AbsTest;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
@@ -37,6 +39,7 @@ import static org.testng.Assert.assertTrue;
  * @author coolone
  * @since 08.01.18
  */
+@NoArgsConstructor
 public class ScriptTest extends AbsTest {
     SpriterComponent spriter;
     PhysicsBodyComponent physic;

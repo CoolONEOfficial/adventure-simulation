@@ -15,8 +15,8 @@ import java.util.Map;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import ru.coolone.adventure_emulation.Camera;
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.camera.Camera;
 
 /**
  * Manages @{@link ScreenScene}'s

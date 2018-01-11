@@ -14,7 +14,7 @@ import java.util.EnumMap;
 import lombok.Getter;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.InputGroups;
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.script.Script;
 import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
