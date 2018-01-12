@@ -2,12 +2,17 @@ package ru.coolone.adventure_emulation.input;
 
 import com.badlogic.gdx.Gdx;
 
-import org.testng.annotations.BeforeMethod;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import lombok.NoArgsConstructor;
+import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
@@ -18,13 +23,23 @@ import static ru.coolone.adventure_emulation.input.InputGroups.keyGroups;
  * @author coolone
  * @since 07.01.18
  */
-@NoArgsConstructor
+@PrepareForTest({InputGroups.class})
 public class InputGroupsTest extends AbsTest {
 
     @SuppressWarnings("unused")
     private static final String TAG = InputGroupsTest.class.getSimpleName();
 
-    private InputGroups inputGroups = new InputGroups();
+    private InputGroups inputGroups;
+
+    @BeforeClass
+    @Override
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
+        inputGroups = new InputGroups();
+        inputGroups.getListeners().clear();
+        inputGroups.getListeners().add(listener);
+        Gdx.app.log(TAG, "Check group index: " + checkIndex);
+    }
 
     private final int checkIndex = (int) (Math.random() * (InputGroups.InputGroupId.values().length - 1));
 
@@ -50,15 +65,6 @@ public class InputGroupsTest extends AbsTest {
         }
     };
 
-    @BeforeMethod
-    @Override
-    public void initMethod() throws Exception {
-        super.initMethod();
-        inputGroups.getListeners().clear();
-        inputGroups.getListeners().add(listener);
-        Gdx.app.log(TAG, "Check group index: " + checkIndex);
-    }
-
     @Test
     public void testGroupActivate() throws Exception {
         int oldActivateCount = activateCount;
@@ -69,11 +75,16 @@ public class InputGroupsTest extends AbsTest {
 
     @Test
     public void testGroupDeactivate() throws Exception {
-        int oldDeactivateCount = deactivateCount;
         Gdx.app.log(TAG, "Starting DEActivate group index: " + checkIndex);
-        assertTrue(inputGroups.groupDeactivate(InputGroups.InputGroupId.values()[checkIndex]));
+        val checkGroupId = InputGroups.InputGroupId.values()[checkIndex];
+
+        inputGroups.getActiveGroups().clear();
+        assertFalse(inputGroups.groupDeactivate(checkGroupId));
+
+        int oldDeactivateCount = deactivateCount;
+        inputGroups.groupActivate(checkGroupId);
+        assertTrue(inputGroups.groupDeactivate(checkGroupId));
         assertEquals(deactivateCount, oldDeactivateCount + 1);
-        assertFalse(inputGroups.groupDeactivate(null));
     }
 
     @Test
@@ -88,12 +99,27 @@ public class InputGroupsTest extends AbsTest {
 
     @Test
     public void testKeyDown() throws Exception {
+        mockStatic(InputGroups.class);
+
         assertFalse(keyGroups.isEmpty());
         //noinspection SuspiciousMethodCalls
         inputGroups.keyDown(keyGroups.entrySet().iterator().next().getValue()[0]);
+
+        verifyStatic(InputGroups.class);
+        InputGroups.keyToInputGroup(anyInt());
     }
 
     @Test
     public void testKeyUp() throws Exception {
+        mockStatic(InputGroups.class);
+
+        assertFalse(keyGroups.isEmpty());
+        //noinspection SuspiciousMethodCalls
+        inputGroups.keyDown(keyGroups.entrySet().iterator().next().getValue()[0]);
+        //noinspection SuspiciousMethodCalls
+        inputGroups.keyUp(keyGroups.entrySet().iterator().next().getValue()[0]);
+
+        verifyStatic(InputGroups.class, times(2));
+        InputGroups.keyToInputGroup(anyInt());
     }
 }

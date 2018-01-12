@@ -6,7 +6,7 @@ import com.badlogic.gdx.utils.Array;
 import com.uwsoft.editor.renderer.components.MainItemComponent;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.EnumMap;
@@ -40,10 +40,11 @@ public class JoystickTest extends AbsTest {
     private Joystick joystick;
 
     @SuppressWarnings("unchecked")
-    @BeforeMethod
+    @BeforeClass
     @Override
-    public void initMethod() throws Exception {
-        super.initMethod();
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
+
 
         // --- Core ---
         val core = mock(Core.class);

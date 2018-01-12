@@ -17,7 +17,7 @@ import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 
 import org.mockito.InjectMocks;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -41,20 +41,20 @@ import static org.testng.Assert.assertTrue;
  */
 @NoArgsConstructor
 public class ScriptTest extends AbsTest {
-    SpriterComponent spriter;
-    PhysicsBodyComponent physic;
-    LayerMapComponent layers;
-    LayerItemVO layerOne = new LayerItemVO("one");
-    LayerItemVO layerTwo = new LayerItemVO("two");
+    private SpriterComponent spriter;
+    private PhysicsBodyComponent physic;
+    private LayerMapComponent layers;
+    private LayerItemVO layerOne = new LayerItemVO("one");
+    private LayerItemVO layerTwo = new LayerItemVO("two");
     @InjectMocks
     private ru.coolone.adventure_emulation.script.Script script;
     private int spriterAnimationId;
 
-    @SuppressWarnings("unchecked")
-    @BeforeMethod
+    @BeforeClass
     @Override
-    public void initMethod() throws Exception {
-        super.initMethod();
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
+
         script.componentClassesForInit.addAll(
                 Arrays.asList(ru.coolone.adventure_emulation.script.Script.componentClasses)
         );
@@ -70,8 +70,8 @@ public class ScriptTest extends AbsTest {
 
         // Animation class with public constructor
         class MyAnimation extends Animation {
-            public MyAnimation(Mainline mainline, int id, String name, int length,
-                               boolean looping, int timelines) {
+            private MyAnimation(Mainline mainline, int id, String name, int length,
+                                boolean looping, int timelines) {
                 super(mainline, id, name, length, looping, timelines);
             }
         }
@@ -94,6 +94,7 @@ public class ScriptTest extends AbsTest {
 
         script.init(
                 new Entity() {{
+                    //noinspection unchecked
                     for (Class<? extends Component> mComponentClass : ru.coolone.adventure_emulation.script.Script.componentClasses)
                         add(mComponentClass.newInstance());
 

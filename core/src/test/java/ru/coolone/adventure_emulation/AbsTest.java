@@ -3,9 +3,8 @@ package ru.coolone.adventure_emulation;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 
-import org.mockito.MockitoAnnotations;
 import org.powermock.modules.testng.PowerMockTestCase;
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 
 import static org.mockito.Mockito.mock;
 
@@ -17,10 +16,6 @@ import static org.mockito.Mockito.mock;
 
 abstract public class AbsTest extends PowerMockTestCase {
 
-    static {
-        initGdx();
-    }
-
     protected static void initGdx() {
         // Initialize libgdx headless for use static vars (e.g. Gdx.input.setInputProcessor)
         final HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
@@ -28,9 +23,9 @@ abstract public class AbsTest extends PowerMockTestCase {
         new HeadlessApplication(mock(Core.class), config);
     }
 
-    @BeforeMethod(alwaysRun = true)
-    public void initMethod() throws Exception {
-        // Initialize mocks
-        MockitoAnnotations.initMocks(this);
+    @BeforeClass
+    protected void setUpClass() throws Exception {
+        super.beforePowerMockTestClass();
+        initGdx();
     }
 }

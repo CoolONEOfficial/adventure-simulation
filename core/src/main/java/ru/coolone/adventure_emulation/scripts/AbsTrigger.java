@@ -20,23 +20,27 @@ import ru.coolone.adventure_emulation.script.Script;
 abstract public class AbsTrigger extends AbsTriggerComposite {
 
     /**
-     * Listeners array
-     */
-    public final ArrayList<AbsTriggerListener> absTriggerListeners = new ArrayList<>();
-    /**
      * Layers names
      */
     private final String activeName;
     private final String passiveName;
     /**
+     * Listeners array
+     */
+    public final ArrayList<AbsTriggerListener> absTriggerListeners = new ArrayList<>();
+    /**
      * Layers
      */
+    @Getter
     private LayerItemVO activeLayer;
+    @Getter
     private LayerItemVO passiveLayer;
     /**
      * Active flag
      */
-    @Getter @NonNull private boolean active;
+    @Getter
+    @NonNull
+    private boolean active;
 
     protected AbsTrigger(
             String activeLayerName,
@@ -58,10 +62,7 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
         passiveLayer = getLayer(passiveName);
 
         // Sync state and flag
-        if (active)
-            activate();
-        else
-            deactivate();
+        setActive(active);
     }
 
     /**
@@ -103,14 +104,6 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
         }
     }
 
-    public LayerItemVO getActiveLayer() {
-        return activeLayer;
-    }
-
-    public LayerItemVO getPassiveLayer() {
-        return passiveLayer;
-    }
-
     /**
      * ScriptListener interface
      */
@@ -128,7 +121,7 @@ abstract public class AbsTrigger extends AbsTriggerComposite {
 }
 
 abstract class AbsTriggerComposite extends Script {
-    public AbsTriggerComposite() {
+    AbsTriggerComposite() {
         super();
         componentClassesForInit.addAll(new ArrayList<>(
                 Collections.singletonList(

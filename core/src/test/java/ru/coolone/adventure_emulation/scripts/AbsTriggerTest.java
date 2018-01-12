@@ -1,13 +1,17 @@
 package ru.coolone.adventure_emulation.scripts;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.uwsoft.editor.renderer.components.LayerMapComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import lombok.NoArgsConstructor;
 import ru.coolone.adventure_emulation.AbsTest;
+import ru.coolone.adventure_emulation.script.Script;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -20,44 +24,61 @@ import static org.testng.Assert.assertTrue;
 @NoArgsConstructor
 public class AbsTriggerTest extends AbsTest {
 
-    @InjectMocks private AbsTrigger absTrigger = new AbsTrigger(
+    @InjectMocks
+    private AbsTrigger absTrigger = new AbsTrigger(
             "active",
             "passive",
             false
     ) {
     };
 
-    @Mock private LayerItemVO activeLayer;
+    @BeforeClass
+    @Override
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
+        absTrigger.init(
+                new Entity() {{
+                    //noinspection unchecked
+                    for (Class<? extends Component> mComponentClass : Script.componentClasses)
+                        add(mComponentClass.newInstance());
 
-    @Mock private LayerItemVO passiveLayer;
+                    getComponent(LayerMapComponent.class).addLayer(
+                            new LayerItemVO("active")
+                    );
+                    getComponent(LayerMapComponent.class).addLayer(
+                            new LayerItemVO("passive")
+                    );
+                }}
+        );
+    }
 
     @Test
     public void testSetActiveState() throws Exception {
         absTrigger.setActive(true);
         assertTrue(absTrigger.isActive());
-        assertTrue(activeLayer.isVisible);
-        assertFalse(passiveLayer.isVisible);
+        assertTrue(absTrigger.getActiveLayer().isVisible);
+        assertFalse(absTrigger.getPassiveLayer().isVisible);
 
         absTrigger.setActive(false);
         assertFalse(absTrigger.isActive());
-        assertFalse(activeLayer.isVisible);
-        assertTrue(passiveLayer.isVisible);
+        assertFalse(absTrigger.getActiveLayer().isVisible);
+        assertTrue(absTrigger.getPassiveLayer().isVisible);
     }
 
     @Test
     public void testActivate() throws Exception {
         absTrigger.activate();
         assertTrue(absTrigger.isActive());
-        assertTrue(activeLayer.isVisible);
-        assertFalse(passiveLayer.isVisible);
+        assertTrue(absTrigger.getActiveLayer().isVisible);
+        assertFalse(absTrigger.getPassiveLayer().isVisible);
     }
 
     @Test
     public void testDeactivate() throws Exception {
         absTrigger.deactivate();
         assertFalse(absTrigger.isActive());
-        assertFalse(activeLayer.isVisible);
-        assertTrue(passiveLayer.isVisible);
+        assertFalse(absTrigger.getActiveLayer().isVisible);
+        assertTrue(absTrigger.getPassiveLayer().isVisible);
     }
 
     @Test
@@ -70,11 +91,11 @@ public class AbsTriggerTest extends AbsTest {
 
     @Test
     public void testGetActiveLayer() throws Exception {
-        assertEquals(absTrigger.getActiveLayer(), activeLayer);
+        assertEquals(absTrigger.getActiveLayer(), absTrigger.getActiveLayer());
     }
 
     @Test
     public void testGetPassiveLayer() throws Exception {
-        assertEquals(absTrigger.getPassiveLayer(), passiveLayer);
+        assertEquals(absTrigger.getPassiveLayer(), absTrigger.getPassiveLayer());
     }
 }

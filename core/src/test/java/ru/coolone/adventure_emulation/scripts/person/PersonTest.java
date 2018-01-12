@@ -7,7 +7,8 @@ import com.brashmonkey.spriter.Mainline;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import org.testng.annotations.BeforeMethod;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -30,6 +31,7 @@ import static org.testng.Assert.assertEquals;
  * @author coolone
  * @since 08.01.18
  */
+@PowerMockIgnore({"org.mockito.*"})
 @NoArgsConstructor
 public class PersonTest extends AbsTest {
     private Person<ModeId, AnimationId> person;
@@ -118,10 +120,11 @@ public class PersonTest extends AbsTest {
     private int spriterAnimationId;
 
     @SuppressWarnings("unchecked")
-    @BeforeMethod
+    @BeforeClass
     @Override
-    public void initMethod() throws Exception {
-        super.initMethod();
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
+
 
         // --- Core ---
         val core = mock(Core.class);

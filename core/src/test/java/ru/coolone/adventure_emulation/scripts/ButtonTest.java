@@ -10,7 +10,7 @@ import com.uwsoft.editor.renderer.components.TransformComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import lombok.NoArgsConstructor;
@@ -36,7 +36,7 @@ public class ButtonTest extends AbsTest {
     private int bClickCount = 0;
     private int bDownCount = 0;
     private int bUpCount = 0;
-    final Button.ButtonListener buttonListener = new Button.ButtonListener() {
+    private final Button.ButtonListener buttonListener = new Button.ButtonListener() {
         @Override
         public void onButtonClick() {
             bClickCount++;
@@ -53,19 +53,16 @@ public class ButtonTest extends AbsTest {
         }
     };
 
-    private Core core;
-
-    private ScreenManager coreScreenManager;
-    private InputGroups coreInputGroups;
-
     @SuppressWarnings("unchecked")
-    @BeforeMethod
+    @BeforeClass
     @Override
-    public void initMethod() throws Exception {
-        // --- Core mocking ---
-        core = mock(Core.class);
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
 
-        coreScreenManager = mock(ScreenManager.class);
+        // --- Core mocking ---
+        val core = mock(Core.class);
+
+        val coreScreenManager = mock(ScreenManager.class);
         when(core.getScreenManager()).thenReturn(coreScreenManager);
 
         // -- Screen manager --
@@ -120,7 +117,7 @@ public class ButtonTest extends AbsTest {
         );
 
         // -- Input groups --
-        coreInputGroups = mock(InputGroups.class);
+        val coreInputGroups = mock(InputGroups.class);
         when(core.getInputGroups()).thenReturn(coreInputGroups);
 
         // - Multiplexer -
@@ -130,8 +127,6 @@ public class ButtonTest extends AbsTest {
         // --- Create button with mocked core ---
         button = new Button(core, "button");
         button.buttonListeners.add(buttonListener);
-
-        super.initMethod();
     }
 
     @Test
