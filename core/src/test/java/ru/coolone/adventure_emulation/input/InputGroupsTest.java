@@ -2,17 +2,12 @@ package ru.coolone.adventure_emulation.input;
 
 import com.badlogic.gdx.Gdx;
 
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
@@ -23,13 +18,40 @@ import static ru.coolone.adventure_emulation.input.InputGroups.keyGroups;
  * @author coolone
  * @since 07.01.18
  */
-@PrepareForTest({InputGroups.class})
 public class InputGroupsTest extends AbsTest {
 
     @SuppressWarnings("unused")
     private static final String TAG = InputGroupsTest.class.getSimpleName();
 
     private InputGroups inputGroups;
+
+    private final int checkIndex = (int) (Math.random() * (InputGroups.InputGroupId.values().length - 1));
+
+    private int activateCount;
+    private int deactivateCount;
+    private InputGroups.InputGroupId activatedGroupId;
+    private InputGroups.InputGroupId deactivatedGroupId;
+    private InputGroups.InputGroupsListener listener = new InputGroups.InputGroupsListener() {
+        @Override
+        public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
+            Gdx.app.log(TAG, "Activate group index: " + groupId);
+            if (groupId.ordinal() == checkIndex)
+                Gdx.app.log(TAG, "Activate success");
+            activateCount++;
+            activatedGroupId = groupId;
+            return false;
+        }
+
+        @Override
+        public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
+            Gdx.app.log(TAG, "DEActivate group index: " + groupId);
+            if (groupId.ordinal() == checkIndex)
+                Gdx.app.log(TAG, "DEActivate success");
+            deactivateCount++;
+            deactivatedGroupId = groupId;
+            return false;
+        }
+    };
 
     @BeforeClass
     @Override
@@ -41,36 +63,15 @@ public class InputGroupsTest extends AbsTest {
         Gdx.app.log(TAG, "Check group index: " + checkIndex);
     }
 
-    private final int checkIndex = (int) (Math.random() * (InputGroups.InputGroupId.values().length - 1));
-
-    private int activateCount;
-    private int deactivateCount;
-    private InputGroups.InputGroupsListener listener = new InputGroups.InputGroupsListener() {
-        @Override
-        public boolean onInputGroupActivate(InputGroups.InputGroupId groupId) {
-            Gdx.app.log(TAG, "Activate group index: " + groupId);
-            if (groupId.ordinal() == checkIndex)
-                Gdx.app.log(TAG, "Activate success");
-                activateCount++;
-            return false;
-        }
-
-        @Override
-        public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
-            Gdx.app.log(TAG, "DEActivate group index: " + groupId);
-            if (groupId.ordinal() == checkIndex)
-                Gdx.app.log(TAG, "DEActivate success");
-                deactivateCount++;
-            return false;
-        }
-    };
-
     @Test
     public void testGroupActivate() throws Exception {
         int oldActivateCount = activateCount;
+        val checkGroupId = InputGroups.InputGroupId.values()[checkIndex];
+
         Gdx.app.log(TAG, "Starting DEActivate group index: " + checkIndex);
-        inputGroups.groupActivate(InputGroups.InputGroupId.values()[checkIndex]);
+        inputGroups.groupActivate(checkGroupId);
         assertEquals(activateCount, oldActivateCount + 1);
+        assertEquals(activatedGroupId, checkGroupId);
     }
 
     @Test
@@ -85,6 +86,7 @@ public class InputGroupsTest extends AbsTest {
         inputGroups.groupActivate(checkGroupId);
         assertTrue(inputGroups.groupDeactivate(checkGroupId));
         assertEquals(deactivateCount, oldDeactivateCount + 1);
+        assertEquals(deactivatedGroupId, checkGroupId);
     }
 
     @Test
@@ -99,27 +101,40 @@ public class InputGroupsTest extends AbsTest {
 
     @Test
     public void testKeyDown() throws Exception {
-        mockStatic(InputGroups.class);
+        val checkGroup = keyGroups.entrySet().iterator().next();
+        val checkGroupId = checkGroup.getKey();
+        val checkGroupKeyId = checkGroup.getValue()
+                [(int) (Math.random() * (checkGroup.getValue().length - 1))];
+        activatedGroupId = null;
+        deactivatedGroupId = null;
 
         assertFalse(keyGroups.isEmpty());
         //noinspection SuspiciousMethodCalls
-        inputGroups.keyDown(keyGroups.entrySet().iterator().next().getValue()[0]);
+        inputGroups.keyDown(checkGroupKeyId);
 
-        verifyStatic(InputGroups.class);
-        InputGroups.keyToInputGroup(anyInt());
+        assertEquals(checkGroupId, activatedGroupId);
+        assertNull(deactivatedGroupId);
     }
 
     @Test
     public void testKeyUp() throws Exception {
-        mockStatic(InputGroups.class);
+        val checkGroup = keyGroups.entrySet().iterator().next();
+        val checkGroupId = checkGroup.getKey();
+        val checkGroupKeyId = checkGroup.getValue()
+                [(int) (Math.random() * (checkGroup.getValue().length - 1))];
+        activatedGroupId = null;
+        deactivatedGroupId = null;
 
         assertFalse(keyGroups.isEmpty());
         //noinspection SuspiciousMethodCalls
-        inputGroups.keyDown(keyGroups.entrySet().iterator().next().getValue()[0]);
-        //noinspection SuspiciousMethodCalls
-        inputGroups.keyUp(keyGroups.entrySet().iterator().next().getValue()[0]);
+        inputGroups.keyDown(checkGroupKeyId);
 
-        verifyStatic(InputGroups.class, times(2));
-        InputGroups.keyToInputGroup(anyInt());
+        assertEquals(activatedGroupId, checkGroupId);
+        assertNull(deactivatedGroupId);
+
+        //noinspection SuspiciousMethodCalls
+        inputGroups.keyUp(checkGroupKeyId);
+
+        assertEquals(deactivatedGroupId, checkGroupId);
     }
 }

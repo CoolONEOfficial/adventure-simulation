@@ -7,7 +7,6 @@ import com.brashmonkey.spriter.Mainline;
 import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -22,16 +21,15 @@ import ru.coolone.adventure_emulation.script.Script;
 import ru.coolone.adventure_emulation.scripts.persons.Player;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author coolone
  * @since 08.01.18
  */
-@PowerMockIgnore({"org.mockito.*"})
 @NoArgsConstructor
 public class PersonTest extends AbsTest {
     private Person<ModeId, AnimationId> person;

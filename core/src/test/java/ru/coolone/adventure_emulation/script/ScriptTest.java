@@ -17,7 +17,7 @@ import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 
 import org.mockito.InjectMocks;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -27,9 +27,9 @@ import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
@@ -50,10 +50,8 @@ public class ScriptTest extends AbsTest {
     private ru.coolone.adventure_emulation.script.Script script;
     private int spriterAnimationId;
 
-    @BeforeClass
-    @Override
-    protected void setUpClass() throws Exception {
-        super.setUpClass();
+    @BeforeMethod
+    void setUpComponents() throws Exception {
 
         script.componentClassesForInit.addAll(
                 Arrays.asList(ru.coolone.adventure_emulation.script.Script.componentClasses)

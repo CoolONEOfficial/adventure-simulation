@@ -6,7 +6,7 @@ import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.BeforeClass;
 
-import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * Abstract test class with initialize gdx static vars and mockito annotations
