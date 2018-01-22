@@ -11,14 +11,21 @@ dependencies {
     compile "com.badlogicgames.ashley:ashley:$ashleyVersion"
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     compile "com.github.insubstantial:trident:7.3"
+    compile 'org.mockito:mockito-inline:2.13.0'
     compile "com.github.CoolONEOfficial:overlap2d-runtime-libgdx:$overlap2dVersion"
     compileOnly "org.projectlombok:lombok:1.16.18"
+
+    testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
     testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    testCompile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+    testCompile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
     testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+    testCompile "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
     testCompile 'org.testng:testng:6.13.1'
-    testCompile "org.mockito:mockito-core:2.8.9"
-    testCompile "org.powermock:powermock-api-mockito2:1.7.3"
-    testCompile "org.powermock:powermock-module-testng:1.7.3"
+    testCompile "org.mockito:mockito-inline:2.13.0"
+    testCompile "org.powermock:powermock-api-mockito2:2.0.0-beta.5"
+    testCompile "org.powermock:powermock-module-testng:2.0.0-beta.5"
     testCompileOnly "org.projectlombok:lombok:1.16.18"
-    compile 'org.mockito:mockito-core:2.8.9'
 }

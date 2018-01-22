@@ -3,7 +3,6 @@ package ru.coolone.adventure_emulation.scripts;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.other.vectors.Vector2;
 
 /**
  * My button implementation, copy of @{@link com.uwsoft.editor.renderer.components.additional.ButtonComponent.ButtonListener}
@@ -95,15 +95,16 @@ public class Button extends ButtonComposite
 
         // Get camera center coord
         Vector2 cameraCenterCoord = new Vector2(
-                core.getScreenManager().camera.position.x,
-                core.getScreenManager().camera.position.y
+                core.getScreenManager().camera.position
         );
 
         // Get camera coord
         final Vector2 cameraCoord = new Vector2(
-                cameraCenterCoord.x - (Core.WIDTH / 2),
-                cameraCenterCoord.y - (Core.HEIGHT / 2)
-        );
+                cameraCenterCoord
+        ) {{
+            x -= (Core.WIDTH / 2);
+            y -= (Core.HEIGHT / 2);
+        }};
 
         // Get button collision rect
         final Rectangle buttonRect = new Rectangle(

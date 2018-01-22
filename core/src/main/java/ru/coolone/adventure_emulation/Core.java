@@ -24,7 +24,7 @@ public class Core extends Game {
     /**
      * Debug output flag
      */
-    static public final boolean DEBUG = true;
+    static public boolean DEBUG = true;
     /**
      * Scenes and screen size
      */
@@ -33,19 +33,21 @@ public class Core extends Game {
     /**
      * Screen class pointer, that will be opens on startup
      */
-    private static final Class<? extends ScreenScene> START_SCREEN = MenuScreen.class;
+    static final Class<? extends ScreenScene> START_SCREEN = MenuScreen.class;
     /**
      * @see ScreenManager
      */
-    @Getter public ScreenManager screenManager;
+    @Getter
+    public ScreenManager screenManager;
     /**
      * Font for debug text
      */
-    private BitmapFont font;
+    BitmapFont font;
     /**
      * Butch for drawing ui
      */
-    @Getter private Batch uiBatch;
+    @Getter
+    private Batch uiBatch;
     /**
      * @see ru.coolone.adventure_emulation.input.InputGroups
      */
@@ -79,10 +81,10 @@ public class Core extends Game {
 
         // Debug
         if (DEBUG) {
-            uiBatch.begin();
+            getUiBatch().begin();
 
             // Current scene and screen
-            font.draw(uiBatch,
+            font.draw(getUiBatch(),
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
                             + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
                             + "Camera indent: " + screenManager.camera.indent + '\n'
@@ -91,7 +93,7 @@ public class Core extends Game {
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );
 
-            uiBatch.end();
+            getUiBatch().end();
         }
     }
 

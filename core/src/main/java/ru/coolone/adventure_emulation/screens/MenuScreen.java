@@ -16,7 +16,7 @@ public class MenuScreen extends ScreenScene {
     @SuppressWarnings("unused")
     private static final String TAG = MenuScreen.class.getSimpleName();
 
-    private static final String name = "MenuScene";
+    public static final String name = "MenuScene";
     /**
      * ButtonBase open's @{@link GameScreen}
      */

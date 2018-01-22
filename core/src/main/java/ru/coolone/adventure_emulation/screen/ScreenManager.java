@@ -2,28 +2,28 @@ package ru.coolone.adventure_emulation.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.uwsoft.editor.renderer.SceneLoader;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.camera.Camera;
+import ru.coolone.adventure_emulation.other.vectors.Vector2;
+import ru.coolone.adventure_emulation.other.vectors.Vector3;
 
 /**
  * Manages @{@link ScreenScene}'s
  *
  * @author coolone
  */
-
+@RequiredArgsConstructor
 public class ScreenManager {
 
     @SuppressWarnings("unused")
@@ -36,15 +36,15 @@ public class ScreenManager {
     /**
      * Viewport to scene
      */
-    private final FitViewport viewport = new FitViewport(Core.WIDTH, Core.HEIGHT);
+    final FitViewport viewport = new FitViewport(Core.WIDTH, Core.HEIGHT);
     /**
      * Loads {@link ru.coolone.adventure_emulation.screen.ScreenScene}'s scene
      */
-    private final SceneLoader loader = new SceneLoader();
+    final SceneLoader loader;
     /**
      * Map of {@link ru.coolone.adventure_emulation.screen.ScreenScene}
      */
-    private final Map<Class<? extends ScreenScene>, ScreenScene> screenMap = new HashMap<>();
+    private final HashMap<Class<? extends ScreenScene>, ScreenScene> screenMap;
     /**
      * Link to @{@link Game}
      */
@@ -65,6 +65,8 @@ public class ScreenManager {
         viewport.setCamera(
                 camera
         );
+        loader = new SceneLoader();
+        screenMap = new HashMap<>();
     }
 
     /**
@@ -81,26 +83,12 @@ public class ScreenManager {
      *
      * @param screenClass @{@link ScreenScene} class, for example @{@link ru.coolone.adventure_emulation.screens.GameScreen}
      */
-    @SneakyThrows
     public void openScreen(Class<? extends ScreenScene> screenClass) {
-        ScreenScene screenInstance;
-
         // Hide old screen
         if (currentScreen != null)
             currentScreen.hide();
 
-        // Add screen to map if no exists
-        if (!screenMap.containsKey(screenClass)) {
-            // Get constructor
-            val screenConstr = screenClass.getConstructor(Core.class);
-            if (screenConstr != null) {
-                // Create screen
-                screenInstance = screenConstr.newInstance(core);
-
-                // Add screen to map
-                screenMap.put(screenClass, screenInstance);
-            } else throw new RuntimeException("Screen constructor find error!");
-        } else screenInstance = screenMap.get(screenClass);
+        val screenInstance = getScreen(screenClass);
 
         // Load scene
         loader.loadScene(screenInstance.name, viewport);
@@ -113,6 +101,33 @@ public class ScreenManager {
 
         // Change currentScreen
         currentScreen = screenInstance;
+    }
+
+    /**
+     * Find in {@link #screenMap} or create @{@link ScreenScene} and return him
+     *
+     * @param screenClass Class of @{@link ScreenScene}
+     * @return New or exists in {@link #screenMap} @{@link ScreenScene}
+     */
+    @SneakyThrows
+    ScreenScene getScreen(Class<? extends ScreenScene> screenClass) {
+        ScreenScene screen;
+
+        if (!screenMap.containsKey(screenClass)) {
+            // Add screen to map
+
+            // Get constructor
+            val screenConstr = screenClass.getConstructor(Core.class);
+            if (screenConstr != null) {
+                // Create screen
+                screen = screenConstr.newInstance(core);
+
+                // Add screen to map
+                screenMap.put(screenClass, screen);
+            } else throw new RuntimeException("Screen constructor find error!");
+        } else screen = screenMap.get(screenClass);
+
+        return screen;
     }
 
     /**
@@ -130,10 +145,10 @@ public class ScreenManager {
     }
 
     public Vector2 screenToWorldCoord(Vector2 coord) {
-        Vector3 screenCoord3d = new Vector3(coord.x, coord.y, 0f);
-
-        Vector3 worldCoord3d = camera.unproject(screenCoord3d);
-
-        return new Vector2(worldCoord3d.x, worldCoord3d.y);
+        return new Vector2(
+                camera.unproject(
+                        new Vector3(coord)
+                )
+        );
     }
 }

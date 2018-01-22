@@ -3,7 +3,6 @@ package ru.coolone.adventure_emulation.scripts.joystick;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Vector2;
 import com.uwsoft.editor.renderer.components.DimensionsComponent;
 import com.uwsoft.editor.renderer.components.TransformComponent;
 
@@ -15,6 +14,7 @@ import lombok.Getter;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.other.vectors.Vector2;
 import ru.coolone.adventure_emulation.script.Script;
 import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
@@ -521,18 +521,16 @@ public class Joystick extends JoystickComposite
     /**
      * @param x      Check x
      * @param y      Check y
-     * @param radius Circle radius
      * @return Check intercept result
      */
-    private boolean intercepts(float x, float y, float radius) {
+    private boolean intercepts(float x, float y) {
         Gdx.app.log(TAG, "Intercept trigger: \n"
-                + '\t' + "x: " + x + " y: " + y + '\n'
-                + '\t' + "radius: " + radius);
+                + '\t' + "x: " + x + " y: " + y);
 
         Circle circle = new Circle(
                 getX() + bg.getX() + bg.getWidth() / 2f,
                 getY() + bg.getY() + bg.getHeight() / 2f,
-                radius
+                bg.getWidth() / 2
         );
 
         boolean ret = circle.contains(
@@ -544,16 +542,8 @@ public class Joystick extends JoystickComposite
         return ret;
     }
 
-    private boolean intercepts(float x, float y) {
-        return intercepts(x, y, bg.getWidth() / 2f);
-    }
-
     public boolean intercepts(Vector2 coord) {
         return intercepts(coord.x, coord.y);
-    }
-
-    private boolean intercepts(Vector2 coord, float radius) {
-        return intercepts(coord.x, coord.y, radius);
     }
 
     public JoystickTrigger getTrigger(TriggerId triggerId) {
@@ -656,8 +646,7 @@ public class Joystick extends JoystickComposite
                                     screenX,
                                     screenY
                             )
-                    ),
-                    bg.getWidth()
+                    )
             )) {
                 // Move stick
                 stick.setCoord(

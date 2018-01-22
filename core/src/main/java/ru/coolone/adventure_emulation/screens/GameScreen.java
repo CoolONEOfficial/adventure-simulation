@@ -28,7 +28,7 @@ public class GameScreen extends ScreenScene
     @SuppressWarnings("unused")
     private static final String TAG = GameScreen.class.getSimpleName();
 
-    private static final String name = "GameScene";
+    public static final String name = "GameScene";
     /**
      * Intent between ui components, e.g. @{@link Button} or @{@link Joystick}
      */

@@ -20,7 +20,7 @@ public class Camera extends OrthographicCamera {
     Vector2 indentAnimStart;
     Vector2 indentAnimEnd;
 
-    public Vector2 indent = new Vector2(0f, 0f);
+    public Vector2 indent = new Vector2();
 
     @Override
     public void update(boolean updateFrustum) {

@@ -24,7 +24,8 @@ abstract public class ScreenScene implements Screen {
     /**
      * Scene name
      */
-    @Getter protected String name;
+    @Getter
+    protected String name;
 
     @Override
     public void show() {

@@ -30,6 +30,9 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
     private static final float CROUCH_WALK_MOVE_VELOCITY = 4f;
     private static final float JUMP_MOVE_ACCELERATION = 1000f;
     private static final float JUMP_MOVE_VELOCITY = 10f;
+
+    private static final float JUMP_ACCELERATION = 1000f;
+
     /**
      * Array of @{@link PersonMode}'s
      */
@@ -302,7 +305,7 @@ public class Player extends Person<Player.PlayerModeId, Player.AnimationId>
                                 getBody().applyLinearImpulse(
                                         new Vector2(
                                                 0f,
-                                                1000f
+                                                JUMP_ACCELERATION
                                         ),
                                         getBody().getPosition(),
                                         true
