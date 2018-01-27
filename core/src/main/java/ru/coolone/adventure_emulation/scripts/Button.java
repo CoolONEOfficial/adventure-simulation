@@ -95,7 +95,7 @@ public class Button extends ButtonComposite
 
         // Get camera center coord
         Vector2 cameraCenterCoord = new Vector2(
-                core.getScreenManager().camera.position
+                core.getScreenManager().getCamera().position
         );
 
         // Get camera coord

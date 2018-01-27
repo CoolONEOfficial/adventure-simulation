@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
 
 import lombok.Getter;
+import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
 import ru.coolone.adventure_emulation.screens.MenuScreen;
@@ -49,15 +50,15 @@ public class Core extends Game {
     @Getter
     private Batch uiBatch;
     /**
-     * @see ru.coolone.adventure_emulation.input.InputGroups
+     * @see InputGroups
      */
     @Getter
-    private ru.coolone.adventure_emulation.input.InputGroups inputGroups;
+    private InputGroups inputGroups;
 
     @Override
     public void create() {
         // Input groups
-        inputGroups = new ru.coolone.adventure_emulation.input.InputGroups();
+        inputGroups = new InputGroups();
 
         // Debug
         uiBatch = new SpriteBatch();
@@ -87,9 +88,9 @@ public class Core extends Game {
             font.draw(getUiBatch(),
                     "Screen: " + getScreen().getClass().getSimpleName() + '\n'
                             + "Scene: " + screenManager.getCurrentScreen().getName() + '\n'
-                            + "Camera indent: " + screenManager.camera.indent + '\n'
+                            + "Camera indent: " + screenManager.getCamera().indent + '\n'
                             + "World scale: " + PhysicsBodyLoader.getScale() + '\n'
-                            + "Active input groups: " + inputGroups.getActiveGroups(),
+                            + "Active input groups: " + getInputGroups().getActiveGroups(),
                     Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() - 10
             );
 

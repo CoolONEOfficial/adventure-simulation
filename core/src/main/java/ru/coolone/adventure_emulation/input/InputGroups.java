@@ -58,15 +58,18 @@ public class InputGroups implements InputProcessor {
     /**
      * General input multiplexer
      */
-    @Getter private final InputMultiplexer multiplexer = new InputMultiplexer();
+    @Getter
+    private final InputMultiplexer multiplexer = new InputMultiplexer();
     /**
      * Array of active @{@link InputGroupId}
      */
-    @Getter private final ArrayList<InputGroupId> activeGroups = new ArrayList<>();
+    @Getter
+    private final ArrayList<InputGroupId> activeGroups = new ArrayList<>();
     /**
      * Array of scriptListeners
      */
-    @Getter private final ArrayList<InputGroupsListener> listeners = new ArrayList<>();
+    @Getter
+    private final ArrayList<InputGroupsListener> listeners = new ArrayList<>();
 
     public InputGroups() {
         // Set input multiplexer

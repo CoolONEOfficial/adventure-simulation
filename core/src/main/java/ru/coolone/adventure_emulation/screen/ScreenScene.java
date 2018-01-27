@@ -20,7 +20,7 @@ abstract public class ScreenScene implements Screen {
     /**
      * Link for @{@link Core}
      */
-    protected Core core;
+    public final Core core;
     /**
      * Scene name
      */

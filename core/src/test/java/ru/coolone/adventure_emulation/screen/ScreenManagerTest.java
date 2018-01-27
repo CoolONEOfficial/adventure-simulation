@@ -1,6 +1,7 @@
 package ru.coolone.adventure_emulation.screen;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -16,10 +17,15 @@ import java.util.HashMap;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
+import ru.coolone.adventure_emulation.camera.Camera;
+import ru.coolone.adventure_emulation.other.vectors.Vector2;
+import ru.coolone.adventure_emulation.other.vectors.Vector3;
 import ru.coolone.adventure_emulation.screens.MenuScreen;
 import ru.coolone.adventure_emulation.script.Script;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
@@ -41,8 +47,6 @@ public class ScreenManagerTest extends AbsTest {
     private Core core = mock(Core.class);
     private Screen coreCurrentScreen;
 
-    private String currentSceneName;
-
     @BeforeClass
     @Override
     protected void setUpClass() throws Exception {
@@ -60,7 +64,7 @@ public class ScreenManagerTest extends AbsTest {
 
         loader.world = mock(World.class);
 
-        screenManager = new ScreenManager(loader, screenMap, core);
+        screenManager = spy(new ScreenManager(loader, screenMap, core));
     }
 
     @Test
@@ -108,6 +112,32 @@ public class ScreenManagerTest extends AbsTest {
 
     @Test
     public void testScreenToWorldCoord() throws Exception {
+        val checkCoord = new Vector2(
+                (float) (Math.random() * 100.),
+                (float) (Math.random() * 400.)
+        );
+
+        val camera = mock(Camera.class);
+        when(camera.unproject(any())).thenReturn(
+                new Vector3(checkCoord)
+        );
+
+        when(screenManager.getCamera()).thenReturn(camera);
+
+        val worldCoord = screenManager.screenToWorldCoord(new Vector2());
+
+        assertEquals(worldCoord, checkCoord);
     }
 
+    @Test
+    public void testUpdateEngine() throws Exception {
+        val engine = mock(Engine.class);
+        doNothing().when(engine).update(anyFloat());
+
+        when(screenManager.loader.getEngine()).thenReturn(engine);
+
+        screenManager.updateEngine(0.1f);
+
+        verify(screenManager.loader.getEngine()).update(anyFloat());
+    }
 }

@@ -40,31 +40,28 @@ public class GameScreen extends ScreenScene
     /**
      * Player behavior for @{@link ItemWrapper}
      */
-    private Player player;
+    Player player;
     /**
      * Move buttons
      */
-    private Button downButton;
-    private Button upButton;
-    private Button leftButton;
-    private Button rightButton;
+    Button downButton;
+    Button upButton;
+    Button leftButton;
+    Button rightButton;
     /**
      * Joystick for move @{@link Player}
      */
-    private Joystick joystick;
+    Joystick joystick;
     /**
      * Just for debug
      */
-    private BitmapFont font;
-    private Box2DDebugRenderer debugRenderer;
+    BitmapFont font;
+    Box2DDebugRenderer debugRenderer;
 
     public GameScreen(
             Core core
     ) {
         super(core, name);
-
-        // Listen input
-        core.getInputGroups().getListeners().add(this);
     }
 
     @Override
@@ -191,6 +188,9 @@ public class GameScreen extends ScreenScene
         // Debug info
         debugRenderer = new Box2DDebugRenderer();
         font = new BitmapFont();
+
+        // Listen input
+        core.getInputGroups().getListeners().add(this);
     }
 
     @Override
@@ -220,7 +220,7 @@ public class GameScreen extends ScreenScene
 
             // Set camera coords
             core.getScreenManager()
-                    .camera
+                    .getCamera()
                     .position.set(
                     new Vector3(
                             cameraPos.x,
@@ -278,7 +278,7 @@ public class GameScreen extends ScreenScene
             // Debug Box2d physics
             debugRenderer.render(
                     core.getScreenManager().getWorld(),
-                    core.getScreenManager().camera.combined
+                    core.getScreenManager().getCamera().combined
             );
 
             val uiBatch = core.getUiBatch();
@@ -318,16 +318,15 @@ public class GameScreen extends ScreenScene
         upButton.dispose();
         downButton.dispose();
         joystick.dispose();
+        font.dispose();
+
+        // Stop listen input
+        core.getInputGroups().getListeners().remove(this);
     }
 
     @Override
     public void dispose() {
-        // Stop listen input
-        core.getInputGroups().getListeners().remove(this);
-
         super.dispose();
-
-        font.dispose();
     }
 
     @Override
@@ -341,7 +340,7 @@ public class GameScreen extends ScreenScene
                 indentPos.x += Core.WIDTH / 3f;
                 break;
         }
-        core.getScreenManager().camera.moveIndentTo(
+        core.getScreenManager().getCamera().moveIndentTo(
                 indentPos,
                 1000
         );

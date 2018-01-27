@@ -32,7 +32,8 @@ public class ScreenManager {
     /**
      * Camera, looks on {@link #viewport}
      */
-    public final Camera camera = new Camera();
+    @Getter
+    private final Camera camera = new Camera();
     /**
      * Viewport to scene
      */
@@ -63,7 +64,7 @@ public class ScreenManager {
     public ScreenManager(Core core) {
         this.core = core;
         viewport.setCamera(
-                camera
+                getCamera()
         );
         loader = new SceneLoader();
         screenMap = new HashMap<>();
@@ -146,7 +147,7 @@ public class ScreenManager {
 
     public Vector2 screenToWorldCoord(Vector2 coord) {
         return new Vector2(
-                camera.unproject(
+                getCamera().unproject(
                         new Vector3(coord)
                 )
         );

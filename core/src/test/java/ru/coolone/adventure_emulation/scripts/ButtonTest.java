@@ -81,12 +81,6 @@ public class ButtonTest extends AbsTest {
                                     }}
                             );
                             add(
-                                    new TransformComponent() {{
-                                        x = 100;
-                                        y = 200;
-                                    }}
-                            );
-                            add(
                                     new DimensionsComponent() {{
                                         width = 500;
                                         height = 80;
