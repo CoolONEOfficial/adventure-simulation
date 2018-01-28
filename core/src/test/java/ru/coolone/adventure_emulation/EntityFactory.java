@@ -3,6 +3,8 @@ package ru.coolone.adventure_emulation;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.uwsoft.editor.renderer.components.MainItemComponent;
+import com.uwsoft.editor.renderer.components.NodeComponent;
+import com.uwsoft.editor.renderer.components.ScriptComponent;
 
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -18,7 +20,7 @@ import lombok.val;
 public class EntityFactory {
 
     @SneakyThrows
-    public static Entity createEntity(@NonNull Class... components) {
+    private static Entity createEntity(@NonNull Class... components) {
         val entity = new Entity();
 
         //noinspection unchecked
@@ -29,7 +31,7 @@ public class EntityFactory {
         return entity;
     }
 
-    public static Entity createEntity(String name, Class... components) {
+    public static Entity createEntity(String name, Entity[] childs, Class... components) {
         val entity = createEntity(components);
 
         // Set name
@@ -37,6 +39,20 @@ public class EntityFactory {
         main.itemIdentifier = name;
         entity.add(main);
 
+        // Add script
+        entity.add(new ScriptComponent());
+
+        // Add childs
+        val node = new NodeComponent();
+        for (val mChild : childs) {
+            node.addChild(mChild);
+        }
+        entity.add(node);
+
         return entity;
+    }
+
+    public static Entity createEntity(String name, Class... components) {
+        return createEntity(name, new Entity[]{}, components);
     }
 }
