@@ -39,7 +39,7 @@ public class Core extends Game {
      * @see ScreenManager
      */
     @Getter
-    public ScreenManager screenManager;
+    private ScreenManager screenManager;
     /**
      * Font for debug text
      */
@@ -57,20 +57,33 @@ public class Core extends Game {
 
     @Override
     public void create() {
+        create(
+                new InputGroups(),
+                new ScreenManager(this),
+                START_SCREEN
+        );
+    }
+
+    public void create(
+            InputGroups inputGroups,
+            ScreenManager screenManager,
+            Class<? extends ScreenScene> startScreen
+    ) {
         // Input groups
-        inputGroups = new InputGroups();
+        this.inputGroups = inputGroups;
 
         // Debug
         uiBatch = new SpriteBatch();
         font = new BitmapFont();
 
         // Screen manager
-        screenManager = new ScreenManager(this);
-        screenManager.openScreen(START_SCREEN);
+        this.screenManager = screenManager;
+        screenManager.openScreen(startScreen);
     }
 
     @Override
     public void render() {
+
         Gdx.gl.glClearColor(36 / 225f, 20 / 225f, 116 / 225f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 

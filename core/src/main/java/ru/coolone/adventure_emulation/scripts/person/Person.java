@@ -78,6 +78,13 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
 
         // Connect scripts
 
+        if (core.getScreenManager() == null)
+            Gdx.app.log(TAG, "Screen manager is null");
+
+        Gdx.app.log(TAG, "Getting child \"" + name + "\"" + '\n'
+                + '\t' + "core: " + core + '\n'
+                + '\t' + "screen manager: " + core.getScreenManager() + '\n');
+
         val selfItem = core
                 .getScreenManager()
                 .getRootItem()

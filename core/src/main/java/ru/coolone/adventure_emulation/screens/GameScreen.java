@@ -9,6 +9,7 @@ import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.EnumMap;
 
+import lombok.NonNull;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
@@ -29,6 +30,10 @@ public class GameScreen extends ScreenScene
     private static final String TAG = GameScreen.class.getSimpleName();
 
     public static final String name = "GameScene";
+    /**
+     * Debug flag
+     */
+    private final boolean debug;
     /**
      * Intent between ui components, e.g. @{@link Button} or @{@link Joystick}
      */
@@ -59,9 +64,17 @@ public class GameScreen extends ScreenScene
     Box2DDebugRenderer debugRenderer;
 
     public GameScreen(
-            Core core
+            @NonNull Core core,
+            boolean debug
     ) {
         super(core, name);
+        this.debug = debug;
+    }
+
+    public GameScreen(
+            Core core
+    ) {
+        this(core, Core.DEBUG);
     }
 
     @Override
@@ -185,9 +198,11 @@ public class GameScreen extends ScreenScene
                 }
         );
 
-        // Debug info
-        debugRenderer = new Box2DDebugRenderer();
-        font = new BitmapFont();
+        if (debug) {
+            // Debug info
+            debugRenderer = new Box2DDebugRenderer();
+            font = new BitmapFont();
+        }
 
         // Listen input
         core.getInputGroups().getListeners().add(this);

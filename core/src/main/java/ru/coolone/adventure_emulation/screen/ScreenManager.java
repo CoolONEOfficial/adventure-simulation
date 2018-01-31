@@ -45,7 +45,7 @@ public class ScreenManager {
     /**
      * Map of {@link ru.coolone.adventure_emulation.screen.ScreenScene}
      */
-    private final HashMap<Class<? extends ScreenScene>, ScreenScene> screenMap;
+    public final HashMap<Class<? extends ScreenScene>, ScreenScene> screenMap;
     /**
      * Link to @{@link Game}
      */
@@ -85,23 +85,25 @@ public class ScreenManager {
      * @param screenClass @{@link ScreenScene} class, for example @{@link ru.coolone.adventure_emulation.screens.GameScreen}
      */
     public void openScreen(Class<? extends ScreenScene> screenClass) {
-        // Hide old screen
-        if (currentScreen != null)
-            currentScreen.hide();
+        if (screenClass != null) {
+            // Hide old screen
+            if (currentScreen != null)
+                currentScreen.hide();
 
-        val screenInstance = getScreen(screenClass);
+            val screenInstance = getScreen(screenClass);
 
-        // Load scene
-        loader.loadScene(screenInstance.name, viewport);
+            // Load scene
+            loader.loadScene(screenInstance.name, viewport);
 
-        // Refresh root item
-        rootItem = new ItemWrapper(loader.getRoot());
+            // Refresh root item
+            rootItem = new ItemWrapper(loader.getRoot());
 
-        // Open screen
-        core.setScreen(screenInstance);
+            // Open screen
+            core.setScreen(screenInstance);
 
-        // Change currentScreen
-        currentScreen = screenInstance;
+            // Change currentScreen
+            currentScreen = screenInstance;
+        }
     }
 
     /**

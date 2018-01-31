@@ -559,7 +559,7 @@ public class Joystick extends JoystickComposite
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (intercepts(
-                core.screenManager.screenToWorldCoord(
+                core.getScreenManager().screenToWorldCoord(
                         new Vector2(
                                 screenX,
                                 screenY
@@ -629,7 +629,7 @@ public class Joystick extends JoystickComposite
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         if (pointer == touchPointer) {
-            Vector2 newStickCoord = core.screenManager.screenToWorldCoord(
+            Vector2 newStickCoord = core.getScreenManager().screenToWorldCoord(
                     new Vector2(
                             screenX,
                             screenY
@@ -641,7 +641,7 @@ public class Joystick extends JoystickComposite
             newStickCoord.y -= getY();
 
             if (intercepts(
-                    core.screenManager.screenToWorldCoord(
+                    core.getScreenManager().screenToWorldCoord(
                             new Vector2(
                                     screenX,
                                     screenY

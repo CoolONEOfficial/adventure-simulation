@@ -12,6 +12,9 @@ import java.util.Arrays;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.other.vectors.Vector2;
 
+import static ru.coolone.adventure_emulation.scripts.Button.LAYER_NAME_ACTIVE;
+import static ru.coolone.adventure_emulation.scripts.Button.LAYER_NAME_PASSIVE;
+
 /**
  * My button implementation, copy of @{@link com.uwsoft.editor.renderer.components.additional.ButtonComponent.ButtonListener}
  * Supported multitouch
@@ -23,6 +26,11 @@ public class Button extends ButtonComposite
         implements InputProcessor {
 
     private static final String TAG = Button.class.getSimpleName();
+    /**
+     * Names of layers in @{@link com.uwsoft.editor.renderer.components.LayerMapComponent}
+     */
+    public static final String LAYER_NAME_ACTIVE = "activated";
+    public static final String LAYER_NAME_PASSIVE = "normal";
     /**
      * Pointer of touch, pressed at button
      */
@@ -232,7 +240,7 @@ abstract class ButtonComposite extends AbsTrigger {
 
     public ButtonComposite() {
         super(
-                "pressed", "normal",
+                LAYER_NAME_ACTIVE, LAYER_NAME_PASSIVE,
                 false
         );
         componentClassesForInit.addAll(

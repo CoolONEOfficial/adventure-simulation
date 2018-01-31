@@ -24,10 +24,12 @@ import static org.testng.Assert.assertTrue;
 @NoArgsConstructor
 public class AbsTriggerTest extends AbsTest {
 
+    private static final String LAYER_NAME_ACTIVE = "active";
+    private static final String LAYER_NAME_PASSIVE = "passive";
+
     @InjectMocks
     private AbsTrigger absTrigger = new AbsTrigger(
-            "active",
-            "passive",
+            LAYER_NAME_ACTIVE, LAYER_NAME_PASSIVE,
             false
     ) {
     };
@@ -43,10 +45,10 @@ public class AbsTriggerTest extends AbsTest {
                         add(mComponentClass.newInstance());
 
                     getComponent(LayerMapComponent.class).addLayer(
-                            new LayerItemVO("active")
+                            new LayerItemVO(LAYER_NAME_ACTIVE)
                     );
                     getComponent(LayerMapComponent.class).addLayer(
-                            new LayerItemVO("passive")
+                            new LayerItemVO(LAYER_NAME_PASSIVE)
                     );
                 }}
         );

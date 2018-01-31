@@ -17,13 +17,18 @@ public class JoystickTrigger extends AbsTrigger {
 
     @SuppressWarnings("unused")
     private static final String TAG = JoystickTrigger.class.getSimpleName();
+    /**
+     * Names of layers in @{@link com.uwsoft.editor.renderer.components.LayerMapComponent}
+     */
+    public static final String LAYER_NAME_ACTIVE = "active";
+    public static final String LAYER_NAME_PASSIVE = "passive";
 
     /**
      * @param listener @{@link AbsTriggerListener}, that will be added
      */
     public JoystickTrigger(AbsTriggerListener listener) {
         super(
-                "active", "passive",
+                LAYER_NAME_ACTIVE, LAYER_NAME_PASSIVE,
                 false,
                 new ArrayList<>(
                         Arrays.asList(

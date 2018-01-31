@@ -21,6 +21,7 @@ import ru.coolone.adventure_emulation.EntityFactory;
 import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
+import ru.coolone.adventure_emulation.scripts.Button;
 
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.spy;
@@ -37,6 +38,8 @@ public class GameScreenTest extends AbsTest {
 
     private GameScreen gameScreen;
 
+    private ScreenManager screenManager;
+
     @BeforeClass
     @Override
     protected void setUpClass() throws Exception {
@@ -46,8 +49,15 @@ public class GameScreenTest extends AbsTest {
         val core = spy(new Core());
         val inputGroups = new InputGroups();
         when(core.getInputGroups()).thenReturn(inputGroups);
+        val map = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
+        val loader = mock(SceneLoader.class);
+        loader.rootEntity = rootEntity;
+        when(loader.getRoot()).thenReturn(rootEntity);
+        screenManager = new ScreenManager(loader, map, core);
+        when(core.getScreenManager()).thenReturn(screenManager);
 
-        gameScreen = new GameScreen(core);
+
+        gameScreen = new GameScreen(core, false);
     }
 
     private static final Entity playerSpriterEntity = createEntity(
@@ -146,11 +156,40 @@ public class GameScreenTest extends AbsTest {
             }
     );
 
+    private static final String[] buttonLayerNames = new String[]{
+            Button.LAYER_NAME_ACTIVE,
+            Button.LAYER_NAME_PASSIVE
+    };
+
+    private static final Entity buttonDownEntity = createEntity(
+            "buttonDown",
+            buttonLayerNames
+    );
+
+    private static final Entity buttonUpEntity = createEntity(
+            "buttonUp",
+            buttonLayerNames
+    );
+
+    private static final Entity buttonLeftEntity = createEntity(
+            "buttonLeft",
+            buttonLayerNames
+    );
+
+    private static final Entity buttonRightEntity = createEntity(
+            "buttonRight",
+            buttonLayerNames
+    );
+
     private static final Entity rootEntity = spy(createEntity(
             "root",
             new Entity[]{
                     playerEntity,
-                    joystickEntity
+                    joystickEntity,
+                    buttonDownEntity,
+                    buttonUpEntity,
+                    buttonLeftEntity,
+                    buttonRightEntity
             }
     ));
 
@@ -170,17 +209,9 @@ public class GameScreenTest extends AbsTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testShow() throws Exception {
-        val loader = mock(SceneLoader.class);
-        loader.rootEntity = rootEntity;
-        when(loader.getRoot()).thenReturn(rootEntity);
-        val map = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
-        val core = spy(new Core());
-        val inputGroups = new InputGroups();
-        when(core.getInputGroups()).thenReturn(inputGroups);
-        val screenManager = new ScreenManager(loader, map, core);
-        core.screenManager = screenManager;
+
+        screenManager.screenMap.put(GameScreen.class, gameScreen);
         screenManager.openScreen(GameScreen.class);
-        gameScreen.show();
 
         assertNotNull(gameScreen.player);
         assertNotNull(gameScreen.joystick);
@@ -188,8 +219,6 @@ public class GameScreenTest extends AbsTest {
         assertNotNull(gameScreen.upButton);
         assertNotNull(gameScreen.leftButton);
         assertNotNull(gameScreen.rightButton);
-        assertNotNull(gameScreen.font);
-        assertNotNull(gameScreen.debugRenderer);
 
         assertTrue(gameScreen.core.getInputGroups().getListeners().contains(gameScreen));
     }
