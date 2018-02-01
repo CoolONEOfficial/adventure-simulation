@@ -1,5 +1,6 @@
 # Adventure Emulation
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5b1b496318fa449aab45a7ec5de0a29d)](https://www.codacy.com/app/CoolONEOfficial/adventure-simulation?utm_source=github.com&utm_medium=referral&utm_content=CoolONEOfficial/adventure-simulation&utm_campaign=badger)
 [![Build Status](https://travis-ci.com/CoolONEOfficial/adventure-simulation.svg?token=wfz5f29VzkAUQiKYXcZQ&branch=master)](https://travis-ci.com/CoolONEOfficial/adventure-simulation)
 [![codecov](https://codecov.io/gh/CoolONEOfficial/adventure-simulation/branch/master/graph/badge.svg?token=W88P95Fwo1)](https://codecov.io/gh/CoolONEOfficial/adventure-simulation)
 
