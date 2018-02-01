@@ -4,6 +4,8 @@
 [![codecov](https://codecov.io/gh/CoolONEOfficial/adventure-simulation/branch/master/graph/badge.svg?token=W88P95Fwo1)](https://codecov.io/gh/CoolONEOfficial/adventure-simulation)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ae2245672f4a4e72b532c290e7595b78)](https://www.codacy.com/app/CoolONEOfficial/adventure-simulation?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=CoolONEOfficial/adventure-simulation&amp;utm_campaign=Badge_Grade)
 
+2D platformer game
+
 A [LibGDX](http://libgdx.badlogicgames.com/) project generated with [gdx-setup](https://github.com/czyzby/gdx-setup).
 
 Project template included simple launchers and an empty `Game` extension.
