@@ -54,6 +54,8 @@ public class PersonTest extends AbsTest {
             ((InputGroups.InputGroupId.values().length / 2) - 1) +
                     (int) (Math.random() * ((InputGroups.InputGroupId.values().length / 2) - 1))];
 
+    private int moveStopCount;
+
     @SuppressWarnings("unchecked")
     private static final PersonMode<ModeId, AnimationId>[] personModes = new PersonMode[]{
             // MODE_ONE
@@ -183,8 +185,7 @@ public class PersonTest extends AbsTest {
                             2,
                             false,
                             1
-                    ) {{
-                    }};
+                    );
 
                 }
         );
@@ -265,8 +266,6 @@ public class PersonTest extends AbsTest {
                 person.getModes()[person.getCurrentModeId().ordinal()]
         );
     }
-
-    private int moveStopCount;
 
     @Test
     public void testSetMoveDir() throws Exception {

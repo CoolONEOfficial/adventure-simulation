@@ -368,7 +368,7 @@ abstract public class Person<PersonModeId extends Enum, AnimationId extends Enum
     @Override
     public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
         // Deactivate endInputGroupId
-        if (groupId == endInputGroupId)
+        if (groupId.equals(endInputGroupId))
             endInputGroupId = null;
 
         // Stop moving

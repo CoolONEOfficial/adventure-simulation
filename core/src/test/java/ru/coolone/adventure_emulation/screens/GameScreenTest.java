@@ -26,6 +26,7 @@ import ru.coolone.adventure_emulation.scripts.Button;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static ru.coolone.adventure_emulation.screens.GameScreenEntityFactory.createEntity;
@@ -57,7 +58,7 @@ public class GameScreenTest extends AbsTest {
         when(core.getScreenManager()).thenReturn(screenManager);
 
 
-        gameScreen = new GameScreen(core, false);
+        gameScreen = new GameScreen(core);
     }
 
     private static final Entity playerSpriterEntity = createEntity(
@@ -225,28 +226,33 @@ public class GameScreenTest extends AbsTest {
 
     @Test
     public void testRender() throws Exception {
+        // TODO: testRender
     }
 
     @Test
     public void testHide() throws Exception {
+        // TODO: testHide
     }
 
     @Test
     public void testDispose() throws Exception {
+        assertFalse(gameScreen.core.getInputGroups().getListeners().contains(gameScreen));
     }
 
     @Test
     public void testOnInputGroupActivate() throws Exception {
+        // TODO: testOnInputGroupActivate
     }
 
     @Test
     public void testOnInputGroupDeactivate() throws Exception {
+        // TODO: testOnInputGroupDeactivate
     }
 
 }
 
 class GameScreenEntityFactory extends EntityFactory {
-    public static Entity createEntity(String name, Entity[] childs, String[] layerNames, Class... components) {
+    static Entity createEntity(String name, Entity[] childs, String[] layerNames, Class... components) {
         val entity = createEntity(name, childs, components);
 
         // Add layers
@@ -259,7 +265,7 @@ class GameScreenEntityFactory extends EntityFactory {
         return entity;
     }
 
-    public static Entity createEntity(String name, String[] layerNames, Class... components) {
+    static Entity createEntity(String name, String[] layerNames, Class... components) {
         return createEntity(name, new Entity[]{}, layerNames, components);
     }
 }

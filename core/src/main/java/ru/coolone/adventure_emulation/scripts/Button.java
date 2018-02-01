@@ -29,7 +29,7 @@ public class Button extends ButtonComposite
     /**
      * Names of layers in @{@link com.uwsoft.editor.renderer.components.LayerMapComponent}
      */
-    public static final String LAYER_NAME_ACTIVE = "activated";
+    public static final String LAYER_NAME_ACTIVE = "pressed";
     public static final String LAYER_NAME_PASSIVE = "normal";
     /**
      * Pointer of touch, pressed at button
@@ -152,7 +152,7 @@ public class Button extends ButtonComposite
             // Change state
             activate();
 
-            // Handle
+            // Handle down
             down();
         }
         return false;
@@ -165,8 +165,7 @@ public class Button extends ButtonComposite
             // Change state
             deactivate();
 
-            // Handle
-            click();
+            // Handle up
             up();
 
             // Clear touch pointer
@@ -188,12 +187,6 @@ public class Button extends ButtonComposite
     @Override
     public boolean scrolled(int amount) {
         return false;
-    }
-
-    public void click() {
-        for (ButtonListener mListener : buttonListeners) {
-            mListener.onButtonClick();
-        }
     }
 
     public void down() {
@@ -219,11 +212,6 @@ public class Button extends ButtonComposite
      * Button listener
      */
     public interface ButtonListener {
-        /**
-         * Will be called after button click
-         */
-        void onButtonClick();
-
         /**
          * Will be called after button press down
          */

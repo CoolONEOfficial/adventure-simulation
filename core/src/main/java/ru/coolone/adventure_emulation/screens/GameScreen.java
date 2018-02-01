@@ -31,10 +31,6 @@ public class GameScreen extends ScreenScene
 
     public static final String name = "GameScene";
     /**
-     * Debug flag
-     */
-    private final boolean debug;
-    /**
      * Intent between ui components, e.g. @{@link Button} or @{@link Joystick}
      */
     private static final int UI_INDENT = 30;
@@ -60,21 +56,13 @@ public class GameScreen extends ScreenScene
     /**
      * Just for debug
      */
-    BitmapFont font;
-    Box2DDebugRenderer debugRenderer;
+    private BitmapFont font;
+    private Box2DDebugRenderer debugRenderer;
 
     public GameScreen(
-            @NonNull Core core,
-            boolean debug
+            @NonNull Core core
     ) {
         super(core, name);
-        this.debug = debug;
-    }
-
-    public GameScreen(
-            Core core
-    ) {
-        this(core, Core.DEBUG);
     }
 
     @Override
@@ -119,10 +107,6 @@ public class GameScreen extends ScreenScene
         downButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
-                    public void onButtonClick() {
-                    }
-
-                    @Override
                     public void onButtonDown() {
                         core.getInputGroups().groupActivate(InputGroups.InputGroupId.CROUCH);
                     }
@@ -139,10 +123,6 @@ public class GameScreen extends ScreenScene
         );
         upButton.buttonListeners.add(
                 new Button.ButtonListener() {
-                    @Override
-                    public void onButtonClick() {
-                    }
-
                     @Override
                     public void onButtonDown() {
                         core.getInputGroups().groupActivate(InputGroups.InputGroupId.JUMP);
@@ -161,11 +141,6 @@ public class GameScreen extends ScreenScene
         leftButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
-                    public void onButtonClick() {
-                        Gdx.app.log(TAG, "Left button");
-                    }
-
-                    @Override
                     public void onButtonDown() {
                         core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_LEFT);
                     }
@@ -183,10 +158,6 @@ public class GameScreen extends ScreenScene
         rightButton.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
-                    public void onButtonClick() {
-                    }
-
-                    @Override
                     public void onButtonDown() {
                         core.getInputGroups().groupActivate(InputGroups.InputGroupId.MOVE_RIGHT);
                     }
@@ -198,7 +169,7 @@ public class GameScreen extends ScreenScene
                 }
         );
 
-        if (debug) {
+        if (Core.DEBUG) {
             // Debug info
             debugRenderer = new Box2DDebugRenderer();
             font = new BitmapFont();
@@ -285,6 +256,8 @@ public class GameScreen extends ScreenScene
                             }}
                     );
                     break;
+                default:
+                    Gdx.app.error(TAG, "Move mode is unknown (" + moveMode + ")");
             }
         }
 

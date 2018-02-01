@@ -1,11 +1,9 @@
 package ru.coolone.adventure_emulation.other.vectors;
 
-import com.badlogic.gdx.math.Vector3;
-
 import lombok.NoArgsConstructor;
 
 /**
- * Clone of @{@link com.badlogic.gdx.math.Vector2}, but with {@link #Vector2(Vector3)}
+ * Clone of @{@link com.badlogic.gdx.math.Vector2}, but with {@link #Vector2(com.badlogic.gdx.math.Vector3)}
  *
  * @author coolone
  * @since 20.01.18

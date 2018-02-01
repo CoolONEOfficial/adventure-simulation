@@ -223,28 +223,28 @@ public class ScriptTest extends AbsTest {
         );
         script.setRect(checkRect);
         assertFalse(script.intercepts(
-                new Vector2(checkRect.x, checkRect.y) {{
-                    x -= 1f;
-                    y -= 1f;
-                }}
+                new Vector2(
+                        checkRect.x - 1f,
+                        checkRect.y - 1f
+                )
         ));
         assertTrue(script.intercepts(
-                new Vector2(checkRect.x, checkRect.y) {{
-                    x += 1f;
-                    y += 1f;
-                }}
+                new Vector2(
+                        checkRect.x + 1f,
+                        checkRect.y + 1f
+                )
         ));
         assertTrue(script.intercepts(
-                new Vector2(checkRect.x, checkRect.y) {{
-                    x += checkRect.width - 1f;
-                    y += checkRect.height - 1f;
-                }}
+                new Vector2(
+                        checkRect.x + checkRect.width - 1f,
+                        checkRect.y + checkRect.height - 1f
+                )
         ));
         assertFalse(script.intercepts(
-                new Vector2(checkRect.x, checkRect.y) {{
-                    x += checkRect.width + 1f;
-                    y += checkRect.height + 1f;
-                }}
+                new Vector2(
+                        checkRect.x + checkRect.width + 1f,
+                        checkRect.y + checkRect.height + 1f
+                )
         ));
     }
 

@@ -44,17 +44,13 @@ public class MenuScreen extends ScreenScene {
         buttonPlay.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
-                    public void onButtonClick() {
-                        core.getScreenManager()
-                                .openScreen(GameScreen.class);
-                    }
-
-                    @Override
                     public void onButtonDown() {
                     }
 
                     @Override
                     public void onButtonUp() {
+                        core.getScreenManager()
+                                .openScreen(GameScreen.class);
                     }
                 }
         );
@@ -67,16 +63,12 @@ public class MenuScreen extends ScreenScene {
         buttonExit.buttonListeners.add(
                 new Button.ButtonListener() {
                     @Override
-                    public void onButtonClick() {
-                        Gdx.app.exit();
-                    }
-
-                    @Override
                     public void onButtonDown() {
                     }
 
                     @Override
                     public void onButtonUp() {
+                        Gdx.app.exit();
                     }
                 }
         );

@@ -43,7 +43,7 @@ public class Core extends Game {
     /**
      * Font for debug text
      */
-    BitmapFont font;
+    private BitmapFont font;
     /**
      * Butch for drawing ui
      */

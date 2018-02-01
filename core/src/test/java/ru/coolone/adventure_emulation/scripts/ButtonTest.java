@@ -33,15 +33,9 @@ public class ButtonTest extends AbsTest {
 
     private Button button;
 
-    private int bClickCount = 0;
     private int bDownCount = 0;
     private int bUpCount = 0;
     private final Button.ButtonListener buttonListener = new Button.ButtonListener() {
-        @Override
-        public void onButtonClick() {
-            bClickCount++;
-        }
-
         @Override
         public void onButtonDown() {
             bDownCount++;
@@ -121,13 +115,6 @@ public class ButtonTest extends AbsTest {
         // --- Create button with mocked core ---
         button = new Button(core, "button");
         button.buttonListeners.add(buttonListener);
-    }
-
-    @Test
-    public void testClick() throws Exception {
-        int countOld = bClickCount;
-        button.click();
-        assertEquals(bClickCount, countOld + 1);
     }
 
     @Test

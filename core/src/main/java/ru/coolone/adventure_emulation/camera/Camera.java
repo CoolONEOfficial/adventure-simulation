@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class Camera extends OrthographicCamera {
+    @SuppressWarnings("unused")
     private static final String TAG = Camera.class.getSimpleName();
 
     Timeline timeline = new Timeline();

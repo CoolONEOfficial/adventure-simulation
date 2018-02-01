@@ -12,7 +12,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class Vector2Test {
     @Test
-    void createFrom3d() {
+    public void createFrom3d() {
         val vec3 = new Vector3(
                 (float) (Math.random() * 200.),
                 (float) (Math.random() * 100.),
@@ -27,7 +27,7 @@ public class Vector2Test {
     }
 
     @Test
-    void createFrom2d() {
+    public void createFrom2d() {
         val vec2Src = new Vector2(
                 (float) (Math.random() * 200.),
                 (float) (Math.random() * 100.)
