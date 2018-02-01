@@ -6,6 +6,7 @@
 
 2D platformer game
 
+
 A [LibGDX](http://libgdx.badlogicgames.com/) project generated with [gdx-setup](https://github.com/czyzby/gdx-setup).
 
 Project template included simple launchers and an empty `Game` extension.
