@@ -36,7 +36,8 @@ public class Script implements IScript {
      *
      * @see ComponentId
      */
-    public static final Class[] componentClasses = new Class[]{
+    @SuppressWarnings("unchecked")
+    public static final Class<? extends Component>[] componentClasses = new Class[]{
             MainItemComponent.class,
             DimensionsComponent.class,
             TransformComponent.class,
@@ -52,7 +53,7 @@ public class Script implements IScript {
      * Classes of @{@link Entity} @{@link Component}'s,
      * that instances will be initialized in {@link #init(Entity)}
      */
-    public final ArrayList<Class> componentClassesForInit = new ArrayList<>();
+    protected final ArrayList<Class> componentClassesForInit = new ArrayList<>();
     /**
      * Map of entity's @{@link Component}'s
      *

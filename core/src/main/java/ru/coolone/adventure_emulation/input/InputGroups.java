@@ -24,8 +24,10 @@ public class InputGroups implements InputProcessor {
     /**
      * Keycodes groups
      */
-    public static final EnumMap<InputGroupId, Integer[]> keyGroups = new EnumMap<InputGroupId, Integer[]>(InputGroupId.class) {{
-        put(
+    public static final EnumMap<InputGroupId, Integer[]> keyGroups = new EnumMap<>(InputGroupId.class);
+
+    static {
+        keyGroups.put(
                 InputGroupId.JUMP,
                 new Integer[]{
                         Keys.UP,
@@ -33,28 +35,29 @@ public class InputGroups implements InputProcessor {
                         Keys.SPACE
                 }
         );
-        put(
+        keyGroups.put(
                 InputGroupId.MOVE_LEFT,
                 new Integer[]{
                         Keys.LEFT,
                         Keys.A
                 }
         );
-        put(
+        keyGroups.put(
                 InputGroupId.CROUCH,
                 new Integer[]{
                         Keys.DOWN,
                         Keys.S
                 }
         );
-        put(
+        keyGroups.put(
                 InputGroupId.MOVE_RIGHT,
                 new Integer[]{
                         Keys.RIGHT,
                         Keys.D
                 }
         );
-    }};
+    }
+
     /**
      * General input multiplexer
      */

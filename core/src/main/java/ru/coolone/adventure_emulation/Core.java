@@ -34,7 +34,7 @@ public class Core extends Game {
     /**
      * Screen class pointer, that will be opens on startup
      */
-    static final Class<? extends ScreenScene> START_SCREEN = MenuScreen.class;
+    private static final Class<? extends ScreenScene> START_SCREEN = MenuScreen.class;
     /**
      * @see ScreenManager
      */

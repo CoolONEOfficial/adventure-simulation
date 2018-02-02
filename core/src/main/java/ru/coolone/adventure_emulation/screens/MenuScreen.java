@@ -26,6 +26,7 @@ public class MenuScreen extends ScreenScene {
      */
     private Button buttonExit;
 
+    @SuppressWarnings("WeakerAccess")
     public MenuScreen(
             Core core
     ) {

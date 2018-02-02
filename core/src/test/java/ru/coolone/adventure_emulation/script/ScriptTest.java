@@ -1,7 +1,5 @@
 package ru.coolone.adventure_emulation.script;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -25,6 +23,7 @@ import java.util.Arrays;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
+import ru.coolone.adventure_emulation.other.EntityBuilder;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
@@ -90,21 +89,19 @@ public class ScriptTest extends AbsTest {
                 }
         );
 
-        script.init(
-                new Entity() {{
-                    //noinspection unchecked
-                    for (Class<? extends Component> mComponentClass : ru.coolone.adventure_emulation.script.Script.componentClasses)
-                        add(mComponentClass.newInstance());
+        val entity = new EntityBuilder()
+                .addCustom(SpriterComponent.class)
+                .addLayers(
+                        layerOne,
+                        layerTwo
+                ).addSpriterPlayer(player)
+                .addCustom(PhysicsBodyComponent.class)
+                .entity;
+        spriter = entity.getComponent(SpriterComponent.class);
+        physic = entity.getComponent(PhysicsBodyComponent.class);
+        layers = entity.getComponent(LayerMapComponent.class);
 
-                    // Get entity components
-                    spriter = getComponent(SpriterComponent.class);
-                    spriter.player = player;
-                    physic = getComponent(PhysicsBodyComponent.class);
-                    layers = getComponent(LayerMapComponent.class);
-                    layers.addLayer(layerOne);
-                    layers.addLayer(layerTwo);
-                }}
-        );
+        script.init(entity);
     }
 
     @Test

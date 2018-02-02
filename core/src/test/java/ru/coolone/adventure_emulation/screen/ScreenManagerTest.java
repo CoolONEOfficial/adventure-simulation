@@ -69,12 +69,12 @@ public class ScreenManagerTest extends AbsTest {
 
     @Test
     public void testOpenScreen() throws Exception {
-        val rootEntity = new Entity() {{
-            //noinspection unchecked
-            for (Class<? extends Component> mComponentClass : Script.componentClasses)
-                add(mComponentClass.newInstance());
-            add(new NodeComponent());
-        }};
+        val rootEntity = new Entity();
+        //noinspection unchecked
+        for (Class<? extends Component> mComponentClass : Script.componentClasses)
+            rootEntity.add(mComponentClass.newInstance());
+        rootEntity.add(new NodeComponent());
+
         when(screenManager.loader.getRoot())
                 .thenReturn(rootEntity);
 

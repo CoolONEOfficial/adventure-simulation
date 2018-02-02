@@ -2,8 +2,6 @@ package ru.coolone.adventure_emulation.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
@@ -13,6 +11,8 @@ import lombok.NonNull;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
 import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.other.vectors.Vector2;
+import ru.coolone.adventure_emulation.other.vectors.Vector3;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
 import ru.coolone.adventure_emulation.scripts.Button;
 import ru.coolone.adventure_emulation.scripts.joystick.Joystick;
@@ -59,6 +59,7 @@ public class GameScreen extends ScreenScene
     private BitmapFont font;
     private Box2DDebugRenderer debugRenderer;
 
+    @SuppressWarnings("WeakerAccess")
     public GameScreen(
             @NonNull Core core
     ) {
@@ -76,27 +77,27 @@ public class GameScreen extends ScreenScene
         );
 
         // Joystick
+        val joystickMap = new EnumMap<Joystick.TriggerId, InputGroups.InputGroupId>(Joystick.TriggerId.class);
+        joystickMap.put(
+                Joystick.TriggerId.LEFT,
+                InputGroups.InputGroupId.MOVE_LEFT
+        );
+        joystickMap.put(
+                Joystick.TriggerId.RIGHT,
+                InputGroups.InputGroupId.MOVE_RIGHT
+        );
+        joystickMap.put(
+                Joystick.TriggerId.UP,
+                InputGroups.InputGroupId.JUMP
+        );
+        joystickMap.put(
+                Joystick.TriggerId.DOWN,
+                InputGroups.InputGroupId.CROUCH
+        );
         joystick = new Joystick(
                 core,
                 "joystick",
-                new EnumMap<Joystick.TriggerId, InputGroups.InputGroupId>(Joystick.TriggerId.class) {{
-                    put(
-                            Joystick.TriggerId.LEFT,
-                            InputGroups.InputGroupId.MOVE_LEFT
-                    );
-                    put(
-                            Joystick.TriggerId.RIGHT,
-                            InputGroups.InputGroupId.MOVE_RIGHT
-                    );
-                    put(
-                            Joystick.TriggerId.UP,
-                            InputGroups.InputGroupId.JUMP
-                    );
-                    put(
-                            Joystick.TriggerId.DOWN,
-                            InputGroups.InputGroupId.CROUCH
-                    );
-                }}
+                joystickMap
         );
 
         // Move buttons
@@ -169,6 +170,21 @@ public class GameScreen extends ScreenScene
                 }
         );
 
+        // Hide joystick or buttons
+//        switch (moveMode) {
+//            case JOYSTICK:
+//                leftButton.setVisible(false);
+//                rightButton.setVisible(false);
+//                upButton.setVisible(false);
+//                downButton.setVisible(false);
+//                break;
+//            case BUTTONS:
+//                joystick.setVisible(false);
+//                break;
+//            default:
+//                Gdx.app.error(TAG, "Move mode unknown (" + moveMode + ")");
+//        }
+
         if (Core.DEBUG) {
             // Debug info
             debugRenderer = new Box2DDebugRenderer();
@@ -176,7 +192,8 @@ public class GameScreen extends ScreenScene
         }
 
         // Listen input
-        core.getInputGroups().getListeners().add(this);
+        core.getInputGroups().getListeners()
+                .add(this);
     }
 
     @Override
@@ -185,11 +202,11 @@ public class GameScreen extends ScreenScene
         if (player.isSpawned()) {
 
             // Camera coords
-            final val playerPos = player.getCoord();
+            val playerPos = player.getCoord();
 
-            final val cameraPos = new Vector2();
+            val cameraPos = new Vector2();
 
-            //final ArrayList<InputGroups.InputGroupId> activeGroups = core.getInputGroups().getActiveGroups();
+            //val activeGroups = core.getInputGroups().getActiveGroups();
             cameraPos.x = playerPos.x + (player.getWidth() / 2);
 
 //            if (activeGroups.contains(InputGroups.InputGroupId.MOVE_LEFT))
@@ -208,52 +225,60 @@ public class GameScreen extends ScreenScene
             core.getScreenManager()
                     .getCamera()
                     .position.set(
-                    new Vector3(
-                            cameraPos.x,
-                            cameraPos.y,
-                            0f
-                    )
+                    new Vector3(cameraPos)
             );
 
             switch (moveMode) {
                 case BUTTONS:
                     // Left
                     leftButton.setCoord(
-                            new Vector2(cameraPos) {{
-                                x -= (Core.WIDTH / 2) - UI_INDENT;
-                                y -= (Core.HEIGHT / 2) + UI_INDENT;
-                            }}
+                            new Vector2(
+                                    cameraPos
+                            ).add(
+                                    -(Core.WIDTH / 2) + UI_INDENT,
+                                    -(Core.HEIGHT / 2) + UI_INDENT
+                            )
                     );
 
                     // Right
                     rightButton.setCoord(
-                            new Vector2(leftButton.getCoord()) {{
-                                x += leftButton.getWidth() + UI_INDENT;
-                            }}
+                            new Vector2(
+                                    leftButton.getCoord()
+                            ).add(
+                                    leftButton.getWidth() + UI_INDENT,
+                                    0f
+                            )
                     );
 
                     // Up
                     upButton.setCoord(
-                            new Vector2(cameraPos) {{
-                                x -= upButton.getWidth() + UI_INDENT - (Core.WIDTH / 2);
-                                y -= (Core.HEIGHT / 2) - UI_INDENT;
-                            }}
+                            new Vector2(
+                                    cameraPos
+                            ).add(
+                                    -upButton.getWidth() - UI_INDENT + (Core.WIDTH / 2),
+                                    -(Core.HEIGHT / 2) + UI_INDENT
+                            )
                     );
 
                     // Down
                     downButton.setCoord(
-                            new Vector2(upButton.getCoord()) {{
-                                x -= downButton.getWidth() + UI_INDENT;
-                            }}
+                            new Vector2(
+                                    upButton.getCoord()
+                            ).add(
+                                    -downButton.getWidth() - UI_INDENT,
+                                    0f
+                            )
                     );
                     break;
                 case JOYSTICK:
                     // Joystick
                     joystick.setCoord(
-                            new Vector2(cameraPos) {{
-                                x -= (Core.WIDTH / 2) - UI_INDENT;
-                                y -= (Core.HEIGHT / 2) - UI_INDENT;
-                            }}
+                            new Vector2(
+                                    cameraPos
+                            ).add(
+                                    -(Core.WIDTH / 2) + UI_INDENT,
+                                    -(Core.HEIGHT / 2) + UI_INDENT
+                            )
                     );
                     break;
                 default:
@@ -309,7 +334,8 @@ public class GameScreen extends ScreenScene
         font.dispose();
 
         // Stop listen input
-        core.getInputGroups().getListeners().remove(this);
+        core.getInputGroups().getListeners()
+                .remove(this);
     }
 
     @Override

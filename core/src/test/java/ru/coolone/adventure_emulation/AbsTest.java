@@ -23,9 +23,9 @@ abstract public class AbsTest extends PowerMockTestCase {
     protected static void initGdx(AbsTest absTest) {
         if (!absTest.gdxInitialized) {
             // Initialize libgdx headless for use static vars (e.g. Gdx.input.setInputProcessor)
-            val config = new HeadlessApplicationConfiguration() {{
-                renderInterval = 1f / 60; // Likely want 1f/60 for 60 fps
-            }};
+            val config = new HeadlessApplicationConfiguration();
+            config.renderInterval = 1f / 60;
+
             new HeadlessApplication(mock(Core.class), config);
 
             absTest.gdxInitialized = true;

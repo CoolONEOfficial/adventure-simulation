@@ -17,8 +17,8 @@ import java.util.HashMap;
 import lombok.val;
 import ru.coolone.adventure_emulation.AbsTest;
 import ru.coolone.adventure_emulation.Core;
-import ru.coolone.adventure_emulation.EntityFactory;
 import ru.coolone.adventure_emulation.input.InputGroups;
+import ru.coolone.adventure_emulation.other.EntityBuilder;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
 import ru.coolone.adventure_emulation.scripts.Button;
@@ -29,7 +29,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static ru.coolone.adventure_emulation.screens.GameScreenEntityFactory.createEntity;
 
 /**
  * @author coolone
@@ -61,88 +60,77 @@ public class GameScreenTest extends AbsTest {
         gameScreen = new GameScreen(core);
     }
 
-    private static final Entity playerSpriterEntity = createEntity(
-            "spriter",
-            SpriterComponent.class
-    );
+    private static final Entity playerSpriterEntity = new EntityBuilder()
+            .addName("spriter")
+            .addCustom(SpriterComponent.class)
+            .entity;
 
-    private static final Entity playerEntity = createEntity(
-            "player",
-            new Entity[]{
-                    playerSpriterEntity
-            }
-    );
+    private static final Entity playerEntity = new EntityBuilder()
+            .addName("player")
+            .addChilds(playerSpriterEntity)
+            .entity;
 
     private static final String[] triggerLayerNames = {
             "active",
             "passive"
     };
 
-    private static final Entity joystickTriggerCenterEntity = createEntity(
-            "triggerCenter",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerCenterEntity = new EntityBuilder()
+            .addName("triggerCenter")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerLeftEntity = createEntity(
-            "triggerLeft",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerLeftEntity = new EntityBuilder()
+            .addName("triggerLeft")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerRightEntity = createEntity(
-            "triggerRight",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerRightEntity = new EntityBuilder()
+            .addName("triggerRight")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerUpEntity = createEntity(
-            "triggerUp",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerUpEntity = new EntityBuilder()
+            .addName("triggerUp")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerDownEntity = createEntity(
-            "triggerDown",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerDownEntity = new EntityBuilder()
+            .addName("triggerDown")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerRightUpEntity = createEntity(
-            "triggerRightUp",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerRightUpEntity = new EntityBuilder()
+            .addName("triggerRightUp")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerRightDownEntity = createEntity(
-            "triggerRightDown",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerRightDownEntity = new EntityBuilder()
+            .addName("triggerRightDown")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerLeftUpEntity = createEntity(
-            "triggerLeftUp",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerLeftUpEntity = new EntityBuilder()
+            .addName("triggerLeftUp")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickTriggerLeftDownEntity = createEntity(
-            "triggerLeftDown",
-            triggerLayerNames,
-            LayerMapComponent.class
-    );
+    private static final Entity joystickTriggerLeftDownEntity = new EntityBuilder()
+            .addName("triggerLeftDown")
+            .addLayerMocks(triggerLayerNames)
+            .entity;
 
-    private static final Entity joystickBgEntity = createEntity(
-            "bg"
-    );
+    private static final Entity joystickBgEntity = new EntityBuilder()
+            .addName("bg")
+            .entity;
 
-    private static final Entity joystickStickEntity = createEntity(
-            "stick"
-    );
+    private static final Entity joystickStickEntity = new EntityBuilder()
+            .addName("stick")
+            .entity;
 
-    private static final Entity joystickEntity = createEntity(
-            "joystick",
-            new Entity[]{
+    private static final Entity joystickEntity = new EntityBuilder()
+            .addName("joystick")
+            .addChilds(
                     joystickStickEntity,
                     joystickBgEntity,
                     joystickTriggerCenterEntity,
@@ -153,46 +141,44 @@ public class GameScreenTest extends AbsTest {
                     joystickTriggerRightUpEntity,
                     joystickTriggerRightDownEntity,
                     joystickTriggerLeftUpEntity,
-                    joystickTriggerLeftDownEntity,
-            }
-    );
+                    joystickTriggerLeftDownEntity
+            ).entity;
 
     private static final String[] buttonLayerNames = new String[]{
             Button.LAYER_NAME_ACTIVE,
             Button.LAYER_NAME_PASSIVE
     };
 
-    private static final Entity buttonDownEntity = createEntity(
-            "buttonDown",
-            buttonLayerNames
-    );
+    private static final Entity buttonDownEntity = new EntityBuilder()
+            .addName("buttonDown")
+            .addLayerMocks(buttonLayerNames)
+            .entity;
 
-    private static final Entity buttonUpEntity = createEntity(
-            "buttonUp",
-            buttonLayerNames
-    );
+    private static final Entity buttonUpEntity = new EntityBuilder()
+            .addName("buttonUp")
+            .addLayerMocks(buttonLayerNames)
+            .entity;
 
-    private static final Entity buttonLeftEntity = createEntity(
-            "buttonLeft",
-            buttonLayerNames
-    );
+    private static final Entity buttonLeftEntity = new EntityBuilder()
+            .addName("buttonLeft")
+            .addLayerMocks(buttonLayerNames)
+            .entity;
 
-    private static final Entity buttonRightEntity = createEntity(
-            "buttonRight",
-            buttonLayerNames
-    );
+    private static final Entity buttonRightEntity = new EntityBuilder()
+            .addName("buttonRight")
+            .addLayerMocks(buttonLayerNames)
+            .entity;
 
-    private static final Entity rootEntity = spy(createEntity(
-            "root",
-            new Entity[]{
+    private static final Entity rootEntity = spy(new EntityBuilder()
+            .addName("root")
+            .addChilds(
                     playerEntity,
                     joystickEntity,
                     buttonDownEntity,
                     buttonUpEntity,
                     buttonLeftEntity,
                     buttonRightEntity
-            }
-    ));
+            ).entity);
 
     static {
         playerSpriterEntity.getComponent(SpriterComponent.class)
@@ -249,23 +235,4 @@ public class GameScreenTest extends AbsTest {
         // TODO: testOnInputGroupDeactivate
     }
 
-}
-
-class GameScreenEntityFactory extends EntityFactory {
-    static Entity createEntity(String name, Entity[] childs, String[] layerNames, Class... components) {
-        val entity = createEntity(name, childs, components);
-
-        // Add layers
-        val layers = new LayerMapComponent();
-        for (val mLayerName : layerNames) {
-            layers.addLayer(new LayerItemVO(mLayerName));
-        }
-        entity.add(layers);
-
-        return entity;
-    }
-
-    static Entity createEntity(String name, String[] layerNames, Class... components) {
-        return createEntity(name, new Entity[]{}, layerNames, components);
-    }
 }
