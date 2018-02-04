@@ -19,8 +19,6 @@ import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static ru.coolone.adventure_emulation.Core.DEBUG;
 
-// TODO: autoclean with lombok
-
 /**
  * @author coolone
  */

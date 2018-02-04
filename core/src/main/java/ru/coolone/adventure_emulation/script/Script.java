@@ -17,6 +17,7 @@ import com.uwsoft.editor.renderer.data.LayerItemVO;
 import com.uwsoft.editor.renderer.scripts.IScript;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 
 import lombok.Getter;
@@ -53,7 +54,12 @@ public class Script implements IScript {
      * Classes of @{@link Entity} @{@link Component}'s,
      * that instances will be initialized in {@link #init(Entity)}
      */
-    protected final ArrayList<Class> componentClassesForInit = new ArrayList<>();
+    protected final ArrayList<Class> componentClassesForInit = new ArrayList<>(
+            Arrays.asList(
+                    MainItemComponent.class,
+                    TransformComponent.class
+            )
+    );
     /**
      * Map of entity's @{@link Component}'s
      *

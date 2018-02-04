@@ -3,10 +3,12 @@ package ru.coolone.adventure_emulation.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.utils.Disposable;
 import com.uwsoft.editor.renderer.utils.ItemWrapper;
 
 import java.util.EnumMap;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
 import ru.coolone.adventure_emulation.Core;
@@ -37,7 +39,9 @@ public class GameScreen extends ScreenScene
     /**
      * Using @{@link MoveMode}
      */
-    private static final MoveMode moveMode = MoveMode.JOYSTICK;
+    @Getter
+    private MoveMode moveMode;
+    private static final MoveMode moveModeDefault = MoveMode.JOYSTICK;
     /**
      * Player behavior for @{@link ItemWrapper}
      */
@@ -76,7 +80,6 @@ public class GameScreen extends ScreenScene
                 "player"
         );
 
-        // Joystick
         val joystickMap = new EnumMap<Joystick.TriggerId, InputGroups.InputGroupId>(Joystick.TriggerId.class);
         joystickMap.put(
                 Joystick.TriggerId.LEFT,
@@ -100,7 +103,6 @@ public class GameScreen extends ScreenScene
                 joystickMap
         );
 
-        // Move buttons
         downButton = new Button(
                 core,
                 "buttonDown"
@@ -170,20 +172,8 @@ public class GameScreen extends ScreenScene
                 }
         );
 
-        // Hide joystick or buttons
-//        switch (moveMode) {
-//            case JOYSTICK:
-//                leftButton.setVisible(false);
-//                rightButton.setVisible(false);
-//                upButton.setVisible(false);
-//                downButton.setVisible(false);
-//                break;
-//            case BUTTONS:
-//                joystick.setVisible(false);
-//                break;
-//            default:
-//                Gdx.app.error(TAG, "Move mode unknown (" + moveMode + ")");
-//        }
+        // Set move mode
+        setMoveMode(moveModeDefault);
 
         if (Core.DEBUG) {
             // Debug info
@@ -228,7 +218,7 @@ public class GameScreen extends ScreenScene
                     new Vector3(cameraPos)
             );
 
-            switch (moveMode) {
+            switch (getMoveMode()) {
                 case BUTTONS:
                     // Left
                     leftButton.setCoord(
@@ -282,7 +272,7 @@ public class GameScreen extends ScreenScene
                     );
                     break;
                 default:
-                    Gdx.app.error(TAG, "Move mode is unknown (" + moveMode + ")");
+                    Gdx.app.error(TAG, "Move mode is unknown (" + getMoveMode() + ")");
             }
         }
 
@@ -312,7 +302,7 @@ public class GameScreen extends ScreenScene
                                             : "null"
                             ) + '\n' +
                             (
-                                    (moveMode == MoveMode.JOYSTICK)
+                                    (getMoveMode() == MoveMode.JOYSTICK)
                                             ? ("Current joystick trigger: " + joystick.getCurrentTriggerId() + '\n')
                                             : ""
                             ) + "FPS: " + Gdx.graphics.getFramesPerSecond(),
@@ -326,12 +316,16 @@ public class GameScreen extends ScreenScene
     public void hide() {
         super.hide();
 
+        player.dispose();
+        joystick.dispose();
         leftButton.dispose();
         rightButton.dispose();
         upButton.dispose();
         downButton.dispose();
-        joystick.dispose();
-        font.dispose();
+
+        if (Core.DEBUG) {
+            font.dispose();
+        }
 
         // Stop listen input
         core.getInputGroups().getListeners()
@@ -364,6 +358,35 @@ public class GameScreen extends ScreenScene
     @Override
     public boolean onInputGroupDeactivate(InputGroups.InputGroupId groupId) {
         return false;
+    }
+
+    /**
+     * Updates {@link #moveMode} and create
+     * or @{@link Disposable#dispose()} {@link #joystick} or @{@link Button}'s
+     *
+     * @param moveMode @{@link MoveMode}, that will be set
+     */
+    public void setMoveMode(MoveMode moveMode) {
+        boolean isJoystick = false;
+        boolean isButtons = false;
+        switch (moveMode) {
+            case JOYSTICK:
+                isJoystick = true;
+                break;
+            case BUTTONS:
+                isButtons = true;
+                break;
+            default:
+                Gdx.app.error(TAG, "Move mode unknown (" + getMoveMode() + ")");
+        }
+
+        leftButton.setVisible(isButtons);
+        rightButton.setVisible(isButtons);
+        upButton.setVisible(isButtons);
+        downButton.setVisible(isButtons);
+        joystick.setVisible(isJoystick);
+
+        this.moveMode = moveMode;
     }
 
     /**

@@ -10,6 +10,7 @@ import com.uwsoft.editor.renderer.components.spriter.SpriterComponent;
 import com.uwsoft.editor.renderer.data.LayerItemVO;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
 import ru.coolone.adventure_emulation.scripts.Button;
 
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.when;
@@ -35,6 +37,8 @@ import static org.testng.Assert.assertTrue;
  * @since 23.01.18
  */
 public class GameScreenTest extends AbsTest {
+    @SuppressWarnings("unused")
+    private static final String TAG = GameScreenTest.class.getSimpleName();
 
     private GameScreen gameScreen;
 
@@ -46,7 +50,10 @@ public class GameScreenTest extends AbsTest {
         super.setUpClass();
 
         Gdx.input = new MockInput();
+        Core.DEBUG = false;
+
         val core = spy(new Core());
+
         val inputGroups = new InputGroups();
         when(core.getInputGroups()).thenReturn(inputGroups);
         val map = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
@@ -55,7 +62,6 @@ public class GameScreenTest extends AbsTest {
         when(loader.getRoot()).thenReturn(rootEntity);
         screenManager = new ScreenManager(loader, map, core);
         when(core.getScreenManager()).thenReturn(screenManager);
-
 
         gameScreen = new GameScreen(core);
     }
@@ -193,31 +199,63 @@ public class GameScreenTest extends AbsTest {
         );
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testShow() throws Exception {
-
-        screenManager.screenMap.put(GameScreen.class, gameScreen);
-        screenManager.openScreen(GameScreen.class);
-
-        assertNotNull(gameScreen.player);
-        assertNotNull(gameScreen.joystick);
-        assertNotNull(gameScreen.downButton);
-        assertNotNull(gameScreen.upButton);
-        assertNotNull(gameScreen.leftButton);
-        assertNotNull(gameScreen.rightButton);
-
-        assertTrue(gameScreen.core.getInputGroups().getListeners().contains(gameScreen));
-    }
-
     @Test
     public void testRender() throws Exception {
         // TODO: testRender
     }
 
-    @Test
-    public void testHide() throws Exception {
-        // TODO: testHide
+
+    @DataProvider
+    public static Object[][] moveModes() {
+        return new Object[][]
+                {
+                        {
+                                GameScreen.MoveMode.JOYSTICK
+                        },
+                        {
+                                GameScreen.MoveMode.BUTTONS
+                        }
+                };
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test(dataProvider = "moveModes")
+    public void testShow(GameScreen.MoveMode moveMode) throws Exception {
+        screenManager.screenMap.put(GameScreen.class, gameScreen);
+        screenManager.openScreen(GameScreen.class);
+        gameScreen.setMoveMode(moveMode);
+
+        assertNotNull(gameScreen.joystick);
+        assertNotNull(gameScreen.downButton);
+        assertNotNull(gameScreen.upButton);
+        assertNotNull(gameScreen.leftButton);
+        assertNotNull(gameScreen.rightButton);
+        assertNotNull(gameScreen.player);
+
+        assertTrue(gameScreen.core.getInputGroups().getListeners().contains(gameScreen));
+    }
+
+    @Test(dataProvider = "moveModes")
+    public void testHide(GameScreen.MoveMode moveMode) throws Exception {
+        screenManager.screenMap.put(GameScreen.class, gameScreen);
+        screenManager.openScreen(GameScreen.class);
+        gameScreen.setMoveMode(moveMode);
+
+        gameScreen.player = spy(gameScreen.player);
+        gameScreen.joystick = spy(gameScreen.joystick);
+        gameScreen.leftButton = spy(gameScreen.leftButton);
+        gameScreen.rightButton = spy(gameScreen.rightButton);
+        gameScreen.upButton = spy(gameScreen.upButton);
+        gameScreen.downButton = spy(gameScreen.downButton);
+
+        gameScreen.hide();
+
+        verify(gameScreen.joystick).dispose();
+        verify(gameScreen.leftButton).dispose();
+        verify(gameScreen.rightButton).dispose();
+        verify(gameScreen.upButton).dispose();
+        verify(gameScreen.downButton).dispose();
+        verify(gameScreen.player).dispose();
     }
 
     @Test
@@ -229,10 +267,4 @@ public class GameScreenTest extends AbsTest {
     public void testOnInputGroupActivate() throws Exception {
         // TODO: testOnInputGroupActivate
     }
-
-    @Test
-    public void testOnInputGroupDeactivate() throws Exception {
-        // TODO: testOnInputGroupDeactivate
-    }
-
 }
