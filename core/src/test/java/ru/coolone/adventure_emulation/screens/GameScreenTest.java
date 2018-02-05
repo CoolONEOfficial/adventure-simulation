@@ -22,7 +22,7 @@ import ru.coolone.adventure_emulation.input.InputGroups;
 import ru.coolone.adventure_emulation.other.EntityBuilder;
 import ru.coolone.adventure_emulation.screen.ScreenManager;
 import ru.coolone.adventure_emulation.screen.ScreenScene;
-import ru.coolone.adventure_emulation.scripts.Button;
+import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -31,6 +31,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
+import static ru.coolone.adventure_emulation.other.EntityBuilder.buttonLayerNames;
+import static ru.coolone.adventure_emulation.other.EntityBuilder.triggerLayerNames;
 
 /**
  * @author coolone
@@ -44,28 +46,6 @@ public class GameScreenTest extends AbsTest {
 
     private ScreenManager screenManager;
 
-    @BeforeClass
-    @Override
-    protected void setUpClass() throws Exception {
-        super.setUpClass();
-
-        Gdx.input = new MockInput();
-        Core.DEBUG = false;
-
-        val core = spy(new Core());
-
-        val inputGroups = new InputGroups();
-        when(core.getInputGroups()).thenReturn(inputGroups);
-        val map = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
-        val loader = mock(SceneLoader.class);
-        loader.rootEntity = rootEntity;
-        when(loader.getRoot()).thenReturn(rootEntity);
-        screenManager = new ScreenManager(loader, map, core);
-        when(core.getScreenManager()).thenReturn(screenManager);
-
-        gameScreen = new GameScreen(core);
-    }
-
     private static final Entity playerSpriterEntity = new EntityBuilder()
             .addName("spriter")
             .addCustom(SpriterComponent.class)
@@ -75,11 +55,6 @@ public class GameScreenTest extends AbsTest {
             .addName("player")
             .addChilds(playerSpriterEntity)
             .entity;
-
-    private static final String[] triggerLayerNames = {
-            "active",
-            "passive"
-    };
 
     private static final Entity joystickTriggerCenterEntity = new EntityBuilder()
             .addName("triggerCenter")
@@ -150,11 +125,6 @@ public class GameScreenTest extends AbsTest {
                     joystickTriggerLeftDownEntity
             ).entity;
 
-    private static final String[] buttonLayerNames = new String[]{
-            Button.LAYER_NAME_ACTIVE,
-            Button.LAYER_NAME_PASSIVE
-    };
-
     private static final Entity buttonDownEntity = new EntityBuilder()
             .addName("buttonDown")
             .addLayerMocks(buttonLayerNames)
@@ -192,11 +162,33 @@ public class GameScreenTest extends AbsTest {
 
         val joystickTriggerDownLayers = joystickTriggerDownEntity.getComponent(LayerMapComponent.class);
         joystickTriggerDownLayers.addLayer(
-                new LayerItemVO("active")
+                new LayerItemVO(AbsTrigger.LAYER_NAME_ACTIVE)
         );
         joystickTriggerDownLayers.addLayer(
-                new LayerItemVO("passive")
+                new LayerItemVO(AbsTrigger.LAYER_NAME_PASSIVE)
         );
+    }
+
+    @BeforeClass
+    @Override
+    protected void setUpClass() throws Exception {
+        super.setUpClass();
+
+        Gdx.input = new MockInput();
+        Core.DEBUG = false;
+
+        val core = spy(new Core());
+
+        val inputGroups = new InputGroups();
+        when(core.getInputGroups()).thenReturn(inputGroups);
+        val map = new HashMap<Class<? extends ScreenScene>, ScreenScene>();
+        val loader = mock(SceneLoader.class);
+        loader.rootEntity = rootEntity;
+        when(loader.getRoot()).thenReturn(rootEntity);
+        screenManager = new ScreenManager(loader, map, core);
+        when(core.getScreenManager()).thenReturn(screenManager);
+
+        gameScreen = new GameScreen(core);
     }
 
     @Test

@@ -80,6 +80,7 @@ public class GameScreen extends ScreenScene
                 "player"
         );
 
+        // Joystick
         val joystickMap = new EnumMap<Joystick.TriggerId, InputGroups.InputGroupId>(Joystick.TriggerId.class);
         joystickMap.put(
                 Joystick.TriggerId.LEFT,
@@ -103,6 +104,7 @@ public class GameScreen extends ScreenScene
                 joystickMap
         );
 
+        // Buttons
         downButton = new Button(
                 core,
                 "buttonDown"

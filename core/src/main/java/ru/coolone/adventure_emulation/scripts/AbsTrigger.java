@@ -18,7 +18,11 @@ import ru.coolone.adventure_emulation.script.Script;
 
 @RequiredArgsConstructor
 abstract public class AbsTrigger extends AbsTriggerComposite {
-
+    /**
+     * Names of layers in @{@link com.uwsoft.editor.renderer.components.LayerMapComponent}
+     */
+    public static final String LAYER_NAME_ACTIVE = "active";
+    public static final String LAYER_NAME_PASSIVE = "passive";
     /**
      * Layers names
      */

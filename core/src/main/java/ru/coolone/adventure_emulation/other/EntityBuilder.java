@@ -14,6 +14,8 @@ import com.uwsoft.editor.renderer.data.LayerItemVO;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import ru.coolone.adventure_emulation.scripts.AbsTrigger;
+import ru.coolone.adventure_emulation.scripts.Button;
 
 /**
  * Factory of @{@link Entity}'s
@@ -23,6 +25,20 @@ import lombok.val;
  */
 
 public class EntityBuilder {
+    /**
+     * Names of layer in @{@link ru.coolone.adventure_emulation.scripts.AbsTrigger}'s
+     */
+    public static final String[] triggerLayerNames = {
+            AbsTrigger.LAYER_NAME_ACTIVE,
+            AbsTrigger.LAYER_NAME_PASSIVE
+    };
+    /**
+     * Names of layers in @{@link Button}
+     */
+    public static final String[] buttonLayerNames = new String[]{
+            Button.LAYER_NAME_ACTIVE,
+            Button.LAYER_NAME_PASSIVE
+    };
     /**
      * Building @{@link Entity}
      */

@@ -20,11 +20,11 @@ public class MenuScreen extends ScreenScene {
     /**
      * ButtonBase open's @{@link GameScreen}
      */
-    private Button buttonPlay;
+    Button buttonPlay;
     /**
      * ButtonBase exit's application
      */
-    private Button buttonExit;
+    Button buttonExit;
 
     @SuppressWarnings("WeakerAccess")
     public MenuScreen(
