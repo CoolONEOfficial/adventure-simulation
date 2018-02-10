@@ -26,7 +26,6 @@ import ru.coolone.adventure_emulation.scripts.AbsTrigger;
 
 public class Joystick extends JoystickComposite
         implements InputProcessor {
-
     @SuppressWarnings("unused")
     private static final String TAG = Joystick.class.getSimpleName();
 
@@ -477,9 +476,12 @@ public class Joystick extends JoystickComposite
         this.triggerInputGroups = triggerInputGroups;
 
         // Create / Add scripts
+        Gdx.app.log("TEST", "SM: " + this.core
+                .getScreenManager());
         val root = this.core
                 .getScreenManager()
                 .getRootItem();
+        Gdx.app.log("TEST", "RI: " + root);
 
         val composite = root.getChild(name);
         composite.addScript(this);
@@ -492,10 +494,10 @@ public class Joystick extends JoystickComposite
         composite.getChild("bg")
                 .addScript(bg);
 
-        for (int mTriggerId = 0; mTriggerId < TriggerId.COUNT.ordinal(); mTriggerId++) {
+        for (val mTriggerId: TriggerId.values()) {
             // Add script
-            val mTriggerName = triggerNames[mTriggerId];
-            val mTriggerScript = triggers[mTriggerId];
+            val mTriggerName = triggerNames[mTriggerId.ordinal()];
+            val mTriggerScript = getTrigger(mTriggerId);
 
             composite.getChild(mTriggerName)
                     .addScript(mTriggerScript);
@@ -657,8 +659,7 @@ public class Joystick extends JoystickComposite
                 );
 
                 // Check intercepts triggers
-                for (int newTriggerIdId = 0; newTriggerIdId < TriggerId.COUNT.ordinal(); newTriggerIdId++) {
-                    val newTriggerId = TriggerId.values()[newTriggerIdId];
+                for (val newTriggerId: TriggerId.values()) {
                     val newTrigger = getTrigger(newTriggerId);
 
                     if (newTrigger.isVisible() &&
@@ -759,9 +760,7 @@ public class Joystick extends JoystickComposite
         RIGHT_UP,
         RIGHT_DOWN,
         LEFT_UP,
-        LEFT_DOWN,
-
-        COUNT
+        LEFT_DOWN
     }
 
     /**

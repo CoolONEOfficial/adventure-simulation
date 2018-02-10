@@ -13,7 +13,7 @@ dependencies {
     compile "com.github.insubstantial:trident:7.3"
     compile 'org.mockito:mockito-inline:2.13.0'
     compile "com.github.CoolONEOfficial:overlap2d-runtime-libgdx:$overlap2dVersion"
-    compileOnly "org.projectlombok:lombok:1.16.18"
+    compileOnly "org.projectlombok:lombok:1.16.20"
 
     testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"
     testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
@@ -23,9 +23,9 @@ dependencies {
     testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
     testCompile "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
     testCompile "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
-    testCompile 'org.testng:testng:6.13.1'
+    testCompile 'org.testng:testng:6.14.2'
     testCompile "org.mockito:mockito-inline:2.13.0"
     testCompile "org.powermock:powermock-api-mockito2:2.0.0-beta.5"
     testCompile "org.powermock:powermock-module-testng:2.0.0-beta.5"
-    testCompileOnly "org.projectlombok:lombok:1.16.18"
+    testCompileOnly "org.projectlombok:lombok:1.16.20"
 }

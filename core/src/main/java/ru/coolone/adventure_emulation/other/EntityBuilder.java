@@ -42,7 +42,7 @@ public class EntityBuilder {
     /**
      * Building @{@link Entity}
      */
-    public Entity entity = new Entity();
+    public final Entity entity;
 
     @SuppressWarnings("unchecked")
     private static final Class<? extends Component>[] initComponents = new Class[]{
@@ -52,8 +52,14 @@ public class EntityBuilder {
             DimensionsComponent.class
     };
 
+    public EntityBuilder(Entity entity) {
+        this.entity = entity;
+    }
+
     @SneakyThrows
     public EntityBuilder() {
+        this.entity = new Entity();
+
         // Init components
         for (val mComponent : initComponents) {
             entity.add(mComponent.newInstance());
